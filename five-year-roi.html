@@ -31,7 +31,7 @@ main{
   padding:25px;
   border-radius:10px;
 }
-h2{color:#2e7d32;margin-top:30px}
+h2,h3{color:#2e7d32;margin-top:30px}
 table{
   width:100%;
   border-collapse:collapse;
@@ -57,15 +57,21 @@ td.left{text-align:left}
   margin-top:25px;
   border-left:5px solid #2e7d32;
 }
+input{
+  padding:8px;
+  width:220px;
+  margin-top:6px;
+}
+.footer-note{
+  font-size:13px;
+  color:#555;
+  margin-top:10px;
+}
 footer{
   text-align:center;
   font-size:13px;
   color:#555;
   padding:15px;
-}
-input{
-  padding:6px;
-  width:200px;
 }
 </style>
 </head>
@@ -73,14 +79,29 @@ input{
 <body>
 <header>
 <h1>🌾 farmerbase – ५ वर्षे वित्तीय प्रक्षेपण</h1>
-<p>Payback Period तथा ROI (Live-Linked)</p>
+<p>वार्षिक परिवर्तन दर सहित Payback Period तथा ROI</p>
 </header>
 
 <main>
 
-<h2>🔢 प्रारम्भिक लगानी</h2>
-<p>यसमा भवन, मेशिन, प्रारम्भिक पशु/बीउ, पूर्वाधार आदि समावेश हुन्छ।</p>
-<input type="number" id="investment" placeholder="प्रारम्भिक लगानी (रु.)" oninput="calculate()" />
+<h2>🔢 आधारभूत इनपुट</h2>
+
+<label>प्रारम्भिक लगानी (रु.)</label><br>
+<input type="number" id="investment" placeholder="जस्तै: 5000000" oninput="calculate()" />
+
+<h3>📈 वार्षिक परिवर्तन दर</h3>
+
+<label>वार्षिक खर्च वृद्धि (%)</label><br>
+<input type="number" id="expGrowth" value="5" oninput="calculate()" />
+
+<br><br>
+
+<label>वार्षिक आम्दानी वृद्धि (%)</label><br>
+<input type="number" id="incGrowth" value="10" oninput="calculate()" />
+
+<p class="footer-note">
+Year-1 को खर्च र आम्दानी प्रणालीबाट स्वतः लिइन्छ।
+</p>
 
 <h2>📊 ५ वर्षे नगद प्रवाह (Cash Flow Projection)</h2>
 
@@ -116,39 +137,52 @@ input{
 
 <div class="note" id="analysisText"></div>
 
-<!-- Debug -->
-<div style="margin-top:15px;font-size:13px;color:#555">
-  <strong>Debug:</strong>
-  Expense=<span id="dExp"></span> |
-  Income=<span id="dInc"></span>
+<!-- Debug (optional) -->
+<div class="footer-note">
+<strong>Debug:</strong>
+Expense=<span id="dExp"></span> |
+Income=<span id="dInc"></span>
 </div>
 
 </main>
 
 <footer>
-© farmerbase BPMS Demo | 5-Year Projection & ROI
+© farmerbase BPMS | 5-Year Projection & ROI (Final)
 </footer>
 
 <script>
 function calculate(){
-  let expense = Number(localStorage.getItem("totalExpense")) || 0;
-  let income  = Number(localStorage.getItem("totalIncome")) || 0;
-  let profit  = income - expense;
-  let invest  = Number(document.getElementById("investment").value) || 0;
 
-  document.getElementById("dExp").innerText = expense;
-  document.getElementById("dInc").innerText = income;
+  let baseExpense = Number(localStorage.getItem("totalExpense")) || 0;
+  let baseIncome  = Number(localStorage.getItem("totalIncome")) || 0;
+
+  let expGrowth = Number(document.getElementById("expGrowth").value) || 0;
+  let incGrowth = Number(document.getElementById("incGrowth").value) || 0;
+  let invest    = Number(document.getElementById("investment").value) || 0;
+
+  document.getElementById("dExp").innerText = baseExpense;
+  document.getElementById("dInc").innerText = baseIncome;
 
   let body = document.getElementById("projectionBody");
   body.innerHTML = "";
+
+  let curExpense = baseExpense;
+  let curIncome  = baseIncome;
 
   let cumulative = -invest;
   let totalProfit = 0;
   let paybackYear = "नभएको";
 
   for(let y=1; y<=5; y++){
-    cumulative += profit;
-    totalProfit += profit;
+
+    if(y > 1){
+      curExpense = curExpense * (1 + expGrowth/100);
+      curIncome  = curIncome  * (1 + incGrowth/100);
+    }
+
+    let yearlyProfit = curIncome - curExpense;
+    cumulative += yearlyProfit;
+    totalProfit += yearlyProfit;
 
     if(cumulative >= 0 && paybackYear === "नभएको"){
       paybackYear = "वर्ष " + y;
@@ -157,16 +191,16 @@ function calculate(){
     body.innerHTML += `
       <tr>
         <td class="left">वर्ष ${y}</td>
-        <td>${income.toLocaleString()}</td>
-        <td>${expense.toLocaleString()}</td>
-        <td>${profit.toLocaleString()}</td>
-        <td>${cumulative.toLocaleString()}</td>
+        <td>${Math.round(curIncome).toLocaleString()}</td>
+        <td>${Math.round(curExpense).toLocaleString()}</td>
+        <td>${Math.round(yearlyProfit).toLocaleString()}</td>
+        <td>${Math.round(cumulative).toLocaleString()}</td>
       </tr>
     `;
   }
 
   document.getElementById("totalProfit").innerText =
-    totalProfit.toLocaleString();
+    Math.round(totalProfit).toLocaleString();
 
   document.getElementById("payback").innerText = paybackYear;
 
@@ -179,10 +213,13 @@ function calculate(){
   }
 
   document.getElementById("analysisText").innerText =
-    `प्रस्तावित व्यवसायबाट ५ वर्षको अवधिमा कुल रु. ${totalProfit.toLocaleString()}
-     नाफा आर्जन हुने देखिएको छ। प्रारम्भिक लगानीको Payback ${paybackYear}
-     मा हुने तथा कुल ROI ${invest>0 ? ((totalProfit/invest)*100).toFixed(2) : 0}% रहने
-     प्रक्षेपण गरिएको छ।`;
+    `व्यवसायको पहिलो वर्षको खर्च तथा आम्दानीलाई आधार मानी
+     वार्षिक खर्चमा ${expGrowth}% र आम्दानीमा ${incGrowth}% परिवर्तन
+     हुने मान्यताका साथ ५ वर्षे वित्तीय प्रक्षेपण गरिएको छ।
+     यस अवधिमा कुल रु. ${Math.round(totalProfit).toLocaleString()}
+     नाफा आर्जन हुने, प्रारम्भिक लगानीको Payback ${paybackYear} मा
+     हुने तथा कुल ROI ${invest>0 ? ((totalProfit/invest)*100).toFixed(2) : 0}% रहने
+     देखिन्छ।`;
 }
 
 window.onload = calculate;
