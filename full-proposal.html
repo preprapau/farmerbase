@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>व्यवसायिक प्रस्तावना</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
+  background:#f4f7f6;margin:0;
+}
+header{
+  text-align:center;
+  padding:30px;
+  background:#fff;
+}
+h1,h2,h3{color:#2e7d32}
+main{
+  max-width:900px;
+  margin:20px auto;
+  background:#fff;
+  padding:40px;
+}
+.section{
+  margin-top:40px;
+}
+.box{
+  background:#eef6f0;
+  padding:15px;
+  border-left:5px solid #2e7d32;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:right;
+}
+th{text-align:center;background:#f1f1f1}
+td.left{text-align:left}
+
+@media print{
+  body{background:#fff}
+  button{display:none}
+  header{page-break-after:always}
+  .section{page-break-inside:avoid}
+}
+</style>
+</head>
+
+<body>
+
+<button onclick="window.print()"
+  style="position:fixed;top:15px;right:15px;
+         padding:10px 16px;background:#2e7d32;color:#fff;
+         border:none;border-radius:6px;z-index:999">
+🖨️ Print / Save PDF
+</button>
+
+<header>
+<h1 id="title">व्यवसायिक प्रस्तावना</h1>
+<p id="location"></p>
+</header>
+
+<main>
+
+<!-- 1. SHORT INFO -->
+<div class="section">
+<h2>१. व्यवसायको संक्षिप्त विवरण</h2>
+<div class="box" id="shortInfoBox"></div>
+</div>
+
+<!-- 2. BUSINESS DETAIL -->
+<div class="section">
+<h2>२. व्यवसायको विस्तृत विवरण</h2>
+<div id="detailBox"></div>
+</div>
+
+<!-- 3. FINANCIAL SUMMARY -->
+<div class="section">
+<h2>३. वित्तीय सारांश</h2>
+<table>
+<tr><th class="left">विवरण</th><th>रकम (रु.)</th></tr>
+<tr><td class="left">कुल वार्षिक खर्च</td><td id="exp"></td></tr>
+<tr><td class="left">कुल वार्षिक आम्दानी</td><td id="inc"></td></tr>
+<tr><td class="left">वार्षिक नाफा</td><td id="profit"></td></tr>
+</table>
+</div>
+
+<!-- 4. ROI -->
+<div class="section">
+<h2>४. ५-वर्षे प्रतिफल विश्लेषण</h2>
+<div class="box" id="roiBox"></div>
+</div>
+
+</main>
+
+<script>
+/* -------- Short Info -------- */
+let shortInfo = JSON.parse(localStorage.getItem("shortInfo"));
+if(shortInfo){
+  document.getElementById("title").innerText =
+    shortInfo.bp_name || "व्यवसायिक प्रस्तावना";
+  document.getElementById("location").innerText =
+    shortInfo.bp_location || "";
+
+  let html = "";
+  Object.keys(shortInfo).forEach(k=>{
+    if(shortInfo[k])
+      html += `<p><strong>${k.replace("bp_","")}</strong> : ${shortInfo[k]}</p>`;
+  });
+  document.getElementById("shortInfoBox").innerHTML = html;
+}
+
+/* -------- Business Detail -------- */
+let details = JSON.parse(localStorage.getItem("businessDetail")) || [];
+let dhtml = "";
+details.forEach((d,i)=>{
+  dhtml += `<h3>${i+1}. ${d.title}</h3><p>${d.content}</p>`;
+});
+document.getElementById("detailBox").innerHTML =
+  dhtml || "<em>विस्तृत विवरण प्रविष्ट गरिएको छैन</em>";
+
+/* -------- Financial -------- */
+let exp = Number(localStorage.getItem("totalExpense")) || 0;
+let inc = Number(localStorage.getItem("totalIncome")) || 0;
+let profit = inc - exp;
+
+document.getElementById("exp").innerText = exp.toLocaleString();
+document.getElementById("inc").innerText = inc.toLocaleString();
+document.getElementById("profit").innerText = profit.toLocaleString();
+
+/* -------- ROI Text -------- */
+let roiText = localStorage.getItem("roi");
+let payback = localStorage.getItem("payback");
+
+document.getElementById("roiBox").innerText =
+  roiText && payback
+  ? `५ वर्षको अवधिमा लगानीको प्रतिफल ${roiText}% रहने तथा
+     लगानी फिर्ता अवधि ${payback} वर्ष हुने देखिन्छ।`
+  : "ROI विवरण उपलब्ध छैन।";
+</script>
+
+</body>
+</html>
