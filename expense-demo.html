@@ -2,98 +2,137 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase – खर्च तथा लगानी विवरण (Demo)</title>
+<title>खर्च विवरण | Business Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* ===== BASE ===== */
 body{
-  font-family:
-   "Noto Sans Devanagari",
-   "Kalimati",
-   "Mangal",
-   "Nirmala UI",
-   system-ui,
-   Arial,
-   sans-serif;
+  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
+
+/* ===== HEADER ===== */
 header{
   background:#2e7d32;
   color:#fff;
   padding:20px;
-  text-align:center;
 }
+header h1{margin:0}
+
+nav{
+  margin-top:10px;
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  margin-right:12px;
+  font-weight:600;
+}
+nav a:hover{text-decoration:underline}
+
+.print-btn{
+  margin-top:10px;
+  padding:8px 14px;
+  background:#fff;
+  color:#2e7d32;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* ===== MAIN ===== */
 main{
   max-width:1100px;
-  margin:20px auto;
+  margin:25px auto;
   background:#fff;
-  padding:20px;
+  padding:30px;
   border-radius:10px;
 }
-h2{color:#2e7d32;margin-top:30px}
-.category{
-  border:1px solid #ddd;
-  padding:15px;
-  border-radius:8px;
-  margin-top:25px;
-}
-label{display:block;margin-top:10px;font-weight:600}
-textarea,input{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
-  font-family:inherit;
-}
+
+h2,h3{color:#2e7d32}
+
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:15px;
+  margin-top:10px;
 }
 th,td{
   border:1px solid #ccc;
   padding:8px;
-  text-align:right;
+  text-align:center;
 }
-th{text-align:center;background:#eef6f0}
+th{background:#eef6f0}
 td.left{text-align:left}
+
+input, select{
+  width:100%;
+  padding:6px;
+  font-family:inherit;
+}
+
 button{
-  margin-top:10px;
-  padding:6px 14px;
+  padding:8px 14px;
   background:#2e7d32;
   color:#fff;
   border:none;
   border-radius:6px;
   cursor:pointer;
-}
-.total{
-  background:#eef6f0;
-  padding:10px;
   margin-top:10px;
-  font-weight:700;
 }
+
+.category-box{
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:15px;
+  margin-top:25px;
+}
+
+.total-box{
+  margin-top:30px;
+  padding:15px;
+  background:#eef6f0;
+  border-left:6px solid #2e7d32;
+  font-size:18px;
+  font-weight:600;
+}
+
+/* ===== FOOTER ===== */
 footer{
   text-align:center;
   font-size:13px;
   color:#555;
-  padding:15px;
+  padding:20px;
 }
-.small{font-size:13px;color:#444}
-  @media print{
-  button{display:none;}
-  body{background:#fff;}
-  header{color:#000;background:#fff;}
-  footer{display:none;}
+
+/* ===== PRINT ===== */
+@media print{
+  header,
+  nav,
+  .print-btn,
+  .no-print,
+  footer{
+    display:none !important;
+  }
+  body{background:#fff}
+  main{
+    margin:0;
+    padding:0;
+    box-shadow:none;
+    border-radius:0;
+  }
 }
 </style>
 </head>
 
 <body>
-<header>
+
 <!-- ===== HEADER (SCREEN ONLY) ===== -->
 <header class="no-print">
   <h1>🌾 farmerbase BPMS</h1>
-  <p>व्यवसायिक योजनाको विस्तृत विवरण</p>
+  <p>खर्च विवरण (Category-wise Entry)</p>
 
   <nav>
     <a href="index.html">🏠 Home</a>
@@ -109,259 +148,120 @@ footer{
   <button onclick="window.print()" class="print-btn">
     🖨️ Print / Save PDF
   </button>
-  <!-- ================= PROJECT MANAGEMENT ================= -->
-<div class="category">
-  <h2>💾 Project Management</h2>
+</header>
 
-  <label>Project Name</label>
-  <input id="projectName"
-         placeholder="जस्तै: बंगुर पालन व्यवसाय २०८२"
-         style="width:320px">
+<!-- ===== MAIN ===== -->
+<main>
 
-  <br><br>
+<h2>💸 खर्च विवरण</h2>
 
-  <button onclick="saveProject()"
-    style="padding:8px 14px;background:#1976d2;color:#fff;
-           border:none;border-radius:6px;cursor:pointer">
-    💾 Save Project
-  </button>
+<div id="categories"></div>
 
-  <select id="projectList"
-          onchange="loadProject()"
-          style="padding:8px;margin-left:10px">
-    <option value="">📂 Load Project</option>
-  </select>
+<button onclick="addCategory()">➕ नयाँ खर्च क्याटेगोरी</button>
 
-  <p style="font-size:13px;color:#555;margin-top:10px">
-    एउटै ब्राउजरमा धेरै Project Save गरेर
-    पछि फेरि खोलेर edit गर्न सकिन्छ।
-  </p>
-</div>
-<!-- ===================================================== -->
-<script>
-function addExpenseRow(btn){
-  let table = btn.previousElementSibling;
-  let row = table.insertRow(-1);
-  row.innerHTML = `
-    <td class="left"><input placeholder="शीर्षक"></td>
-    <td><input type="number" oninput="calcExpenseRow(this)"></td>
-    <td><input type="number" oninput="calcExpenseRow(this)"></td>
-    <td class="rowTotal">0</td>
-  `;
-}
-
-function calcExpenseRow(el){
-  let row = el.closest("tr");
-  let inputs = row.querySelectorAll("input");
-  let qty = +inputs[1].value || 0;
-  let rate = +inputs[2].value || 0;
-  let total = qty * rate;
-  row.querySelector(".rowTotal").innerText = total;
-  calcCategory(row.closest(".category"));
-}
-
-function calcCategory(cat){
-  let sum = 0;
-  cat.querySelectorAll(".rowTotal").forEach(td=>{
-    sum += +td.innerText || 0;
-  });
-  cat.querySelector(".catTotal").innerText = sum;
-  calcGrand();
-}
-
-function calcGrand(){
-  let g = 0;
-  document.querySelectorAll(".catTotal").forEach(s=>{
-    let val = s.innerText.replace(/,/g, ""); // 🔑 comma हटाउने
-    g += parseInt(val) || 0;
-  });
-  document.getElementById("grandTotal").innerText = g.toLocaleString();
-
-  // 🔴 LIVE LINK (सबैभन्दा महत्वपूर्ण)
-  localStorage.setItem("totalExpense", g);
-
-  calcFunding();
-}
-
-/* FUNDING */
-function addFundingRow(){
-  let table = document.getElementById("fundingTable");
-  let row = table.insertRow(-1);
-  row.innerHTML = `
-    <td class="left"><input placeholder="स्रोत नाम"></td>
-    <td><input type="number" oninput="calcFunding()"></td>
-    <td class="fundAmt">0</td>
-  `;
-}
-
-function calcFunding(){
-  let total = +document.getElementById("grandTotal").innerText || 0;
-  let rows = document.querySelectorAll(".fundAmt");
-  let percInputs = document.querySelectorAll("#fundingTable input[type='number']");
-  let percSum = 0;
-
-  percInputs.forEach(i=> percSum += (+i.value || 0));
-
-  percInputs.forEach((inp,idx)=>{
-    let amt = total * ((+inp.value||0)/100);
-    rows[idx].innerText = Math.round(amt);
-  });
-
-  document.getElementById("percTotal").innerText = percSum;
-}
-</script>
-
-<!-- ================= EXPENSE CATEGORIES ================= -->
-
-<!-- 1 -->
-<div class="category">
-<h2>१️⃣ प्रारम्भिक लगानी</h2>
-<label>Category Narration</label>
-<textarea placeholder="व्यवसाय सुरु गर्न आवश्यक दीर्घकालीन प्रारम्भिक लगानी खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर (रु.)</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: पशु / बिउ खरीद"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addExpenseRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 2 -->
-<div class="category">
-<h2>२️⃣ मेशीन / औजार / प्रविधि / सवारी</h2>
-<label>Category Narration</label>
-<textarea placeholder="उत्पादन तथा व्यवस्थापनका लागि आवश्यक मेशीन तथा औजार खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: दाना मिक्सर"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addExpenseRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 3 -->
-<div class="category">
-<h2>३️⃣ पूर्वाधार निर्माण</h2>
-<label>Category Narration</label>
-<textarea placeholder="खोर, शेड, टनेल, पानी तथा बिजुली जडान खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: खोर निर्माण"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addExpenseRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 4 -->
-<div class="category">
-<h2>४️⃣ कच्चा पदार्थ (Operating Cost)</h2>
-<label>Category Narration</label>
-<textarea placeholder="दाना, भेटेरीनरी औषधि, मल, विषादी, बिउ आदिमा लाग्ने नियमित खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: भेटेरीनरी औषधि"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addExpenseRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 5 -->
-<div class="category">
-<h2>५️⃣ कामदार / श्रम खर्च</h2>
-<label>Category Narration</label>
-<textarea placeholder="स्थायी तथा अस्थायी कामदारको तलब तथा ज्याला खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>संख्या</th><th>वार्षिक दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: स्थायी कामदार"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addExpenseRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 6 -->
-<div class="category">
-<h2>६️⃣ विविध खर्च</h2>
-<label>Category Narration</label>
-<textarea placeholder="अन्य शीर्षकमा नपर्ने तर आवश्यक विविध खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: मर्मत खर्च"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td><input type="number" oninput="calcExpenseRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addExpenseRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- ================= GRAND TOTAL ================= -->
-<h2>🔢 कुल वार्षिक खर्च / कुल लगानी</h2>
-<div class="total" style="font-size:18px">
-रु. <span id="grandTotal">0</span>
-</div>
-
-<!-- ================= FUNDING ================= -->
-<div class="category">
-<h2>💰 खर्च / लगानी व्यहोरिने स्रोत</h2>
-<p class="small">प्रतिशत (%) हानेपछि रकम स्वतः छुट्टिन्छ</p>
-
-<table id="fundingTable">
-<tr><th>स्रोत</th><th>%</th><th>रकम (रु.)</th></tr>
-<tr>
-<td class="left"><input value="सरकार"></td>
-<td><input type="number" value="40" oninput="calcFunding()"></td>
-<td class="fundAmt">0</td>
-</tr>
-</table>
-
-<button onclick="addFundingRow()">+ स्रोत थप्नुहोस्</button>
-
-<div class="total">
-जम्मा प्रतिशत: <span id="percTotal">40</span> %
-</div>
-
-<label>Funding Narration</label>
-<textarea placeholder="कुल लगानी कुन–कुन स्रोतबाट कति प्रतिशत व्यहोरिने भन्ने विवरण।"></textarea>
+<div class="total-box">
+  कुल खर्च: रु. <span id="grandTotal">0</span>
 </div>
 
 </main>
 
-<footer>
-© farmerbase BPMS Demo | Expense + Investment Module
+<footer class="no-print">
+© Business Plan Management System
 </footer>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+let expenseData = JSON.parse(localStorage.getItem("expenseData")) || [];
+
+/* Add category */
+function addCategory(){
+  expenseData.push({category:"", items:[]});
+  render();
+}
+
+/* Add item */
+function addItem(ci){
+  expenseData[ci].items.push({title:"", qty:1, rate:0, total:0});
+  render();
+}
+
+/* Update item */
+function updateItem(ci,ii,field,value){
+  let it = expenseData[ci].items[ii];
+  it[field] = field==="qty"||field==="rate" ? Number(value) : value;
+  it.total = it.qty * it.rate;
+  save();
+  render();
+}
+
+/* Render */
+function render(){
+  let box = document.getElementById("categories");
+  box.innerHTML = "";
+  let grand = 0;
+
+  expenseData.forEach((cat,ci)=>{
+    let catTotal = 0;
+
+    let html = `
+    <div class="category-box">
+      <label><strong>खर्च क्याटेगोरी</strong></label>
+      <input value="${cat.category}"
+        oninput="expenseData[${ci}].category=this.value; save()">
+
+      <table>
+        <tr>
+          <th class="left">विवरण</th>
+          <th>परिमाण</th>
+          <th>दर (रु.)</th>
+          <th>रकम</th>
+        </tr>
+    `;
+
+    cat.items.forEach((it,ii)=>{
+      catTotal += it.total;
+      html += `
+      <tr>
+        <td class="left">
+          <input value="${it.title}"
+            oninput="updateItem(${ci},${ii},'title',this.value)">
+        </td>
+        <td>
+          <input type="number" value="${it.qty}"
+            oninput="updateItem(${ci},${ii},'qty',this.value)">
+        </td>
+        <td>
+          <input type="number" value="${it.rate}"
+            oninput="updateItem(${ci},${ii},'rate',this.value)">
+        </td>
+        <td>${it.total.toLocaleString()}</td>
+      </tr>
+      `;
+    });
+
+    html += `
+      </table>
+      <button onclick="addItem(${ci})">➕ खर्च थप्नुहोस्</button>
+      <p><strong>क्याटेगोरी जम्मा:</strong> रु. ${catTotal.toLocaleString()}</p>
+    </div>
+    `;
+
+    grand += catTotal;
+    box.innerHTML += html;
+  });
+
+  document.getElementById("grandTotal").innerText = grand.toLocaleString();
+  localStorage.setItem("totalExpense", grand);
+}
+
+/* Save */
+function save(){
+  localStorage.setItem("expenseData", JSON.stringify(expenseData));
+}
+
+/* Load */
+render();
+</script>
 
 </body>
 </html>
