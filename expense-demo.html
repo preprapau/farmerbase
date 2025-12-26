@@ -2,35 +2,93 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase – खर्च विवरण (Demo)</title>
+<title>farmerbase – खर्च तथा लगानी विवरण (Demo)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body{font-family:system-ui,Arial;background:#f4f7f6;margin:0}
-header{background:#2e7d32;color:#fff;padding:20px;text-align:center}
-main{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:10px}
+body{
+  font-family:
+   "Noto Sans Devanagari",
+   "Kalimati",
+   "Mangal",
+   "Nirmala UI",
+   system-ui,
+   Arial,
+   sans-serif;
+  background:#f4f7f6;
+  margin:0;
+}
+header{
+  background:#2e7d32;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+}
+main{
+  max-width:1100px;
+  margin:20px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+}
 h2{color:#2e7d32;margin-top:30px}
-.category{border:1px solid #ddd;padding:15px;border-radius:8px;margin-top:25px}
+.category{
+  border:1px solid #ddd;
+  padding:15px;
+  border-radius:8px;
+  margin-top:25px;
+}
 label{display:block;margin-top:10px;font-weight:600}
-textarea,input{width:100%;padding:8px;margin-top:5px}
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ccc;padding:8px;text-align:right}
+textarea,input{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  font-family:inherit;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:right;
+}
 th{text-align:center;background:#eef6f0}
 td.left{text-align:left}
-button{margin-top:10px;padding:6px 14px;background:#2e7d32;color:#fff;border:none;border-radius:6px;cursor:pointer}
-.total{background:#eef6f0;padding:10px;margin-top:10px;font-weight:700}
-footer{text-align:center;font-size:13px;color:#555;padding:15px}
+button{
+  margin-top:10px;
+  padding:6px 14px;
+  background:#2e7d32;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+.total{
+  background:#eef6f0;
+  padding:10px;
+  margin-top:10px;
+  font-weight:700;
+}
+footer{
+  text-align:center;
+  font-size:13px;
+  color:#555;
+  padding:15px;
+}
 </style>
 </head>
 
 <body>
 <header>
-<h1>🌾 farmerbase – खर्च विवरण (Demo)</h1>
-<p>Category LOCKED | Item ADDABLE | Category-wise Narration</p>
+<h1>🌾 farmerbase – खर्च तथा लगानी विवरण (Demo)</h1>
+<p>Category LOCKED | Item ADDABLE | Unicode Friendly</p>
 </header>
 
 <main>
 
-<!-- CATEGORY TEMPLATE -->
 <script>
 function addRow(btn){
   let table = btn.previousElementSibling;
@@ -42,6 +100,7 @@ function addRow(btn){
     <td class="rowTotal">0</td>
   `;
 }
+
 function calcRow(el){
   let row = el.closest("tr");
   let inputs = row.querySelectorAll("input");
@@ -49,9 +108,9 @@ function calcRow(el){
   let rate = +inputs[2].value || 0;
   let total = qty * rate;
   row.querySelector(".rowTotal").innerText = total;
-
   calcCategory(row.closest(".category"));
 }
+
 function calcCategory(cat){
   let sum = 0;
   cat.querySelectorAll(".rowTotal").forEach(td=>{
@@ -60,138 +119,57 @@ function calcCategory(cat){
   cat.querySelector(".catTotal").innerText = sum;
   calcGrand();
 }
+
 function calcGrand(){
   let g = 0;
   document.querySelectorAll(".catTotal").forEach(s=>{
     g += +s.innerText || 0;
   });
   document.getElementById("grandTotal").innerText = g;
+  calcFunding();
+}
+
+function calcFunding(){
+  let total = +document.getElementById("grandTotal").innerText || 0;
+  document.getElementById("govAmt").innerText = (total * (+gov.value||0)/100).toFixed(0);
+  document.getElementById("coopAmt").innerText = (total * (+coop.value||0)/100).toFixed(0);
+  document.getElementById("privateAmt").innerText = (total * (+private.value||0)/100).toFixed(0);
 }
 </script>
 
-<!-- 1. प्रारम्भिक लगानी -->
-<div class="category">
-<h2>१️⃣ प्रारम्भिक लगानी</h2>
-<label>Category Narration (अनिवार्य)</label>
-<textarea placeholder="व्यवसाय सुरु गर्न आवश्यक दीर्घकालीन प्रारम्भिक लगानी खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर (रु.)</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: पशु/बिउ खरीद"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 2. मेशीन / औजार -->
-<div class="category">
-<h2>२️⃣ मेशीन / औजार / प्रविधि / सवारी</h2>
-<label>Category Narration (अनिवार्य)</label>
-<textarea placeholder="उत्पादन तथा व्यवस्थापनका लागि आवश्यक मेशीन, औजार तथा प्रविधिमा लाग्ने खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: दाना मिक्सर"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 3. पूर्वाधार निर्माण -->
-<div class="category">
-<h2>३️⃣ पूर्वाधार निर्माण</h2>
-<label>Category Narration (अनिवार्य)</label>
-<textarea placeholder="खोर, शेड, टनेल, पानी, बिजुली जडान लगायत पूर्वाधार निर्माण खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: खोर निर्माण"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 4. कच्चा पदार्थ -->
-<div class="category">
-<h2>४️⃣ कच्चा पदार्थ (Operating Cost)</h2>
-<label>Category Narration (अनिवार्य)</label>
-<textarea placeholder="दाना, भेटेरीनरी औषधि, मल, विषादी, बिउ आदि नियमित खपत खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: भेटेरीनरी औषधि"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 5. कामदार -->
-<div class="category">
-<h2>५️⃣ कामदार / श्रम खर्च</h2>
-<label>Category Narration (अनिवार्य)</label>
-<textarea placeholder="स्थायी तथा अस्थायी कामदारको तलब, ज्याला तथा सेवा सुविधा खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>संख्या</th><th>वार्षिक दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: स्थायी कामदार"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<!-- 6. विविध -->
-<div class="category">
-<h2>६️⃣ विविध खर्च</h2>
-<label>Category Narration (अनिवार्य)</label>
-<textarea placeholder="अन्य शीर्षकमा नपर्ने तर आवश्यक विविध खर्च।"></textarea>
-
-<table>
-<tr><th>शीर्षक</th><th>परिमाण</th><th>दर</th><th>रकम</th></tr>
-<tr>
-<td class="left"><input placeholder="जस्तै: मर्मत खर्च"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td><input type="number" oninput="calcRow(this)"></td>
-<td class="rowTotal">0</td>
-</tr>
-</table>
-<button onclick="addRow(this)">+ खर्च थप्नुहोस्</button>
-<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
-</div>
-
-<h2>🔢 कुल वार्षिक खर्च</h2>
+<h2>🔢 कुल वार्षिक खर्च / कुल लगानी</h2>
 <div class="total" style="font-size:18px">
 रु. <span id="grandTotal">0</span>
+</div>
+
+<!-- Funding Source -->
+<div class="category">
+<h2>💰 खर्च / लगानी व्यहोरिने स्रोत</h2>
+
+<label>सरकार (%)</label>
+<input id="gov" type="number" value="40" oninput="calcFunding()">
+
+<label>सहकारी (%)</label>
+<input id="coop" type="number" value="30" oninput="calcFunding()">
+
+<label>संस्थागत / निजी (%)</label>
+<input id="private" type="number" value="30" oninput="calcFunding()">
+
+<table>
+<tr><th>स्रोत</th><th>रकम (रु.)</th></tr>
+<tr><td class="left">सरकार</td><td id="govAmt">0</td></tr>
+<tr><td class="left">सहकारी</td><td id="coopAmt">0</td></tr>
+<tr><td class="left">संस्थागत / निजी</td><td id="privateAmt">0</td></tr>
+</table>
+
+<label>Funding Narration</label>
+<textarea placeholder="कुल लगानीमध्ये कति प्रतिशत कुन स्रोतबाट व्यहोरिने भन्ने विवरण।"></textarea>
 </div>
 
 </main>
 
 <footer>
-© farmerbase BPMS Demo | Expense Module
+© farmerbase BPMS Demo | Expense + Investment Module
 </footer>
 
 </body>
