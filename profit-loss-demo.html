@@ -71,57 +71,41 @@ footer{
 </header>
 
 <main>
+  <script>
+function loadData(){
+  let totalExpense = Number(localStorage.getItem("totalExpense")) || 0;
+  let totalIncome  = Number(localStorage.getItem("totalIncome")) || 0;
+  let net = totalIncome - totalExpense;
 
-<script>
-/* Demo values – पछि Expense/Income page बाट link हुन्छ */
-let totalExpense = 4400000;   // कुल वार्षिक खर्च (Demo)
-let totalIncome  = 6500000;   // कुल वार्षिक आम्दानी (Demo)
+  document.getElementById("exp").innerText = totalExpense.toLocaleString();
+  document.getElementById("inc").innerText = totalIncome.toLocaleString();
 
-let net = totalIncome - totalExpense;
-</script>
+  let netBox = document.getElementById("netVal");
+  let note   = document.getElementById("noteText");
 
-<h2>📊 वार्षिक वित्तीय सारांश</h2>
+  if(net > 0){
+    netBox.innerHTML = `<span class="profit">रु. ${net.toLocaleString()} (नाफा)</span>`;
+    note.innerHTML =
+      "Expense र Income विवरणका आधारमा प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ।";
+  }else if(net < 0){
+    netBox.innerHTML = `<span class="loss">रु. ${Math.abs(net).toLocaleString()} (घाटा)</span>`;
+    note.innerHTML =
+      "प्रारम्भिक चरणमा घाटा देखिए पनि आगामी वर्षहरूमा नाफा सम्भावित छ।";
+  }else{
+    netBox.innerHTML = "रु. 0 (सन्तुलित)";
+    note.innerHTML = "कुल खर्च र आम्दानी बराबर छन्।";
+  }
 
-<div class="summary-box">
-
-  <div class="row">
-    <div class="label">कुल वार्षिक खर्च</div>
-    <div class="value">रु. <span id="exp"></span></div>
-  </div>
-
-  <div class="row">
-    <div class="label">कुल वार्षिक आम्दानी</div>
-    <div class="value">रु. <span id="inc"></span></div>
-  </div>
-
-  <div class="row">
-    <div class="label">नाफा / घाटा</div>
-    <div class="value" id="netVal"></div>
-  </div>
-
-</div>
-
-<div class="note" id="noteText"></div>
-
-<script>
-document.getElementById("exp").innerText = totalExpense.toLocaleString();
-document.getElementById("inc").innerText = totalIncome.toLocaleString();
-
-let netBox = document.getElementById("netVal");
-let note   = document.getElementById("noteText");
-
-if(net >= 0){
-  netBox.innerHTML = `<span class="profit">रु. ${net.toLocaleString()} (नाफा)</span>`;
-  note.innerHTML =
-    "प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ, " +
-    "जसले व्यवसायको आर्थिक व्यवहारिकता र दिगोपन पुष्टि गर्दछ।";
-}else{
-  netBox.innerHTML = `<span class="loss">रु. ${Math.abs(net).toLocaleString()} (घाटा)</span>`;
-  note.innerHTML =
-    "प्रस्तावित व्यवसायको प्रारम्भिक चरणमा घाटा देखिए पनि " +
-    "उत्पादन वृद्धि र व्यवस्थापन सुधारसँगै आगामी वर्षहरूमा " +
-    "नाफामा रूपान्तरण हुने अपेक्षा गरिएको छ।";
+  // 🔍 DEBUG (तपाईंका लागि)
+  document.getElementById("debug").innerText =
+    `Expense=${totalExpense} | Income=${totalIncome}`;
 }
+
+// 🔁 Auto reload every 1 second
+setInterval(loadData, 1000);
+
+// First load
+window.onload = loadData;
 </script>
 
 </main>
