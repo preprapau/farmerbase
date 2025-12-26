@@ -2,31 +2,53 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Project Cover | BPMS</title>
+<title>BPMS Home | Project Controller</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
-  background:#f4f7f6;
   margin:0;
+  background:#f4f7f6;
 }
 
-/* ===== HEADER (SCREEN ONLY) ===== */
+/* ===== HEADER ===== */
 header{
   background:#2e7d32;
   color:#fff;
-  padding:20px;
+  padding:18px 20px;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.brand{
+  font-size:22px;
+  font-weight:700;
+}
+.status{
+  font-size:14px;
+  opacity:.9;
+}
+
+/* ===== NAV ===== */
+nav{
+  margin-top:12px;
 }
 nav a{
   color:#fff;
   text-decoration:none;
-  margin-right:12px;
+  margin-right:14px;
   font-weight:600;
+  white-space:nowrap;
 }
+nav a:hover{ text-decoration:underline; }
+
+/* ===== PROJECT BAR ===== */
 .project-bar{
-  margin-top:10px;
+  margin-top:12px;
   display:flex;
   gap:8px;
   flex-wrap:wrap;
@@ -56,18 +78,14 @@ nav a{
 }
 .cover h1{
   font-size:32px;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 .icon{
   font-size:90px;
-  margin:30px 0;
+  margin:25px 0;
 }
 .desc{
   font-size:18px;
-  margin-bottom:25px;
-}
-.map{
-  margin-top:25px;
 }
 .footer{
   margin-top:35px;
@@ -75,46 +93,14 @@ nav a{
   padding-top:15px;
   font-size:15px;
 }
-
-/* ===== POPUP (SCREEN ONLY) ===== */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:999;
-}
-.modal-box{
-  background:#fff;
-  max-width:800px;
-  margin:5% auto;
-  padding:25px;
-  border-radius:10px;
-}
-.close{
-  float:right;
-  cursor:pointer;
-  font-weight:700;
+.map{
+  margin-top:25px;
 }
 
-/* ===== PRINT (FINAL CLEAN) ===== */
+/* ===== PRINT ===== */
 @media print{
-  /* hide all app UI */
-  header,
-  nav,
-  .project-bar,
-  .no-print,
-  .modal{
-    display:none !important;
-  }
-
-  /* page reset */
-  body{
-    background:#fff;
-    margin:0;
-  }
-
-  /* cover only */
+  header,nav,.project-bar,.no-print{display:none!important}
+  body{background:#fff}
   .cover{
     margin:0;
     padding:0;
@@ -127,18 +113,20 @@ nav a{
 
 <body>
 
-<!-- ===== HEADER ===== -->
-<header class="no-print">
-  <h2>🌾 Business Plan Management System</h2>
+<header>
+  <div class="topbar">
+    <div class="brand">🌾 BPMS – Business Plan Management System</div>
+    <div class="status" id="projectStatus">🔴 Project Loaded छैन</div>
+  </div>
 
   <nav>
     <a href="index.html">🏠 Home</a>
-    <a href="#" onclick="openModal()">ℹ️ Project सारांश</a>
-    <a href="short-info.html">✏️ Edit Short Info</a>
-    <a href="full-proposal.html">🧾 Full Proposal</a>
+    <a href="short-info.html">✏️ Short Info</a>
+    <a href="expense-demo.html">💸 खर्च</a>
+    <a href="income-demo.html">💰 आम्दानी</a>
+    <a href="#" onclick="openProposal()">📄 Full Proposal</a>
   </nav>
 
-  <!-- PROJECT CONTROLS -->
   <div class="project-bar">
     <input id="projectName" placeholder="Project / प्रस्तावनाको नाम">
     <button onclick="saveProject()">💾 Save</button>
@@ -160,17 +148,11 @@ nav a{
 <!-- ===== COVER ===== -->
 <div class="cover">
   <h1 id="bizName">व्यवसायको नाम</h1>
-
   <div class="icon" id="bizIcon">🌾</div>
+  <div class="desc" id="bizDesc">व्यवसायिक प्रकृति / वर्णन</div>
 
-  <div class="desc" id="bizDesc">
-    व्यवसायिक प्रकृति / वर्णन
-  </div>
-
-  <!-- Map (screen only, auto hidden in print) -->
   <div class="map no-print">
-    <iframe id="gmap" width="100%" height="250"
-      style="border:0" loading="lazy"></iframe>
+    <iframe id="gmap" width="100%" height="250" style="border:0" loading="lazy"></iframe>
   </div>
 
   <div class="footer">
@@ -179,151 +161,117 @@ nav a{
   </div>
 </div>
 
-<!-- ===== POPUP ===== -->
-<div class="modal no-print" id="infoModal">
-  <div class="modal-box">
-    <span class="close" onclick="closeModal()">✖</span>
-    <h3>📊 Project सारांश</h3>
-    <div id="popupContent"></div>
-  </div>
-</div>
-
 <script>
-/* ===== ICON BY BUSINESS TYPE ===== */
+/* ===== UTIL ===== */
+function mustHaveProject(){
+  if(!localStorage.getItem("activeProject")){
+    alert("पहिला Project Load वा Save गर्नुहोस्");
+    return false;
+  }
+  return true;
+}
+
+/* ===== FULL PROPOSAL (ONLY FROM HOME) ===== */
+function openProposal(){
+  if(!mustHaveProject()) return;
+  window.open("full-proposal.html","_blank");
+}
+
+/* ===== ICON ===== */
 function getIcon(t){
   t=(t||"").toLowerCase();
-  if(t.includes("बंगुर")||t.includes("pig")) return "🐖";
-  if(t.includes("बाख्रा")||t.includes("goat")) return "🐐";
-  if(t.includes("गाई")||t.includes("cow")) return "🐄";
-  if(t.includes("तरकारी")) return "🥬";
-  return "🌾";
+  if(t.includes("बंगुर")||t.includes("pig"))return"🐖";
+  if(t.includes("बाख्रा")||t.includes("goat"))return"🐐";
+  if(t.includes("गाई"))return"🐄";
+  if(t.includes("तरकारी"))return"🥬";
+  return"🌾";
 }
 
-/* ===== LOAD COVER FROM SHORT INFO ===== */
+/* ===== LOAD COVER ===== */
 function loadCover(){
-  let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
+  let s=JSON.parse(localStorage.getItem("shortInfo")||"{}");
 
-  bizName.innerText = s.bp_name || "व्यवसायको नाम";
-  bizDesc.innerText = s.bp_products || "व्यवसायिक प्रकृति / वर्णन";
-  orgName.innerText = s.bp_org || s.bp_owner || "";
-  bizLocation.innerText = s.bp_location || "";
-  bizIcon.innerText = getIcon(s.bp_products);
+  bizName.innerText=s.bp_name||"व्यवसायको नाम";
+  bizDesc.innerText=s.bp_products||"व्यवसायिक प्रकृति / वर्णन";
+  orgName.innerText=s.bp_org||s.bp_owner||"";
+  bizLocation.innerText=s.bp_location||"";
+  bizIcon.innerText=getIcon(s.bp_products);
 
   if(s.bp_location){
-    gmap.src =
-      "https://www.google.com/maps?q=" +
-      encodeURIComponent(s.bp_location) +
-      "&output=embed";
+    gmap.src="https://www.google.com/maps?q="+
+      encodeURIComponent(s.bp_location)+"&output=embed";
   }
 
-  popupContent.innerHTML = `
-    <p>कुल खर्च: रु. ${localStorage.totalExpense||0}</p>
-    <p>कुल आम्दानी: रु. ${localStorage.totalIncome||0}</p>
-    <p>ROI: ${localStorage.roi||""}%</p>
-    <p>Payback: ${localStorage.payback||""}</p>
-  `;
+  projectStatus.innerText =
+    localStorage.getItem("activeProject")
+    ? "🟢 Project Loaded: "+localStorage.getItem("activeProject").replace("project_","")
+    : "🔴 Project Loaded छैन";
 }
 
-/* ===== POPUP ===== */
-function openModal(){ infoModal.style.display="block"; }
-function closeModal(){ infoModal.style.display="none"; }
-
-/* ===== PROJECT SAVE ===== */
+/* ===== SAVE / LOAD / EXPORT / IMPORT ===== */
 function saveProject(){
-  let name = projectName.value.trim();
-  if(!name){
-    alert("Project नाम लेख्नुहोस्");
-    return;
-  }
+  let name=projectName.value.trim();
+  if(!name){alert("Project नाम लेख्नुहोस्");return;}
 
-  let data = {
-    shortInfo: JSON.parse(localStorage.shortInfo||"{}"),
-    businessDetail: JSON.parse(localStorage.businessDetail||"[]"),
-    expenseData: JSON.parse(localStorage.expenseData||"[]"),
-    incomeData: JSON.parse(localStorage.incomeData||"[]"),
-    totalExpense: localStorage.totalExpense||0,
-    totalIncome: localStorage.totalIncome||0,
-    roi: localStorage.roi||"",
-    payback: localStorage.payback||""
+  let data={
+    shortInfo:JSON.parse(localStorage.shortInfo||"{}"),
+    expenseData:JSON.parse(localStorage.expenseData||"[]"),
+    incomeData:JSON.parse(localStorage.incomeData||"[]")
   };
-
-  localStorage.setItem("project_"+name, JSON.stringify(data));
+  localStorage.setItem("project_"+name,JSON.stringify(data));
   refreshProjects();
   alert("Project Save भयो");
 }
 
-/* ===== PROJECT LOAD ===== */
 function loadProject(){
-  let key = projectList.value;
-  if(!key){
-    alert("Project छान्नुहोस्");
-    return;
-  }
+  let key=projectList.value;
+  if(!key){alert("Project छान्नुहोस्");return;}
+  let d=JSON.parse(localStorage.getItem(key));
+  if(!d){alert("Project भेटिएन");return;}
 
-  let d = JSON.parse(localStorage.getItem(key));
-  if(!d){
-    alert("Project भेटिएन");
-    return;
-  }
-
-  localStorage.setItem("shortInfo", JSON.stringify(d.shortInfo||{}));
-  localStorage.setItem("businessDetail", JSON.stringify(d.businessDetail||[]));
-  localStorage.setItem("expenseData", JSON.stringify(d.expenseData||[]));
-  localStorage.setItem("incomeData", JSON.stringify(d.incomeData||[]));
-  localStorage.setItem("totalExpense", d.totalExpense||0);
-  localStorage.setItem("totalIncome", d.totalIncome||0);
-  localStorage.setItem("roi", d.roi||"");
-  localStorage.setItem("payback", d.payback||"");
-
-  localStorage.setItem("activeProject", key);
+  localStorage.setItem("shortInfo",JSON.stringify(d.shortInfo||{}));
+  localStorage.setItem("expenseData",JSON.stringify(d.expenseData||[]));
+  localStorage.setItem("incomeData",JSON.stringify(d.incomeData||[]));
+  localStorage.setItem("activeProject",key);
 
   loadCover();
-  alert("Project Load भयो");
 }
 
-/* ===== EXPORT ===== */
 function exportProject(){
-  let key = localStorage.getItem("activeProject");
-  if(!key){
-    alert("पहिला Project Load गर्नुहोस्");
-    return;
-  }
-  let data = localStorage.getItem(key);
-  let blob = new Blob([data], {type:"application/json"});
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = key.replace("project_","") + ".json";
+  if(!mustHaveProject())return;
+  let key=localStorage.getItem("activeProject");
+  let blob=new Blob([localStorage.getItem(key)],{type:"application/json"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=key.replace("project_","")+".json";
   a.click();
 }
 
-/* ===== IMPORT ===== */
 function importProject(file){
-  let r = new FileReader();
-  r.onload = function(){
-    let data = JSON.parse(r.result);
-    let name = prompt("Project नाम लेख्नुहोस्");
-    if(!name) return;
-    localStorage.setItem("project_"+name, JSON.stringify(data));
+  let r=new FileReader();
+  r.onload=function(){
+    let data=JSON.parse(r.result);
+    let name=prompt("Project नाम लेख्नुहोस्");
+    if(!name)return;
+    localStorage.setItem("project_"+name,JSON.stringify(data));
     refreshProjects();
     alert("Project Import भयो");
   };
   r.readAsText(file);
 }
 
-/* ===== PROJECT LIST ===== */
 function refreshProjects(){
-  projectList.innerHTML = '<option value="">📂 Project छान्नुहोस्</option>';
+  projectList.innerHTML='<option value="">📂 Project छान्नुहोस्</option>';
   for(let k in localStorage){
     if(k.startsWith("project_")){
-      let o = document.createElement("option");
-      o.value = k;
-      o.text = k.replace("project_","");
+      let o=document.createElement("option");
+      o.value=k;o.text=k.replace("project_","");
       projectList.appendChild(o);
     }
   }
 }
 
-window.onload = function(){
+window.onload=function(){
   refreshProjects();
   loadCover();
 };
