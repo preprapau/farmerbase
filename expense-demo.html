@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>farmerbase – खर्च विवरण (Demo)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:system-ui,Arial;background:#f4f7f6;margin:0}
+header{background:#2e7d32;color:#fff;padding:20px;text-align:center}
+main{max-width:1000px;margin:20px auto;background:#fff;padding:20px;border-radius:10px}
+h2{color:#2e7d32;margin-top:30px}
+.category{border:1px solid #ddd;padding:15px;border-radius:8px;margin-top:20px}
+label{display:block;margin-top:10px;font-weight:600}
+textarea,input{width:100%;padding:8px;margin-top:5px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border:1px solid #ccc;padding:8px;text-align:right}
+th{text-align:center;background:#eef6f0}
+td.left{text-align:left}
+button{margin-top:10px;padding:8px 14px;background:#2e7d32;color:#fff;border:none;border-radius:6px}
+.total{background:#eef6f0;padding:10px;margin-top:10px;font-weight:700}
+footer{text-align:center;font-size:13px;color:#555;padding:15px}
+</style>
+</head>
+
+<body>
+<header>
+<h1>🌾 farmerbase – खर्च विवरण (Demo)</h1>
+<p>Category LOCKED | Item ADDABLE | Proposal-ready</p>
+</header>
+
+<main>
+
+<!-- CATEGORY TEMPLATE -->
+<div class="category" data-cat="init">
+<h2>१️⃣ प्रारम्भिक लगानी</h2>
+<label>Category Narration (अनिवार्य)</label>
+<textarea placeholder="यस शीर्षक अन्तर्गत व्यवसाय सुरु गर्न आवश्यक प्रारम्भिक लगानी खर्च समावेश गरिएको छ।"></textarea>
+
+<table>
+<tr>
+<th>शीर्षक</th><th>परिमाण</th><th>दर (रु.)</th><th>रकम</th>
+</tr>
+<tr>
+<td class="left"><input placeholder="जस्तै: पाठापाठी बंगुर खरीद"></td>
+<td><input type="number" oninput="calcRow(this)"></td>
+<td><input type="number" oninput="calcRow(this)"></td>
+<td class="rowTotal">0</td>
+</tr>
+</table>
+
+<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
+</div>
+
+<!-- CATEGORY -->
+<div class="category" data-cat="raw">
+<h2>२️⃣ कच्चा पदार्थ (Operating Cost)</h2>
+<label>Category Narration (अनिवार्य)</label>
+<textarea placeholder="दाना, भेटेरीनरी औषधि, मल, विषादी, बिउ आदिमा लाग्ने नियमित खर्च।"></textarea>
+
+<table>
+<tr>
+<th>शीर्षक</th><th>परिमाण</th><th>दर (रु.)</th><th>रकम</th>
+</tr>
+<tr>
+<td class="left"><input placeholder="जस्तै: भेटेरीनरी औषधि"></td>
+<td><input type="number" oninput="calcRow(this)"></td>
+<td><input type="number" oninput="calcRow(this)"></td>
+<td class="rowTotal">0</td>
+</tr>
+</table>
+
+<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
+</div>
+
+<!-- CATEGORY -->
+<div class="category" data-cat="labour">
+<h2>३️⃣ कामदार / श्रम खर्च</h2>
+<label>Category Narration (अनिवार्य)</label>
+<textarea placeholder="स्थायी तथा अस्थायी कामदारको तलब, ज्याला तथा सेवा सुविधामा लाग्ने खर्च।"></textarea>
+
+<table>
+<tr>
+<th>शीर्षक</th><th>संख्या</th><th>मासिक दर</th><th>वार्षिक रकम</th>
+</tr>
+<tr>
+<td class="left"><input placeholder="जस्तै: स्थायी कामदार"></td>
+<td><input type="number" oninput="calcRow(this)"></td>
+<td><input type="number" oninput="calcRow(this)"></td>
+<td class="rowTotal">0</td>
+</tr>
+</table>
+
+<div class="total">Category Total: रु. <span class="catTotal">0</span></div>
+</div>
+
+<!-- GRAND TOTAL -->
+<h2>🔢 कुल वार्षिक खर्च</h2>
+<div class="total" style="font-size:18px">
+रु. <span id="grandTotal">0</span>
+</div>
+
+</main>
+
+<footer>
+© farmerbase BPMS Demo | Nepali Farmer Business Plan Management System
+</footer>
+
+<script>
+function calcRow(el){
+  let row = el.closest("tr");
+  let inputs = row.querySelectorAll("input");
+  let qty = +inputs[1].value || 0;
+  let rate = +inputs[2].value || 0;
+  let total = qty * rate;
+  row.querySelector(".rowTotal").innerText = total;
+
+  calcCategory(row.closest(".category"));
+}
+
+function calcCategory(cat){
+  let sum = 0;
+  cat.querySelectorAll(".rowTotal").forEach(td=>{
+    sum += +td.innerText || 0;
+  });
+  cat.querySelector(".catTotal").innerText = sum;
+  calcGrand();
+}
+
+function calcGrand(){
+  let g = 0;
+  document.querySelectorAll(".catTotal").forEach(s=>{
+    g += +s.innerText || 0;
+  });
+  document.getElementById("grandTotal").innerText = g;
+}
+</script>
+
+</body>
+</html>
