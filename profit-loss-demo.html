@@ -2,148 +2,188 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase – नाफा / घाटा विवरण (Demo)</title>
+<title>नाफा / घाटा विवरण | Business Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* ===== BASE ===== */
 body{
-  font-family:
-   "Noto Sans Devanagari",
-   "Kalimati",
-   "Mangal",
-   "Nirmala UI",
-   system-ui,
-   Arial,
-   sans-serif;
+  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
+
+/* ===== HEADER ===== */
 header{
   background:#2e7d32;
   color:#fff;
   padding:20px;
-  text-align:center;
 }
+header h1{margin:0}
+
+nav{margin-top:10px}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  margin-right:12px;
+  font-weight:600;
+}
+nav a:hover{text-decoration:underline}
+
+.print-btn{
+  margin-top:10px;
+  padding:8px 14px;
+  background:#fff;
+  color:#2e7d32;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* ===== MAIN ===== */
 main{
   max-width:900px;
-  margin:20px auto;
+  margin:25px auto;
   background:#fff;
-  padding:25px;
+  padding:30px;
   border-radius:10px;
 }
+
 h2{color:#2e7d32}
+
 .summary-box{
   border:1px solid #ddd;
-  border-radius:8px;
-  padding:15px;
+  border-radius:10px;
+  padding:20px;
   margin-top:20px;
 }
+
 .row{
   display:flex;
   justify-content:space-between;
   padding:10px 0;
   border-bottom:1px dashed #ccc;
+  font-size:18px;
 }
 .row:last-child{border-bottom:none}
-.label{font-weight:600}
-.value{font-weight:700}
-.profit{color:#2e7d32}
-.loss{color:#c62828}
+
+.profit{color:#2e7d32;font-weight:700}
+.loss{color:#c62828;font-weight:700}
+
 .note{
-  background:#eef6f0;
+  margin-top:20px;
   padding:15px;
-  margin-top:25px;
-  border-left:5px solid #2e7d32;
+  background:#eef6f0;
+  border-left:6px solid #2e7d32;
+  font-size:15px;
 }
+
+/* ===== FOOTER ===== */
 footer{
   text-align:center;
   font-size:13px;
   color:#555;
-  padding:15px;
+  padding:20px;
+}
+
+/* ===== PRINT ===== */
+@media print{
+  header,
+  nav,
+  .print-btn,
+  .no-print,
+  footer{
+    display:none !important;
+  }
+  body{background:#fff}
+  main{
+    margin:0;
+    padding:0;
+    box-shadow:none;
+    border-radius:0;
+  }
 }
 </style>
 </head>
 
 <body>
-<header>
-<h1>🌾 farmerbase – नाफा / घाटा विवरण</h1>
-<p>Expense + Income आधारित स्वचालित सारांश</p>
+
+<!-- ===== HEADER (SCREEN ONLY) ===== -->
+<header class="no-print">
+  <h1>🌾 farmerbase BPMS</h1>
+  <p>नाफा / घाटा विवरण (Auto Calculation)</p>
+
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="short-info.html">📄 Short Info</a>
+    <a href="business-detail.html">📘 विस्तृत विवरण</a>
+    <a href="expense-demo.html">💸 खर्च</a>
+    <a href="income-demo.html">💰 आम्दानी</a>
+    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
+    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
+    <a href="full-proposal.html">🧾 Full Proposal</a>
+  </nav>
+
+  <button onclick="window.print()" class="print-btn">
+    🖨️ Print / Save PDF
+  </button>
 </header>
-  <h2>📊 वार्षिक वित्तीय सारांश</h2>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+<h2>📊 वार्षिक वित्तीय सारांश</h2>
 
 <div class="summary-box">
-
   <div class="row">
-    <div class="label">कुल वार्षिक खर्च</div>
-    <div class="value">रु. <span id="exp">0</span></div>
+    <div>कुल वार्षिक खर्च</div>
+    <div>रु. <span id="totalExpense">0</span></div>
   </div>
 
   <div class="row">
-    <div class="label">कुल वार्षिक आम्दानी</div>
-    <div class="value">रु. <span id="inc">0</span></div>
+    <div>कुल वार्षिक आम्दानी</div>
+    <div>रु. <span id="totalIncome">0</span></div>
   </div>
 
   <div class="row">
-    <div class="label">नाफा / घाटा</div>
-    <div class="value" id="netVal">0</div>
+    <div>नाफा / घाटा</div>
+    <div id="profitLoss" class="profit">0</div>
   </div>
-
 </div>
 
 <div class="note" id="noteText"></div>
 
-<!-- 🔍 Debug box -->
-<div style="margin-top:15px;font-size:13px;color:#555">
-  <strong>Debug:</strong> <span id="debug"></span>
-</div>
-
-<main>
-  <script>
-function loadData(){
-  let totalExpense = Number(localStorage.getItem("totalExpense")) || 0;
-  let totalIncome  = Number(localStorage.getItem("totalIncome")) || 0;
-  let net = totalIncome - totalExpense;
-
-  document.getElementById("exp").innerText = totalExpense.toLocaleString();
-  document.getElementById("inc").innerText = totalIncome.toLocaleString();
-
-  let netBox = document.getElementById("netVal");
-  let note   = document.getElementById("noteText");
-
-  if(net > 0){
-    netBox.innerHTML = `<span class="profit">रु. ${net.toLocaleString()} (नाफा)</span>`;
-    note.innerHTML =
-      "Expense र Income विवरणका आधारमा प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ।";
-  }else if(net < 0){
-    netBox.innerHTML = `<span class="loss">रु. ${Math.abs(net).toLocaleString()} (घाटा)</span>`;
-    note.innerHTML =
-      "प्रारम्भिक चरणमा घाटा देखिए पनि आगामी वर्षहरूमा नाफा सम्भावित छ।";
-  }else{
-    netBox.innerHTML = "रु. 0 (सन्तुलित)";
-    note.innerHTML = "कुल खर्च र आम्दानी बराबर छन्।";
-  }
-
-  // 🔍 DEBUG (तपाईंका लागि)
-  document.getElementById("debug").innerText =
-    `Expense=${totalExpense} | Income=${totalIncome}`;
-}
-
-// 🔁 Auto reload every 1 second
-setInterval(loadData, 1000);
-
-// First load
-window.onload = loadData;
-</script>
-
 </main>
 
-<footer>
-© farmerbase BPMS Demo | Profit / Loss Summary
-  
+<footer class="no-print">
+© Business Plan Management System
 </footer>
 
-</body><div style="margin-top:15px;font-size:13px;color:#555">
-  <strong>Debug:</strong> <span id="debug"></span>
-</div>
+<!-- ===== SCRIPT ===== -->
+<script>
+let expense = Number(localStorage.getItem("totalExpense")) || 0;
+let income  = Number(localStorage.getItem("totalIncome")) || 0;
 
+document.getElementById("totalExpense").innerText = expense.toLocaleString();
+document.getElementById("totalIncome").innerText  = income.toLocaleString();
+
+let diff = income - expense;
+let plBox = document.getElementById("profitLoss");
+let note  = document.getElementById("noteText");
+
+if(diff >= 0){
+  plBox.innerHTML = "रु. " + diff.toLocaleString() + " (नाफा)";
+  plBox.className = "profit";
+  note.innerText =
+    "प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ, जसले व्यवसायको आर्थिक व्यवहारिकता र दीगोता पुष्टि गर्दछ।";
+}else{
+  plBox.innerHTML = "रु. " + Math.abs(diff).toLocaleString() + " (घाटा)";
+  plBox.className = "loss";
+  note.innerText =
+    "हालको प्रक्षेपण अनुसार घाटा देखिएको हुँदा खर्च व्यवस्थापन वा आम्दानी वृद्धिका उपायहरू आवश्यक देखिन्छ।";
+}
+</script>
+
+</body>
 </html>
