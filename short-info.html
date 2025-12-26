@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase – व्यवसाय संक्षिप्त विवरण</title>
+<title>संक्षिप्त विवरण | Business Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -11,153 +11,116 @@ body{
   background:#f4f7f6;margin:0;
 }
 header{
-  background:#2e7d32;color:#fff;padding:20px;text-align:center;
+  background:#2e7d32;color:#fff;padding:20px;
+}
+nav{margin-top:10px}
+nav a{
+  color:#fff;text-decoration:none;margin-right:12px;font-weight:600;
+}
+.print-btn{
+  margin-top:10px;padding:8px 14px;
+  background:#fff;color:#2e7d32;
+  border:none;border-radius:6px;cursor:pointer;
 }
 main{
-  max-width:900px;margin:20px auto;background:#fff;
-  padding:25px;border-radius:10px;
+  max-width:900px;margin:25px auto;
+  background:#fff;padding:30px;border-radius:10px;
 }
-h2{color:#2e7d32}
-label{font-weight:600;display:block;margin-top:15px}
+label{display:block;margin-top:12px;font-weight:600}
 input,textarea{
   width:100%;padding:8px;margin-top:5px;font-family:inherit;
 }
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
-.total-box{
-  background:#eef6f0;
-  padding:15px;
-  border-left:5px solid #2e7d32;
-  margin-top:20px;
-}
+textarea{min-height:100px}
 button{
-  padding:8px 16px;
-  background:#2e7d32;color:#fff;
-  border:none;border-radius:6px;cursor:pointer;
-  margin-top:20px;
+  padding:8px 14px;background:#2e7d32;color:#fff;
+  border:none;border-radius:6px;cursor:pointer;margin-top:15px;
 }
+footer{text-align:center;font-size:13px;color:#555;padding:20px}
+
 @media print{
-  button{display:none}
+  header,nav,.print-btn,footer{display:none!important}
   body{background:#fff}
-  header{background:#fff;color:#000}
+  main{margin:0;padding:0;border-radius:0}
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>🌾 व्यवसायिक योजनाको संक्षिप्त विवरण</h1>
-<p>(Short Information / Executive Summary)</p>
+<header class="no-print">
+  <h1>🌾 Business Plan Management System</h1>
+  <p>व्यवसायको संक्षिप्त विवरण</p>
+
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="short-info.html">📄 Short Info</a>
+    <a href="business-detail.html">📘 विस्तृत विवरण</a>
+    <a href="expense-demo.html">💸 खर्च</a>
+    <a href="income-demo.html">💰 आम्दानी</a>
+    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
+    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
+    <a href="full-proposal.html">🧾 Full Proposal</a>
+  </nav>
+
+  <button onclick="window.print()" class="print-btn">🖨️ Print / PDF</button>
 </header>
 
 <main>
+<h2>📄 व्यवसायको संक्षिप्त विवरण</h2>
 
-<h2>📌 आधारभूत विवरण</h2>
-
-<label>१. व्यवसाय वा प्रस्तावनाको नाम</label>
+<label>व्यवसायको नाम</label>
 <input id="bp_name">
 
-<label>२. सञ्चालन हुने स्थान</label>
+<label>सञ्चालन हुने स्थान</label>
 <input id="bp_location">
 
-<label>३. सञ्चालन गर्ने संस्था</label>
+<label>सञ्चालन गर्ने संस्था</label>
 <input id="bp_org">
 
-<label>४. प्रोप्राइटरको नाम</label>
+<label>प्रोप्राइटरको नाम</label>
 <input id="bp_owner">
 
-<label>५. सम्पर्क व्यक्ति</label>
+<label>सम्पर्क व्यक्ति</label>
 <input id="bp_contact">
 
-<label>६. उत्पादन गरिने वस्तुहरू</label>
+<label>उत्पादन गरिने वस्तुहरू</label>
 <textarea id="bp_products"></textarea>
 
-<label>७. मुख्य बजार</label>
+<label>मुख्य बजार</label>
 <textarea id="bp_market"></textarea>
 
-<h2>💰 लगानी तथा प्रतिफल</h2>
-
-<div class="grid">
-  <div>
-    <label>८. कुल पुँजी (रु.)</label>
-    <input id="total_capital">
-  </div>
-  <div>
-    <label>चालु पूँजी (रु.)</label>
-    <input id="working_capital">
-  </div>
-  <div>
-    <label>स्थिर पूँजी (रु.)</label>
-    <input id="fixed_capital">
-  </div>
-</div>
-
-<label>९. वार्षिक खुद नाफा (५ वर्षको सरदर) रु.</label>
-<input id="avg_profit" readonly>
-
-<div class="grid">
-  <div>
-    <label>१०. लगानीको प्रतिफल (%)</label>
-    <input id="roi" readonly>
-  </div>
-  <div>
-    <label>११. लगानी फिर्ता अवधि (वर्ष)</label>
-    <input id="payback" readonly>
-  </div>
-</div>
-
-<div class="total-box" id="autoText"></div>
-
-<button onclick="saveShortInfo()">💾 Save Info</button>
-<button onclick="window.print()" style="margin-left:10px">🖨️ Print</button>
-
+<button onclick="saveShort()">💾 Save</button>
 </main>
 
+<footer class="no-print">
+© Business Plan System
+</footer>
+
 <script>
-function autoFill(){
-  // Auto from ROI page if exists
-  let roi = localStorage.getItem("roi");
-  let payback = localStorage.getItem("payback");
-  let profit = localStorage.getItem("avgProfit");
-
-  if(roi) document.getElementById("roi").value = roi;
-  if(payback) document.getElementById("payback").value = payback;
-  if(profit) document.getElementById("avg_profit").value = profit;
-
-  if(roi && payback){
-    document.getElementById("autoText").innerText =
-      `प्रस्तावित व्यवसायबाट ५ वर्षको अवधिमा
-       लगानीको प्रतिफल ${roi}% र
-       लगानी फिर्ता अवधि ${payback} वर्ष
-       रहने देखिन्छ।`;
+function saveShort(){
+  let data={
+    bp_name:bp_name.value,
+    bp_location:bp_location.value,
+    bp_org:bp_org.value,
+    bp_owner:bp_owner.value,
+    bp_contact:bp_contact.value,
+    bp_products:bp_products.value,
+    bp_market:bp_market.value
+  };
+  localStorage.setItem("shortInfo",JSON.stringify(data));
+  alert("Save भयो");
+}
+window.onload=function(){
+  let d=JSON.parse(localStorage.getItem("shortInfo"));
+  if(d){
+    bp_name.value=d.bp_name||"";
+    bp_location.value=d.bp_location||"";
+    bp_org.value=d.bp_org||"";
+    bp_owner.value=d.bp_owner||"";
+    bp_contact.value=d.bp_contact||"";
+    bp_products.value=d.bp_products||"";
+    bp_market.value=d.bp_market||"";
   }
-}
-
-function saveShortInfo(){
-  let data = {};
-  document.querySelectorAll("input, textarea").forEach(el=>{
-    data[el.id] = el.value;
-  });
-  localStorage.setItem("shortInfo", JSON.stringify(data));
-  alert("Short Info Save भयो");
-}
-
-function loadShortInfo(){
-  let d = JSON.parse(localStorage.getItem("shortInfo"));
-  if(!d) return;
-  for(let k in d){
-    let el = document.getElementById(k);
-    if(el) el.value = d[k];
-  }
-}
-
-window.onload = function(){
-  loadShortInfo();
-  autoFill();
 };
 </script>
 
