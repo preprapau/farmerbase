@@ -2,187 +2,230 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>नाफा / घाटा विवरण | Business Plan</title>
+<title>Income Entry | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
 
-/* ===== HEADER ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:20px;
-}
-header h1{margin:0}
-
-nav{margin-top:10px}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:12px;
-  font-weight:600;
-}
-nav a:hover{text-decoration:underline}
-
-.print-btn{
-  margin-top:10px;
-  padding:8px 14px;
-  background:#fff;
-  color:#2e7d32;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* ===== MAIN ===== */
-main{
-  max-width:900px;
-  margin:25px auto;
+/* ===== CONTAINER ===== */
+.container{
+  max-width:1000px;
+  margin:30px auto;
   background:#fff;
   padding:30px;
   border-radius:10px;
 }
 
-h2{color:#2e7d32}
+h2{
+  margin-top:0;
+  color:#2e7d32;
+}
 
-.summary-box{
+/* ===== CATEGORY ===== */
+.category{
   border:1px solid #ddd;
-  border-radius:10px;
-  padding:20px;
-  margin-top:20px;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px dashed #ccc;
-  font-size:18px;
-}
-.row:last-child{border-bottom:none}
-
-.profit{color:#2e7d32;font-weight:700}
-.loss{color:#c62828;font-weight:700}
-
-.note{
-  margin-top:20px;
+  border-radius:8px;
   padding:15px;
-  background:#eef6f0;
-  border-left:6px solid #2e7d32;
-  font-size:15px;
+  margin-top:20px;
+}
+.category h3{
+  margin:0 0 10px 0;
 }
 
-/* ===== FOOTER ===== */
-footer{
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  border:1px solid #ddd;
+  padding:6px;
   text-align:center;
-  font-size:13px;
-  color:#555;
-  padding:20px;
+}
+th{
+  background:#f0f0f0;
+}
+
+input,textarea{
+  width:100%;
+  padding:5px;
+  font-family:inherit;
+}
+textarea{min-height:40px}
+
+button{
+  padding:6px 12px;
+  background:#1b5e20;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.total{
+  margin-top:25px;
+  font-size:18px;
+  font-weight:700;
 }
 
 /* ===== PRINT ===== */
 @media print{
-  header,
-  nav,
-  .print-btn,
-  .no-print,
-  footer{
-    display:none !important;
-  }
+  button{display:none}
   body{background:#fff}
-  main{
-    margin:0;
-    padding:0;
-    box-shadow:none;
-    border-radius:0;
-  }
+  .container{margin:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER (SCREEN ONLY) ===== -->
-<header class="no-print">
-  <h1>🌾 farmerbase BPMS</h1>
-  <p>नाफा / घाटा विवरण (Auto Calculation)</p>
+<div class="container">
+  <h2>💰 वार्षिक आम्दानी विवरण</h2>
 
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">📄 Short Info</a>
-    <a href="business-detail.html">📘 विस्तृत विवरण</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
-    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
-    <a href="full-proposal.html">🧾 Full Proposal</a>
-  </nav>
+  <div id="categories"></div>
 
-  <button onclick="window.print()" class="print-btn">
-    🖨️ Print / Save PDF
-  </button>
-</header>
-
-<!-- ===== MAIN ===== -->
-<main>
-
-<h2>📊 वार्षिक वित्तीय सारांश</h2>
-
-<div class="summary-box">
-  <div class="row">
-    <div>कुल वार्षिक खर्च</div>
-    <div>रु. <span id="totalExpense">0</span></div>
+  <div class="total">
+    कुल वार्षिक आम्दानी: रु. <span id="grandTotal">0</span>
   </div>
 
-  <div class="row">
-    <div>कुल वार्षिक आम्दानी</div>
-    <div>रु. <span id="totalIncome">0</span></div>
-  </div>
-
-  <div class="row">
-    <div>नाफा / घाटा</div>
-    <div id="profitLoss" class="profit">0</div>
-  </div>
+  <button onclick="saveIncome()">💾 Save Income</button>
 </div>
 
-<div class="note" id="noteText"></div>
-
-</main>
-
-<footer class="no-print">
-© Business Plan Management System
-</footer>
-
-<!-- ===== SCRIPT ===== -->
 <script>
-let expense = Number(localStorage.getItem("totalExpense")) || 0;
-let income  = Number(localStorage.getItem("totalIncome")) || 0;
+/* ===== FIXED INCOME CATEGORIES ===== */
+const CATEGORY_LIST = [
+  "१. पशु / उत्पादन बिक्री",
+  "२. मासु तथा प्रशोधित वस्तु बिक्री",
+  "३. सहायक उत्पादन / मल / फोहर",
+  "४. अनुदान / सहयोग",
+  "५. विविध अन्य आम्दानी"
+];
 
-document.getElementById("totalExpense").innerText = expense.toLocaleString();
-document.getElementById("totalIncome").innerText  = income.toLocaleString();
+/* ===== RESTORE ACTIVE PROJECT ===== */
+(function restoreActiveProject(){
+  let key = localStorage.getItem("activeProject");
+  if(!key) return;
 
-let diff = income - expense;
-let plBox = document.getElementById("profitLoss");
-let note  = document.getElementById("noteText");
+  let d = JSON.parse(localStorage.getItem(key));
+  if(!d) return;
 
-if(diff >= 0){
-  plBox.innerHTML = "रु. " + diff.toLocaleString() + " (नाफा)";
-  plBox.className = "profit";
-  note.innerText =
-    "प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ, जसले व्यवसायको आर्थिक व्यवहारिकता र दीगोता पुष्टि गर्दछ।";
-}else{
-  plBox.innerHTML = "रु. " + Math.abs(diff).toLocaleString() + " (घाटा)";
-  plBox.className = "loss";
-  note.innerText =
-    "हालको प्रक्षेपण अनुसार घाटा देखिएको हुँदा खर्च व्यवस्थापन वा आम्दानी वृद्धिका उपायहरू आवश्यक देखिन्छ।";
+  localStorage.setItem("incomeData", JSON.stringify(d.incomeData||[]));
+})();
+
+/* ===== INITIAL RENDER ===== */
+function render(){
+  let wrap = document.getElementById("categories");
+  wrap.innerHTML = "";
+
+  let data = JSON.parse(localStorage.getItem("incomeData")||"[]");
+
+  CATEGORY_LIST.forEach((cat,i)=>{
+    let rows = data.filter(r=>r.category===cat);
+
+    let html = `
+      <div class="category">
+        <h3>${cat}</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>आम्दानी शीर्षक</th>
+              <th>परिमाण</th>
+              <th>दर</th>
+              <th>रकम</th>
+              <th>हटाउने</th>
+            </tr>
+          </thead>
+          <tbody id="tbody_${i}"></tbody>
+        </table>
+
+        <textarea placeholder="यस शीर्षकको विवरण / टिप्पणी"></textarea>
+        <br><br>
+        <button onclick="addRow('${cat}',${i})">➕ आम्दानी थप्नुहोस्</button>
+      </div>
+    `;
+    wrap.insertAdjacentHTML("beforeend",html);
+
+    rows.forEach(r=>addRow(cat,i,r));
+  });
+
+  calculateTotal();
 }
+
+/* ===== ADD ROW ===== */
+function addRow(category,index,rowData={}){
+  let tb = document.getElementById("tbody_"+index);
+  let tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td><input value="${rowData.title||""}"></td>
+    <td><input type="number" value="${rowData.qty||""}" oninput="calcRow(this)"></td>
+    <td><input type="number" value="${rowData.rate||""}" oninput="calcRow(this)"></td>
+    <td class="amount">0</td>
+    <td><button onclick="this.parentElement.parentElement.remove();calculateTotal()">✖</button></td>
+  `;
+  tb.appendChild(tr);
+
+  calcRow(tr.querySelector("input[type=number]"));
+}
+
+/* ===== CALC ROW ===== */
+function calcRow(el){
+  let tr = el.parentElement.parentElement;
+  let qty = parseFloat(tr.children[1].querySelector("input").value)||0;
+  let rate = parseFloat(tr.children[2].querySelector("input").value)||0;
+  tr.querySelector(".amount").innerText = qty*rate;
+  calculateTotal();
+}
+
+/* ===== TOTAL ===== */
+function calculateTotal(){
+  let total = 0;
+  document.querySelectorAll(".amount").forEach(td=>{
+    total += parseFloat(td.innerText)||0;
+  });
+  document.getElementById("grandTotal").innerText = total;
+}
+
+/* ===== SAVE ===== */
+function saveIncome(){
+  let result = [];
+
+  CATEGORY_LIST.forEach((cat,i)=>{
+    let tb = document.getElementById("tbody_"+i);
+    [...tb.rows].forEach(r=>{
+      result.push({
+        category:cat,
+        title:r.cells[0].querySelector("input").value,
+        qty:r.cells[1].querySelector("input").value,
+        rate:r.cells[2].querySelector("input").value,
+        amount:r.cells[3].innerText
+      });
+    });
+  });
+
+  localStorage.setItem("incomeData", JSON.stringify(result));
+  localStorage.setItem("totalIncome", document.getElementById("grandTotal").innerText);
+
+  let key = localStorage.getItem("activeProject");
+  if(key){
+    let p = JSON.parse(localStorage.getItem(key));
+    if(p){
+      p.incomeData = result;
+      p.totalIncome = document.getElementById("grandTotal").innerText;
+      localStorage.setItem(key, JSON.stringify(p));
+    }
+  }
+
+  alert("आम्दानी विवरण Save भयो");
+}
+
+window.onload = render;
 </script>
 
 </body>
