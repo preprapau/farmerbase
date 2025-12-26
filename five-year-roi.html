@@ -2,241 +2,210 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>५-वर्षे ROI विश्लेषण | Business Plan</title>
+<title>Five Year ROI | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
-
-/* ===== HEADER ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:20px;
-}
-header h1{margin:0}
-
-nav{margin-top:10px}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:12px;
-  font-weight:600;
-}
-nav a:hover{text-decoration:underline}
-
-.print-btn{
-  margin-top:10px;
-  padding:8px 14px;
-  background:#fff;
-  color:#2e7d32;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* ===== MAIN ===== */
-main{
+.container{
   max-width:1000px;
-  margin:25px auto;
+  margin:35px auto;
   background:#fff;
   padding:30px;
   border-radius:10px;
 }
-
-h2,h3{color:#2e7d32}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
+h2{
+  margin-top:0;
+  color:#2e7d32;
+  text-align:center;
 }
 
-label{
-  display:block;
-  margin-top:10px;
+/* ===== ASSUMPTIONS ===== */
+.assumptions{
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:15px;
+  margin-bottom:25px;
+}
+.assumptions label{
+  display:inline-block;
+  margin-right:20px;
   font-weight:600;
 }
-
-input{
-  width:100%;
-  padding:6px;
-  margin-top:5px;
+.assumptions input{
+  width:80px;
+  padding:5px;
+  margin-left:6px;
   font-family:inherit;
 }
 
+/* ===== TABLE ===== */
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:20px;
 }
 th,td{
-  border:1px solid #ccc;
+  border:1px solid #ddd;
   padding:8px;
-  text-align:right;
-}
-th{text-align:center;background:#eef6f0}
-td.left{text-align:left}
-
-.summary-box{
-  margin-top:25px;
-  padding:15px;
-  background:#eef6f0;
-  border-left:6px solid #2e7d32;
-  font-size:16px;
-}
-
-/* ===== FOOTER ===== */
-footer{
   text-align:center;
-  font-size:13px;
-  color:#555;
-  padding:20px;
 }
+th{
+  background:#f0f0f0;
+}
+
+/* ===== SUMMARY ===== */
+.summary{
+  margin-top:25px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:15px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  border-bottom:1px dashed #ddd;
+}
+.row:last-child{border-bottom:none}
+.label{font-weight:600}
+.value{font-weight:700}
+.profit{color:green}
+.loss{color:red}
 
 /* ===== PRINT ===== */
 @media print{
-  header,
-  nav,
-  .print-btn,
-  .no-print,
-  footer{
-    display:none !important;
-  }
   body{background:#fff}
-  main{
-    margin:0;
-    padding:0;
-    box-shadow:none;
-    border-radius:0;
-  }
+  .container{margin:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER (SCREEN ONLY) ===== -->
-<header class="no-print">
-  <h1>🌾 farmerbase BPMS</h1>
-  <p>५-वर्षे लगानी प्रतिफल (ROI) विश्लेषण</p>
+<div class="container">
+  <h2>📈 पाँच वर्षे नाफा, ROI तथा लगानी फिर्ता अवधि</h2>
 
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">📄 Short Info</a>
-    <a href="business-detail.html">📘 विस्तृत विवरण</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
-    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
-    <a href="full-proposal.html">🧾 Full Proposal</a>
-  </nav>
-
-  <button onclick="window.print()" class="print-btn">
-    🖨️ Print / Save PDF
-  </button>
-</header>
-
-<!-- ===== MAIN ===== -->
-<main>
-
-<h2>📈 ५-वर्षे वित्तीय प्रक्षेपण</h2>
-
-<div class="grid">
-  <div>
-    <label>वार्षिक खर्च वृद्धि (%)</label>
-    <input type="number" id="expGrowth" value="5">
+  <!-- ===== ASSUMPTIONS ===== -->
+  <div class="assumptions">
+    <label>आम्दानी वार्षिक वृद्धि (%)
+      <input id="incGrowth" type="number" value="5">
+    </label>
+    <label>खर्च वार्षिक वृद्धि (%)
+      <input id="expGrowth" type="number" value="3">
+    </label>
+    <button onclick="recalculate()">🔄 Recalculate</button>
   </div>
-  <div>
-    <label>वार्षिक आम्दानी वृद्धि (%)</label>
-    <input type="number" id="incGrowth" value="10">
+
+  <!-- ===== TABLE ===== -->
+  <table>
+    <thead>
+      <tr>
+        <th>वर्ष</th>
+        <th>आम्दानी (रु.)</th>
+        <th>खर्च (रु.)</th>
+        <th>नाफा / घाटा (रु.)</th>
+      </tr>
+    </thead>
+    <tbody id="roiBody"></tbody>
+  </table>
+
+  <!-- ===== SUMMARY ===== -->
+  <div class="summary">
+    <div class="row">
+      <div class="label">५ वर्षको कुल नाफा</div>
+      <div class="value" id="totalProfit">0</div>
+    </div>
+    <div class="row">
+      <div class="label">लगानीको प्रतिफल (ROI)</div>
+      <div class="value"><span id="roi">–</span> %</div>
+    </div>
+    <div class="row">
+      <div class="label">लगानी फिर्ता अवधि</div>
+      <div class="value"><span id="payback">–</span> वर्ष</div>
+    </div>
   </div>
 </div>
 
-<button onclick="calculate()" style="margin-top:15px">
-🔄 Calculate
-</button>
-
-<table>
-  <tr>
-    <th>वर्ष</th>
-    <th>खर्च (रु.)</th>
-    <th>आम्दानी (रु.)</th>
-    <th>नाफा (रु.)</th>
-  </tr>
-  <tbody id="roiTable"></tbody>
-</table>
-
-<div class="summary-box" id="summary"></div>
-
-</main>
-
-<footer class="no-print">
-© Business Plan Management System
-</footer>
-
-<!-- ===== SCRIPT ===== -->
 <script>
-function calculate(){
-  let baseExp = Number(localStorage.getItem("totalExpense")) || 0;
-  let baseInc = Number(localStorage.getItem("totalIncome")) || 0;
+/* ===== RESTORE ACTIVE PROJECT ===== */
+(function restoreActiveProject(){
+  let key = localStorage.getItem("activeProject");
+  if(!key) return;
+  let d = JSON.parse(localStorage.getItem(key));
+  if(!d) return;
 
-  let expRate = Number(document.getElementById("expGrowth").value) || 0;
-  let incRate = Number(document.getElementById("incGrowth").value) || 0;
+  if(d.totalIncome)  localStorage.setItem("totalIncome", d.totalIncome);
+  if(d.totalExpense) localStorage.setItem("totalExpense", d.totalExpense);
+  if(d.shortInfo){
+    localStorage.setItem("shortInfo", JSON.stringify(d.shortInfo));
+  }
+})();
 
-  let tbody = document.getElementById("roiTable");
+/* ===== CORE CALC ===== */
+function recalculate(){
+  let baseIncome  = parseFloat(localStorage.getItem("totalIncome")) || 0;
+  let baseExpense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+
+  let incG = parseFloat(document.getElementById("incGrowth").value) || 0;
+  let expG = parseFloat(document.getElementById("expGrowth").value) || 0;
+
+  let tbody = document.getElementById("roiBody");
   tbody.innerHTML = "";
 
-  let curExp = baseExp;
-  let curInc = baseInc;
+  let income = baseIncome;
+  let expense = baseExpense;
   let totalProfit = 0;
-  let paybackYear = 0;
-  let investment = baseExp;
+  let cumulativeProfit = 0;
+  let paybackYear = "–";
 
   for(let y=1; y<=5; y++){
     if(y>1){
-      curExp = curExp * (1 + expRate/100);
-      curInc = curInc * (1 + incRate/100);
+      income  = income  * (1 + incG/100);
+      expense = expense * (1 + expG/100);
     }
-
-    let profit = curInc - curExp;
+    let profit = income - expense;
     totalProfit += profit;
+    cumulativeProfit += profit;
 
-    if(totalProfit >= investment && paybackYear === 0){
+    let tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>वर्ष ${y}</td>
+      <td>${income.toFixed(2)}</td>
+      <td>${expense.toFixed(2)}</td>
+      <td class="${profit>=0?'profit':'loss'}">${profit.toFixed(2)}</td>
+    `;
+    tbody.appendChild(tr);
+
+    // simple payback: first year cumulative >= initial investment
+    let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
+    let investment = parseFloat(s.bp_capital)||0;
+    if(investment>0 && cumulativeProfit>=investment && paybackYear==="–"){
       paybackYear = y;
     }
-
-    tbody.innerHTML += `
-      <tr>
-        <td class="left">${y}</td>
-        <td>${Math.round(curExp).toLocaleString()}</td>
-        <td>${Math.round(curInc).toLocaleString()}</td>
-        <td>${Math.round(profit).toLocaleString()}</td>
-      </tr>
-    `;
   }
 
-  let roi = investment>0 ? ((totalProfit / investment)*100).toFixed(2) : 0;
+  document.getElementById("totalProfit").innerText =
+    (totalProfit>=0?"रु. ":"रु. ") + totalProfit.toFixed(2);
 
-  localStorage.setItem("roi", roi);
-  localStorage.setItem("payback", paybackYear || "५ वर्षभन्दा बढी");
+  // ROI = (Total Profit / Initial Capital) * 100
+  let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
+  let capital = parseFloat(s.bp_capital)||0;
+  let roi = capital>0 ? (totalProfit/capital)*100 : 0;
 
-  document.getElementById("summary").innerHTML = `
-    <strong>निष्कर्ष:</strong><br>
-    ५ वर्षको अवधिमा कुल नाफा रु. ${Math.round(totalProfit).toLocaleString()} हुने,
-    लगानीको प्रतिफल ${roi}% रहने तथा
-    लगानी फिर्ता अवधि ${paybackYear ? paybackYear + " वर्ष" : "५ वर्षभन्दा बढी"} हुने देखिन्छ।
-  `;
+  document.getElementById("roi").innerText = roi.toFixed(2);
+  document.getElementById("payback").innerText = paybackYear;
+
+  // store for proposal
+  localStorage.setItem("fiveYearProfit", totalProfit.toFixed(2));
+  localStorage.setItem("roi", roi.toFixed(2));
+  localStorage.setItem("payback", paybackYear);
 }
 
-/* Auto-calc on load */
-calculate();
+window.onload = recalculate;
 </script>
 
 </body>
