@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase BPMS – Final</title>
+<title>farmerbase BPMS – Final Fixed</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -13,23 +13,25 @@ body{
 header{
  background:#2e7d32;color:#fff;padding:15px 20px;
 }
-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+nav{
+ display:flex;gap:8px;flex-wrap:wrap;margin-top:10px
+}
 nav button{
  background:#ffffff22;color:#fff;border:none;
- padding:8px 14px;border-radius:6px;cursor:pointer;
+ padding:8px 14px;border-radius:6px;cursor:pointer
 }
 nav button.active{background:#1b5e20}
 
 .project-bar{
  margin-top:10px;display:flex;gap:8px;flex-wrap:wrap
 }
-.project-bar input,select{
+.project-bar input,.project-bar select{
  padding:6px;font-family:inherit
 }
 
 main{
  max-width:1200px;margin:20px auto;background:#fff;
- padding:25px;border-radius:10px;
+ padding:25px;border-radius:10px
 }
 .section{display:none}
 .section.active{display:block}
@@ -59,13 +61,15 @@ button.green{
  padding:8px 14px;border-radius:6px;cursor:pointer
 }
 
-footer{text-align:center;font-size:13px;color:#555;padding:15px}
+footer{
+ text-align:center;font-size:13px;color:#555;padding:15px
+}
 
+/* ✅ PRINT SAFE */
 @media print{
- nav,.project-bar,.no-print{display:none}
+ .no-print{display:none}
  body{background:#fff}
  header{background:#fff;color:#000}
- .section{display:block}
 }
 </style>
 </head>
@@ -76,8 +80,8 @@ footer{text-align:center;font-size:13px;color:#555;padding:15px}
 <h1>🌾 farmerbase BPMS</h1>
 <p>कुनै झन्झट विना व्यवसायिक योजना/प्रस्तावना बनाउने यन्त्र</p>
 
-<!-- ===== GLOBAL PROJECT BAR ===== -->
-<div class="project-bar">
+<!-- GLOBAL PROJECT BAR -->
+<div class="project-bar no-print">
  <input id="projectName" placeholder="Project Name">
  <button class="green" onclick="saveProject()">💾 Save</button>
  <select id="projectList" onchange="loadProject()">
@@ -87,31 +91,28 @@ footer{text-align:center;font-size:13px;color:#555;padding:15px}
 </div>
 
 <nav class="no-print">
- <button onclick="openTab('home')" class="active">🏠 Home</button>
- <button onclick="openTab('short')">📄 Short Info</button>
- <button onclick="openTab('detail')">📘 विस्तृत विवरण</button>
- <button onclick="openTab('expense')">💸 खर्च</button>
- <button onclick="openTab('income')">💰 आम्दानी</button>
- <button onclick="openTab('pl')">📊 नाफा/घाटा</button>
- <button onclick="openTab('roi')">📈 ५-वर्षे ROI</button>
- <button onclick="openTab('proposal')">🧾 Full Proposal</button>
+ <button onclick="openTab('home',this)" class="active">🏠 Home</button>
+ <button onclick="openTab('short',this)">📄 Short Info</button>
+ <button onclick="openTab('detail',this)">📘 विस्तृत विवरण</button>
+ <button onclick="openTab('expense',this)">💸 खर्च</button>
+ <button onclick="openTab('income',this)">💰 आम्दानी</button>
+ <button onclick="openTab('pl',this)">📊 नाफा/घाटा</button>
+ <button onclick="openTab('roi',this)">📈 ५-वर्षे ROI</button>
+ <button onclick="openTab('proposal',this)">🧾 Full Proposal</button>
 </nav>
 </header>
 
 <main>
 
-<!-- HOME -->
 <div id="home" class="section active">
 <h2>📌 प्रणाली परिचय</h2>
 <p>
-यो प्रणाली किसान/व्यवसायीले
-खर्च, आम्दानी, नाफा, लगानी प्रतिफल र
-पूरै व्यवसायिक प्रस्तावना
-कुनै प्राविधिक ज्ञान बिना तयार गर्न सक्ने गरी बनाइएको हो।
+यो प्रणाली किसान/व्यवसायीले खर्च, आम्दानी, नाफा,
+लगानी प्रतिफल र पूर्ण व्यवसायिक प्रस्तावना
+एउटै ठाउँमा तयार गर्न सहयोग गर्छ।
 </p>
 </div>
 
-<!-- SHORT INFO -->
 <div id="short" class="section">
 <h2>📄 व्यवसायको संक्षिप्त विवरण</h2>
 <label>व्यवसायको नाम</label><input id="bp_name">
@@ -121,31 +122,27 @@ footer{text-align:center;font-size:13px;color:#555;padding:15px}
 <label>सम्पर्क व्यक्ति</label><input id="bp_contact">
 <label>उत्पादन</label><textarea id="bp_products"></textarea>
 <label>मुख्य बजार</label><textarea id="bp_market"></textarea>
-<button class="green" onclick="saveShort()">Save</button>
+<button class="green" onclick="buildProposal()">Save</button>
 </div>
 
-<!-- BUSINESS DETAIL -->
 <div id="detail" class="section">
 <h2>📘 व्यवसायको विस्तृत विवरण</h2>
 <div class="box" id="toc"></div>
 <div id="topics"></div>
 <button class="green" onclick="addTopic()">➕ विषय थप्नुहोस्</button>
-<button class="green" onclick="saveDetail()">Save</button>
+<button class="green" onclick="buildProposal()">Save</button>
 </div>
 
-<!-- EXPENSE -->
 <div id="expense" class="section">
-<h2>💸 खर्च विवरण</h2>
-<div class="box">Expense entry यहाँ (Category + Item logic प्रयोग गरिन्छ)</div>
+<h2>💸 खर्च</h2>
+<div class="box">खर्च Entry Module यहाँ Embed हुन्छ</div>
 </div>
 
-<!-- INCOME -->
 <div id="income" class="section">
-<h2>💰 आम्दानी विवरण</h2>
-<div class="box">Income entry यहाँ (Item-wise)</div>
+<h2>💰 आम्दानी</h2>
+<div class="box">आम्दानी Entry Module यहाँ Embed हुन्छ</div>
 </div>
 
-<!-- PROFIT LOSS -->
 <div id="pl" class="section">
 <h2>📊 नाफा / घाटा</h2>
 <div class="box">
@@ -155,21 +152,18 @@ footer{text-align:center;font-size:13px;color:#555;padding:15px}
 </div>
 </div>
 
-<!-- ROI -->
 <div id="roi" class="section">
 <h2>📈 ५-वर्षे प्रतिफल</h2>
 <label>ROI (%)</label><input id="roiVal">
 <label>Payback (वर्ष)</label><input id="payback">
-<button class="green" onclick="saveROI()">Save</button>
+<button class="green" onclick="buildProposal()">Save</button>
 </div>
 
-<!-- FULL PROPOSAL -->
 <div id="proposal" class="section">
 <h2>🧾 पूर्ण व्यवसायिक प्रस्तावना</h2>
-<div class="box">
-<p><strong id="p_title"></strong></p>
+
+<h3 id="p_title"></h3>
 <p id="p_location"></p>
-</div>
 
 <h3>१. संक्षिप्त विवरण</h3>
 <div id="p_short"></div>
@@ -185,74 +179,26 @@ footer{text-align:center;font-size:13px;color:#555;padding:15px}
 <tr><td class="left">नाफा</td><td id="p_profit"></td></tr>
 </table>
 
-<h3>४. प्रतिफल विश्लेषण</h3>
+<h3>४. प्रतिफल</h3>
 <div id="p_roi"></div>
 </div>
 
 </main>
 
 <footer>
-© farmerbase BPMS | Final Integrated System
+© farmerbase BPMS | Final Fixed Version
 </footer>
 
 <script>
-/* TAB */
-function openTab(id){
- document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+/* TAB FIXED */
+function openTab(id,btn){
+ document.querySelectorAll(".section")
+  .forEach(s=>s.classList.remove("active"));
+ document.querySelectorAll("nav button")
+  .forEach(b=>b.classList.remove("active"));
+
  document.getElementById(id).classList.add("active");
- event.target.classList.add("active");
-}
-
-/* PROJECT SAVE */
-function saveProject(){
- let name = projectName.value;
- if(!name){alert("Project Name लेख्नुहोस्");return;}
- let data={
-  short:{
-   name:bp_name.value,loc:bp_location.value
-  },
-  detail:topics,
-  exp:localStorage.totalExpense||0,
-  inc:localStorage.totalIncome||0,
-  roi:roiVal.value,
-  payback:payback.value
- };
- localStorage.setItem("project_"+name,JSON.stringify(data));
- refreshList();
- alert("Project Save भयो");
-}
-function loadProject(){
- let k=projectList.value;
- if(!k)return;
- let d=JSON.parse(localStorage.getItem(k));
- if(!d)return;
- bp_name.value=d.short.name||"";
- bp_location.value=d.short.loc||"";
- topics=d.detail||[];
- renderTopics();
- localStorage.totalExpense=d.exp||0;
- localStorage.totalIncome=d.inc||0;
- roiVal.value=d.roi||"";
- payback.value=d.payback||"";
- updatePL();
- buildProposal();
-}
-function refreshList(){
- projectList.innerHTML='<option value="">📂 Load Project</option>';
- for(let k in localStorage)
-  if(k.startsWith("project_")){
-   let o=document.createElement("option");
-   o.value=k;o.text=k.replace("project_","");
-   projectList.appendChild(o);
-  }
-}
-window.onload=refreshList;
-
-/* SHORT */
-function saveShort(){
- alert("Short Info Save भयो");
- buildProposal();
+ if(btn) btn.classList.add("active");
 }
 
 /* DETAIL */
@@ -270,21 +216,57 @@ function renderTopics(){
    <textarea oninput="topics[${i}].content=this.value">${t.content}</textarea>
   `;
  });
- renderTOC();
-}
-function renderTOC(){
  toc.innerHTML="<strong>विषयसूची</strong><ol>"+
- topics.map(t=>`<li>${t.title}</li>`).join("")+"</ol>";
+  topics.map(t=>`<li>${t.title}</li>`).join("")+"</ol>";
 }
-function saveDetail(){alert("विस्तृत विवरण Save भयो");buildProposal();}
 
-/* ROI */
-function saveROI(){alert("ROI Save भयो");buildProposal();}
+/* PROJECT */
+function saveProject(){
+ let n=projectName.value;
+ if(!n){alert("Project Name लेख्नुहोस्");return;}
+ let data={
+  short:{
+   name:bp_name.value,loc:bp_location.value
+  },
+  detail:topics,
+  roi:roiVal.value,
+  payback:payback.value,
+  exp:localStorage.totalExpense||0,
+  inc:localStorage.totalIncome||0
+ };
+ localStorage.setItem("project_"+n,JSON.stringify(data));
+ refreshList();alert("Project Save भयो");
+}
+function loadProject(){
+ let k=projectList.value;
+ if(!k)return;
+ let d=JSON.parse(localStorage.getItem(k));
+ if(!d)return;
+ bp_name.value=d.short.name||"";
+ bp_location.value=d.short.loc||"";
+ topics=d.detail||[];
+ renderTopics();
+ roiVal.value=d.roi||"";
+ payback.value=d.payback||"";
+ localStorage.totalExpense=d.exp||0;
+ localStorage.totalIncome=d.inc||0;
+ updatePL();buildProposal();
+}
+function refreshList(){
+ projectList.innerHTML='<option value="">📂 Load Project</option>';
+ for(let k in localStorage)
+  if(k.startsWith("project_")){
+   let o=document.createElement("option");
+   o.value=k;o.text=k.replace("project_","");
+   projectList.appendChild(o);
+  }
+}
+window.onload=refreshList;
 
 /* PL */
 function updatePL(){
- exp.innerText=(localStorage.totalExpense||0);
- inc.innerText=(localStorage.totalIncome||0);
+ exp.innerText=localStorage.totalExpense||0;
+ inc.innerText=localStorage.totalIncome||0;
  profit.innerText=(localStorage.totalIncome||0)-(localStorage.totalExpense||0);
 }
 
@@ -296,7 +278,9 @@ function buildProposal(){
   <p><strong>संस्था:</strong> ${bp_org.value}</p>
   <p><strong>उत्पादन:</strong> ${bp_products.value}</p>
  `;
- p_detail.innerHTML=topics.map((t,i)=>`<h4>${i+1}. ${t.title}</h4><p>${t.content}</p>`).join("");
+ p_detail.innerHTML=topics.map((t,i)=>
+  `<h4>${i+1}. ${t.title}</h4><p>${t.content}</p>`
+ ).join("");
  p_exp.innerText=localStorage.totalExpense||0;
  p_inc.innerText=localStorage.totalIncome||0;
  p_profit.innerText=(localStorage.totalIncome||0)-(localStorage.totalExpense||0);
