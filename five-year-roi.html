@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>farmerbase – ५ वर्षे वित्तीय प्रक्षेपण तथा ROI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:
+   "Noto Sans Devanagari",
+   "Kalimati",
+   "Mangal",
+   "Nirmala UI",
+   system-ui,
+   Arial,
+   sans-serif;
+  background:#f4f7f6;
+  margin:0;
+}
+header{
+  background:#2e7d32;
+  color:#fff;
+  padding:22px;
+  text-align:center;
+}
+main{
+  max-width:1100px;
+  margin:20px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:10px;
+}
+h2{color:#2e7d32;margin-top:30px}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:10px;
+  text-align:right;
+}
+th{
+  background:#eef6f0;
+  text-align:center;
+}
+td.left{text-align:left}
+.highlight{
+  background:#eef6f0;
+  font-weight:700;
+}
+.note{
+  background:#eef6f0;
+  padding:15px;
+  margin-top:25px;
+  border-left:5px solid #2e7d32;
+}
+footer{
+  text-align:center;
+  font-size:13px;
+  color:#555;
+  padding:15px;
+}
+input{
+  padding:6px;
+  width:200px;
+}
+</style>
+</head>
+
+<body>
+<header>
+<h1>🌾 farmerbase – ५ वर्षे वित्तीय प्रक्षेपण</h1>
+<p>Payback Period तथा ROI (Live-Linked)</p>
+</header>
+
+<main>
+
+<h2>🔢 प्रारम्भिक लगानी</h2>
+<p>यसमा भवन, मेशिन, प्रारम्भिक पशु/बीउ, पूर्वाधार आदि समावेश हुन्छ।</p>
+<input type="number" id="investment" placeholder="प्रारम्भिक लगानी (रु.)" oninput="calculate()" />
+
+<h2>📊 ५ वर्षे नगद प्रवाह (Cash Flow Projection)</h2>
+
+<table>
+<thead>
+<tr>
+  <th>वर्ष</th>
+  <th>वार्षिक आम्दानी (रु.)</th>
+  <th>वार्षिक खर्च (रु.)</th>
+  <th>वार्षिक नाफा (रु.)</th>
+  <th>संचित नगद प्रवाह (रु.)</th>
+</tr>
+</thead>
+<tbody id="projectionBody"></tbody>
+</table>
+
+<h2>📈 लगानी प्रतिफल विश्लेषण</h2>
+
+<table>
+<tr>
+  <td class="left highlight">कुल ५ वर्षको नाफा</td>
+  <td class="highlight">रु. <span id="totalProfit">0</span></td>
+</tr>
+<tr>
+  <td class="left highlight">Payback Period</td>
+  <td class="highlight"><span id="payback">—</span></td>
+</tr>
+<tr>
+  <td class="left highlight">ROI (%)</td>
+  <td class="highlight"><span id="roi">—</span></td>
+</tr>
+</table>
+
+<div class="note" id="analysisText"></div>
+
+<!-- Debug -->
+<div style="margin-top:15px;font-size:13px;color:#555">
+  <strong>Debug:</strong>
+  Expense=<span id="dExp"></span> |
+  Income=<span id="dInc"></span>
+</div>
+
+</main>
+
+<footer>
+© farmerbase BPMS Demo | 5-Year Projection & ROI
+</footer>
+
+<script>
+function calculate(){
+  let expense = Number(localStorage.getItem("totalExpense")) || 0;
+  let income  = Number(localStorage.getItem("totalIncome")) || 0;
+  let profit  = income - expense;
+  let invest  = Number(document.getElementById("investment").value) || 0;
+
+  document.getElementById("dExp").innerText = expense;
+  document.getElementById("dInc").innerText = income;
+
+  let body = document.getElementById("projectionBody");
+  body.innerHTML = "";
+
+  let cumulative = -invest;
+  let totalProfit = 0;
+  let paybackYear = "नभएको";
+
+  for(let y=1; y<=5; y++){
+    cumulative += profit;
+    totalProfit += profit;
+
+    if(cumulative >= 0 && paybackYear === "नभएको"){
+      paybackYear = "वर्ष " + y;
+    }
+
+    body.innerHTML += `
+      <tr>
+        <td class="left">वर्ष ${y}</td>
+        <td>${income.toLocaleString()}</td>
+        <td>${expense.toLocaleString()}</td>
+        <td>${profit.toLocaleString()}</td>
+        <td>${cumulative.toLocaleString()}</td>
+      </tr>
+    `;
+  }
+
+  document.getElementById("totalProfit").innerText =
+    totalProfit.toLocaleString();
+
+  document.getElementById("payback").innerText = paybackYear;
+
+  if(invest > 0){
+    let roi = (totalProfit / invest) * 100;
+    document.getElementById("roi").innerText =
+      roi.toFixed(2) + " %";
+  }else{
+    document.getElementById("roi").innerText = "—";
+  }
+
+  document.getElementById("analysisText").innerText =
+    `प्रस्तावित व्यवसायबाट ५ वर्षको अवधिमा कुल रु. ${totalProfit.toLocaleString()}
+     नाफा आर्जन हुने देखिएको छ। प्रारम्भिक लगानीको Payback ${paybackYear}
+     मा हुने तथा कुल ROI ${invest>0 ? ((totalProfit/invest)*100).toFixed(2) : 0}% रहने
+     प्रक्षेपण गरिएको छ।`;
+}
+
+window.onload = calculate;
+</script>
+
+</body>
+</html>
