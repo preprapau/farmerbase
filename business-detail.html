@@ -2,227 +2,154 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>व्यवसायको विस्तृत विवरण</title>
+<title>Business Detail | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
 
-/* ===== HEADER & MENU ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:20px;
-}
-header h1{margin:0}
-
-nav{
-  margin-top:10px;
-}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:12px;
-  font-weight:600;
-}
-nav a:hover{text-decoration:underline}
-
-.print-btn{
-  margin-top:10px;
-  padding:8px 14px;
-  background:#fff;
-  color:#2e7d32;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* ===== MAIN ===== */
-main{
-  max-width:1000px;
-  margin:25px auto;
+/* ===== CONTAINER ===== */
+.container{
+  max-width:900px;
+  margin:30px auto;
   background:#fff;
   padding:30px;
   border-radius:10px;
 }
 
-h2,h3{color:#2e7d32}
-
-label{
-  display:block;
-  margin-top:15px;
-  font-weight:600;
+h2{
+  margin-top:0;
+  color:#2e7d32;
 }
 
-input, textarea{
-  width:100%;
-  padding:8px;
-  margin-top:6px;
-  font-family:inherit;
-}
-
-textarea{min-height:130px}
-
-.topic-box{
+/* ===== TOPIC BLOCK ===== */
+.topic{
   border:1px solid #ddd;
   border-radius:8px;
   padding:15px;
   margin-top:20px;
 }
-
-.toc{
-  background:#eef6f0;
-  padding:15px;
-  border-left:5px solid #2e7d32;
-  margin-bottom:20px;
+.topic h3{
+  margin:0 0 10px 0;
 }
+
+input,textarea{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+  font-family:inherit;
+}
+textarea{min-height:120px}
 
 button{
-  padding:8px 14px;
-  background:#2e7d32;
+  padding:6px 12px;
+  background:#1b5e20;
   color:#fff;
   border:none;
-  border-radius:6px;
+  border-radius:5px;
   cursor:pointer;
-  margin-top:15px;
+  margin-top:10px;
 }
 
-/* ===== FOOTER ===== */
-footer{
-  text-align:center;
-  font-size:13px;
-  color:#555;
-  padding:20px;
-}
-
-/* ===== PRINT (FINAL FIX) ===== */
+/* ===== PRINT ===== */
 @media print{
-  /* ⛔ farmerbase / header / menu / button सबै हटाउने */
-  header,
-  nav,
-  .print-btn,
-  .no-print,
-  footer{
-    display:none !important;
-  }
-
-  body{
-    background:#fff;
-    margin:0;
-  }
-
-  main{
-    margin:0;
-    padding:0;
-    box-shadow:none;
-    border-radius:0;
-  }
+  button{display:none}
+  body{background:#fff}
+  .container{margin:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER (SCREEN ONLY) ===== -->
-<header class="no-print">
-  <h1>🌾 farmerbase BPMS</h1>
-  <p>व्यवसायिक योजनाको विस्तृत विवरण</p>
+<div class="container">
+  <h2>📘 व्यवसाय / प्रस्तावनाको विस्तृत विवरण</h2>
 
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">📄 Short Info</a>
-    <a href="business-detail.html">📘 विस्तृत विवरण</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
-    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
-    <a href="full-proposal.html">🧾 Full Proposal</a>
-  </nav>
+  <div id="topics"></div>
 
-  <button onclick="window.print()" class="print-btn">
-    🖨️ Print / Save PDF
-  </button>
-</header>
-
-<!-- ===== CONTENT ===== -->
-<main>
-
-<h2>व्यवसायको विस्तृत विवरण</h2>
-
-<div class="toc" id="toc">
-  <em>विषय थपिएपछि यहाँ विषयसूची देखिन्छ</em>
+  <button onclick="addTopic()">➕ नयाँ विषय थप्नुहोस्</button>
+  <br><br>
+  <button onclick="saveDetail()">💾 Save Business Detail</button>
 </div>
 
-<div id="topics"></div>
-
-<button onclick="addTopic()">➕ नयाँ विषय थप्नुहोस्</button>
-<button onclick="saveDetail()" style="margin-left:10px">💾 Save</button>
-
-</main>
-
-<footer class="no-print">
-© farmerbase BPMS
-</footer>
-
-<!-- ===== SCRIPT (UNCHANGED LOGIC) ===== -->
 <script>
-let topics = [];
+/* ===== RESTORE ACTIVE PROJECT ===== */
+(function restoreActiveProject(){
+  let key = localStorage.getItem("activeProject");
+  if(!key) return;
 
-function addTopic(){
-  topics.push({title:"", content:""});
-  renderTopics();
+  let d = JSON.parse(localStorage.getItem(key));
+  if(!d) return;
+
+  localStorage.setItem(
+    "businessDetail",
+    JSON.stringify(d.businessDetail||[])
+  );
+})();
+
+/* ===== LOAD ===== */
+function loadDetail(){
+  let list = JSON.parse(localStorage.getItem("businessDetail")||"[]");
+  let wrap = document.getElementById("topics");
+  wrap.innerHTML = "";
+
+  list.forEach((t,i)=>{
+    wrap.appendChild(topicBlock(i,t.title,t.content));
+  });
 }
 
-function renderTopics(){
-  let box = document.getElementById("topics");
-  box.innerHTML = "";
+/* ===== TOPIC BLOCK ===== */
+function topicBlock(index,title="",content=""){
+  let div = document.createElement("div");
+  div.className = "topic";
 
-  topics.forEach((t,i)=>{
-    box.innerHTML += `
-      <div class="topic-box">
-        <label>${i+1}. विषय शीर्षक</label>
-        <input value="${t.title}"
-          oninput="topics[${i}].title=this.value; renderTOC();">
+  div.innerHTML = `
+    <h3>विषय ${index+1}</h3>
 
-        <label>विवरण</label>
-        <textarea
-          oninput="topics[${i}].content=this.value">${t.content}</textarea>
-      </div>
-    `;
+    <label>विषय शीर्षक</label>
+    <input value="${title}">
+
+    <label>विस्तृत विवरण</label>
+    <textarea>${content}</textarea>
+
+    <button onclick="this.parentElement.remove()">✖ हटाउनुहोस्</button>
+  `;
+  return div;
+}
+
+/* ===== ADD TOPIC ===== */
+function addTopic(){
+  let wrap = document.getElementById("topics");
+  wrap.appendChild(topicBlock(wrap.children.length));
+}
+
+/* ===== SAVE ===== */
+function saveDetail(){
+  let result = [];
+  document.querySelectorAll(".topic").forEach((t,i)=>{
+    let title = t.querySelector("input").value;
+    let content = t.querySelector("textarea").value;
+    if(title || content){
+      result.push({title,content});
+    }
   });
 
-  renderTOC();
-}
+  localStorage.setItem("businessDetail", JSON.stringify(result));
 
-function renderTOC(){
-  let toc = document.getElementById("toc");
-  if(topics.length === 0){
-    toc.innerHTML = "<em>विषय थपिएपछि यहाँ विषयसूची देखिन्छ</em>";
-    return;
+  let key = localStorage.getItem("activeProject");
+  if(key){
+    let p = JSON.parse(localStorage.getItem(key));
+    if(p){
+      p.businessDetail = result;
+      localStorage.setItem(key, JSON.stringify(p));
+    }
   }
-  toc.innerHTML =
-    "<strong>विषयसूची</strong><ol>" +
-    topics.map(t=>`<li>${t.title || "—"}</li>`).join("") +
-    "</ol>";
-}
 
-function saveDetail(){
-  localStorage.setItem("businessDetail", JSON.stringify(topics));
-  alert("विस्तृत विवरण Save भयो");
-}
-
-function loadDetail(){
-  let d = JSON.parse(localStorage.getItem("businessDetail"));
-  if(d){
-    topics = d;
-    renderTopics();
-  }
+  alert("Business Detail Save भयो");
 }
 
 window.onload = loadDetail;
