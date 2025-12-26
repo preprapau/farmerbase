@@ -1,98 +1,110 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-  <meta charset="UTF-8" />
-  <title>farmerbase – व्यवसायिक योजना बनाउने यन्त्र</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body{
-      font-family: system-ui, Arial, sans-serif;
-      background:#f4f7f6;
-      margin:0;
-      padding:0;
-      color:#222;
-    }
-    header{
-      background:#2e7d32;
-      color:#fff;
-      padding:30px 20px;
-      text-align:center;
-    }
-    header h1{margin:0;font-size:28px;}
-    header p{margin-top:10px;font-size:16px;}
-    main{
-      max-width:900px;
-      margin:30px auto;
-      background:#fff;
-      padding:25px;
-      border-radius:10px;
-      box-shadow:0 5px 20px rgba(0,0,0,.08);
-    }
-    h2{color:#2e7d32;}
-    ul{line-height:1.8;}
-    .box{
-      background:#eef6f0;
-      padding:15px;
-      border-left:5px solid #2e7d32;
-      margin:20px 0;
-    }
-    footer{
-      text-align:center;
-      padding:15px;
-      font-size:13px;
-      color:#555;
-    }
-    .btn{
-      display:inline-block;
-      margin-top:15px;
-      padding:12px 20px;
-      background:#2e7d32;
-      color:#fff;
-      text-decoration:none;
-      border-radius:6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>farmerbase BPMS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:
+   "Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",
+   system-ui,Arial,sans-serif;
+  margin:0;
+  background:#f4f7f6;
+}
+header{
+  background:#2e7d32;
+  color:#fff;
+  padding:15px 20px;
+}
+nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  padding:8px 12px;
+  background:rgba(255,255,255,0.15);
+  border-radius:6px;
+  font-size:14px;
+}
+nav a:hover{background:#1b5e20}
+main{
+  max-width:1100px;
+  margin:30px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:10px;
+}
+.card{
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:20px;
+  margin-top:20px;
+}
+footer{
+  text-align:center;
+  font-size:13px;
+  color:#555;
+  padding:20px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <h1>🌾 farmerbase</h1>
-  <p>कुनै झन्झट विना उच्चकोटीको व्यवसायिक योजना बनाउने यन्त्र</p>
+<h1>🌾 farmerbase BPMS</h1>
+<p>कुनै झन्झट विना व्यवसायिक योजना बनाउने यन्त्र</p>
+
+<nav>
+  <a href="index.html">🏠 Home</a>
+  <a href="expense-demo.html">💸 खर्च</a>
+  <a href="income-demo.html">💰 आम्दानी</a>
+  <a href="profit-loss-demo.html">📊 नाफा / घाटा</a>
+  <a href="five-year-roi.html">📈 ५-वर्षे योजना</a>
+</nav>
 </header>
 
 <main>
-  <h2>farmerbase के हो ?</h2>
-  <p>
-    farmerbase नेपाली किसान, व्यवसायी, सहकारी तथा समूहका लागि
-    तयार गरिएको व्यवसायिक योजना तथा प्रस्तावना बनाउने
-    डिजिटल प्रणाली हो।
-  </p>
 
-  <div class="box">
-    <strong>यसले के–के गर्छ ?</strong>
-    <ul>
-      <li>वार्षिक र पञ्चवर्षे व्यवसायिक योजना</li>
-      <li>खर्च, आम्दानी, नाफा–नोक्सान स्वचालित हिसाब</li>
-      <li>लगानी फिर्ता अवधि (Payback Period)</li>
-      <li>लगानीको प्रतिफल (ROI)</li>
-      <li>लाभांश बाँडफाँट तथा पुनः लगानी योजना</li>
-      <li>Proposal + Business Plan दुवै तयार</li>
-    </ul>
-  </div>
+<div class="card">
+<h2>📌 प्रणालीको परिचय</h2>
+<p>
+farmerbase BPMS प्रणाली किसान तथा व्यवसायीले
+खर्च, आम्दानी, नाफा, लगानी प्रतिफल र
+५-वर्षे वित्तीय प्रक्षेपण
+कुनै प्राविधिक ज्ञान बिना तयार गर्न सक्ने गरी विकास गरिएको हो।
+</p>
+</div>
 
-  <h2>कसका लागि ?</h2>
-  <ul>
-    <li>बंगुर, बाख्रा, गाई, तरकारी, कृषि व्यवसाय</li>
-    <li>व्यक्तिगत किसान</li>
-    <li>सहकारी / समूह</li>
-    <li>संघीय, प्रदेश, स्थानीय प्रस्तावना</li>
-  </ul>
+<div class="card">
+<h2>🚀 कसरी सुरु गर्ने ?</h2>
+<ol>
+  <li>पहिले <strong>खर्च</strong> विवरण भर्नुहोस्</li>
+  <li>पछि <strong>आम्दानी</strong> विवरण भर्नुहोस्</li>
+  <li><strong>नाफा / घाटा</strong> हेर्नुहोस्</li>
+  <li><strong>५-वर्षे योजना</strong> बाट ROI जाँच गर्नुहोस्</li>
+  <li>Print गरेर Proposal बनाउनुहोस्</li>
+</ol>
+</div>
 
-  <a class="btn" href="#">🚀 Demo System (Coming Soon)</a>
+<div class="card">
+<h2>📂 Project Management</h2>
+<p>
+एउटै Project मा सबै page आपसमा जोडिएका छन्।
+Project Save गरेपछि सबै Menu बाट खोल्दा
+डाटा स्वतः आउनेछ।
+</p>
+</div>
+
 </main>
 
 <footer>
-  © farmerbase | Nepali Farmer Business Plan Management System
+© farmerbase BPMS | Home
 </footer>
 
 </body>
