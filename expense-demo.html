@@ -124,9 +124,14 @@ function calcCategory(cat){
 function calcGrand(){
   let g = 0;
   document.querySelectorAll(".catTotal").forEach(s=>{
-    g += +s.innerText || 0;
+    let val = s.innerText.replace(/,/g, ""); // 🔑 comma हटाउने
+    g += parseInt(val) || 0;
   });
-  document.getElementById("grandTotal").innerText = g;
+  document.getElementById("grandTotal").innerText = g.toLocaleString();
+
+  // 🔴 LIVE LINK (सबैभन्दा महत्वपूर्ण)
+  localStorage.setItem("totalExpense", g);
+
   calcFunding();
 }
 
