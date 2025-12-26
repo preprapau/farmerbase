@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>नाफा / घाटा विवरण | Business Plan</title>
+<title>५-वर्षे ROI विश्लेषण | Business Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -43,40 +43,53 @@ nav a:hover{text-decoration:underline}
 
 /* ===== MAIN ===== */
 main{
-  max-width:900px;
+  max-width:1000px;
   margin:25px auto;
   background:#fff;
   padding:30px;
   border-radius:10px;
 }
 
-h2{color:#2e7d32}
+h2,h3{color:#2e7d32}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+label{
+  display:block;
+  margin-top:10px;
+  font-weight:600;
+}
+
+input{
+  width:100%;
+  padding:6px;
+  margin-top:5px;
+  font-family:inherit;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:right;
+}
+th{text-align:center;background:#eef6f0}
+td.left{text-align:left}
 
 .summary-box{
-  border:1px solid #ddd;
-  border-radius:10px;
-  padding:20px;
-  margin-top:20px;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px dashed #ccc;
-  font-size:18px;
-}
-.row:last-child{border-bottom:none}
-
-.profit{color:#2e7d32;font-weight:700}
-.loss{color:#c62828;font-weight:700}
-
-.note{
-  margin-top:20px;
+  margin-top:25px;
   padding:15px;
   background:#eef6f0;
   border-left:6px solid #2e7d32;
-  font-size:15px;
+  font-size:16px;
 }
 
 /* ===== FOOTER ===== */
@@ -112,7 +125,7 @@ footer{
 <!-- ===== HEADER (SCREEN ONLY) ===== -->
 <header class="no-print">
   <h1>🌾 farmerbase BPMS</h1>
-  <p>नाफा / घाटा विवरण (Auto Calculation)</p>
+  <p>५-वर्षे लगानी प्रतिफल (ROI) विश्लेषण</p>
 
   <nav>
     <a href="index.html">🏠 Home</a>
@@ -133,26 +146,34 @@ footer{
 <!-- ===== MAIN ===== -->
 <main>
 
-<h2>📊 वार्षिक वित्तीय सारांश</h2>
+<h2>📈 ५-वर्षे वित्तीय प्रक्षेपण</h2>
 
-<div class="summary-box">
-  <div class="row">
-    <div>कुल वार्षिक खर्च</div>
-    <div>रु. <span id="totalExpense">0</span></div>
+<div class="grid">
+  <div>
+    <label>वार्षिक खर्च वृद्धि (%)</label>
+    <input type="number" id="expGrowth" value="5">
   </div>
-
-  <div class="row">
-    <div>कुल वार्षिक आम्दानी</div>
-    <div>रु. <span id="totalIncome">0</span></div>
-  </div>
-
-  <div class="row">
-    <div>नाफा / घाटा</div>
-    <div id="profitLoss" class="profit">0</div>
+  <div>
+    <label>वार्षिक आम्दानी वृद्धि (%)</label>
+    <input type="number" id="incGrowth" value="10">
   </div>
 </div>
 
-<div class="note" id="noteText"></div>
+<button onclick="calculate()" style="margin-top:15px">
+🔄 Calculate
+</button>
+
+<table>
+  <tr>
+    <th>वर्ष</th>
+    <th>खर्च (रु.)</th>
+    <th>आम्दानी (रु.)</th>
+    <th>नाफा (रु.)</th>
+  </tr>
+  <tbody id="roiTable"></tbody>
+</table>
+
+<div class="summary-box" id="summary"></div>
 
 </main>
 
@@ -162,27 +183,60 @@ footer{
 
 <!-- ===== SCRIPT ===== -->
 <script>
-let expense = Number(localStorage.getItem("totalExpense")) || 0;
-let income  = Number(localStorage.getItem("totalIncome")) || 0;
+function calculate(){
+  let baseExp = Number(localStorage.getItem("totalExpense")) || 0;
+  let baseInc = Number(localStorage.getItem("totalIncome")) || 0;
 
-document.getElementById("totalExpense").innerText = expense.toLocaleString();
-document.getElementById("totalIncome").innerText  = income.toLocaleString();
+  let expRate = Number(document.getElementById("expGrowth").value) || 0;
+  let incRate = Number(document.getElementById("incGrowth").value) || 0;
 
-let diff = income - expense;
-let plBox = document.getElementById("profitLoss");
-let note  = document.getElementById("noteText");
+  let tbody = document.getElementById("roiTable");
+  tbody.innerHTML = "";
 
-if(diff >= 0){
-  plBox.innerHTML = "रु. " + diff.toLocaleString() + " (नाफा)";
-  plBox.className = "profit";
-  note.innerText =
-    "प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ, जसले व्यवसायको आर्थिक व्यवहारिकता र दीगोता पुष्टि गर्दछ।";
-}else{
-  plBox.innerHTML = "रु. " + Math.abs(diff).toLocaleString() + " (घाटा)";
-  plBox.className = "loss";
-  note.innerText =
-    "हालको प्रक्षेपण अनुसार घाटा देखिएको हुँदा खर्च व्यवस्थापन वा आम्दानी वृद्धिका उपायहरू आवश्यक देखिन्छ।";
+  let curExp = baseExp;
+  let curInc = baseInc;
+  let totalProfit = 0;
+  let paybackYear = 0;
+  let investment = baseExp;
+
+  for(let y=1; y<=5; y++){
+    if(y>1){
+      curExp = curExp * (1 + expRate/100);
+      curInc = curInc * (1 + incRate/100);
+    }
+
+    let profit = curInc - curExp;
+    totalProfit += profit;
+
+    if(totalProfit >= investment && paybackYear === 0){
+      paybackYear = y;
+    }
+
+    tbody.innerHTML += `
+      <tr>
+        <td class="left">${y}</td>
+        <td>${Math.round(curExp).toLocaleString()}</td>
+        <td>${Math.round(curInc).toLocaleString()}</td>
+        <td>${Math.round(profit).toLocaleString()}</td>
+      </tr>
+    `;
+  }
+
+  let roi = investment>0 ? ((totalProfit / investment)*100).toFixed(2) : 0;
+
+  localStorage.setItem("roi", roi);
+  localStorage.setItem("payback", paybackYear || "५ वर्षभन्दा बढी");
+
+  document.getElementById("summary").innerHTML = `
+    <strong>निष्कर्ष:</strong><br>
+    ५ वर्षको अवधिमा कुल नाफा रु. ${Math.round(totalProfit).toLocaleString()} हुने,
+    लगानीको प्रतिफल ${roi}% रहने तथा
+    लगानी फिर्ता अवधि ${paybackYear ? paybackYear + " वर्ष" : "५ वर्षभन्दा बढी"} हुने देखिन्छ।
+  `;
 }
+
+/* Auto-calc on load */
+calculate();
 </script>
 
 </body>
