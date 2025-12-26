@@ -2,91 +2,236 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Home | Business Plan Management System</title>
+<title>Project Cover | Business Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
-  background:#f4f7f6;margin:0;
+  background:#f4f7f6;
+  margin:0;
 }
+
+/* ===== HEADER ===== */
 header{
-  background:#2e7d32;color:#fff;padding:25px;
+  background:#2e7d32;
+  color:#fff;
+  padding:20px;
 }
 nav a{
-  color:#fff;text-decoration:none;margin-right:14px;font-weight:600;
+  color:#fff;
+  text-decoration:none;
+  margin-right:12px;
+  font-weight:600;
 }
-.print-btn{
-  margin-top:10px;padding:8px 14px;
-  background:#fff;color:#2e7d32;
-  border:none;border-radius:6px;cursor:pointer;
+.project-bar{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
-main{
-  max-width:1000px;margin:30px auto;
-  background:#fff;padding:30px;border-radius:10px;
+.project-bar input,.project-bar select{
+  padding:6px;font-family:inherit;
 }
-.card{
-  border:1px solid #ddd;border-radius:8px;
-  padding:20px;margin-top:20px;
+.project-bar button{
+  padding:6px 12px;
+  background:#1b5e20;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
 }
-footer{text-align:center;font-size:13px;color:#555;padding:20px}
 
+/* ===== COVER ===== */
+.cover{
+  max-width:900px;
+  margin:30px auto;
+  background:#fff;
+  padding:50px 40px;
+  border-radius:10px;
+  text-align:center;
+}
+.cover h1{
+  font-size:32px;
+}
+.icon{
+  font-size:90px;
+  margin:30px 0;
+}
+.desc{
+  font-size:18px;
+  margin-bottom:25px;
+}
+.map{
+  margin-top:25px;
+}
+.footer{
+  margin-top:35px;
+  border-top:1px solid #ddd;
+  padding-top:15px;
+  font-size:15px;
+}
+
+/* ===== POPUP ===== */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:999;
+}
+.modal-box{
+  background:#fff;
+  max-width:800px;
+  margin:5% auto;
+  padding:25px;
+  border-radius:10px;
+}
+.close{
+  float:right;
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* ===== PRINT ===== */
 @media print{
-  header,nav,.print-btn,footer{display:none!important}
+  header,.no-print,.modal{display:none!important}
   body{background:#fff}
-  main{margin:0;padding:0;border-radius:0}
+  .cover{margin:0;padding:0;border-radius:0}
 }
 </style>
 </head>
 
 <body>
 
+<!-- ===== HEADER (SCREEN ONLY) ===== -->
 <header class="no-print">
-  <h1>🌾 Business Plan Management System</h1>
-  <p>कुनै झन्झट र प्राविधिक ज्ञान विना व्यवसायिक योजना/प्रस्तावना बनाउने यन्त्र</p>
+  <h2>🌾 Business Plan Management System</h2>
 
   <nav>
     <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">📄 Short Info</a>
-    <a href="business-detail.html">📘 विस्तृत विवरण</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
-    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
+    <a href="#" onclick="openModal()">ℹ️ अहिलेका सूचना</a>
+    <a href="short-info.html">✏️ Edit Info</a>
     <a href="full-proposal.html">🧾 Full Proposal</a>
   </nav>
 
-  <button onclick="window.print()" class="print-btn">🖨️ Print</button>
+  <div class="project-bar">
+    <input id="projectName" placeholder="Project नाम">
+    <button onclick="saveProject()">💾 Save</button>
+    <select id="projectList" onchange="loadProject()">
+      <option value="">📂 Load Project</option>
+    </select>
+    <button onclick="window.print()">🖨️ Print Cover</button>
+  </div>
 </header>
 
-<main>
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <h1 id="bizName">व्यवसायको नाम</h1>
 
-<h2>📌 प्रणाली परिचय</h2>
-<div class="card">
-यो प्रणाली किसान तथा व्यवसायीले
-खर्च, आम्दानी, नाफा, लगानी प्रतिफल तथा
-पूर्ण व्यवसायिक प्रस्तावना
-एउटै ठाउँमा तयार गर्न सहयोग गर्छ।
+  <div class="icon" id="bizIcon">🌾</div>
+
+  <div class="desc" id="bizDesc">
+    व्यवसायिक प्रकृति / वर्णन
+  </div>
+
+  <div class="map no-print">
+    <iframe id="gmap" width="100%" height="250" style="border:0"
+      loading="lazy" allowfullscreen></iframe>
+  </div>
+
+  <div class="footer">
+    <div id="orgName"></div>
+    <div id="bizLocation"></div>
+  </div>
 </div>
 
-<h2>🚀 कसरी सुरु गर्ने ?</h2>
-<div class="card">
-<ol>
-  <li>📄 Short Info भर्नुहोस्</li>
-  <li>📘 विस्तृत विवरण लेख्नुहोस्</li>
-  <li>💸 खर्च विवरण भर्नुहोस्</li>
-  <li>💰 आम्दानी विवरण भर्नुहोस्</li>
-  <li>📊 नाफा/घाटा हेर्नुहोस्</li>
-  <li>📈 ५-वर्षे ROI विश्लेषण</li>
-  <li>🧾 Full Proposal Print गर्नुहोस्</li>
-</ol>
+<!-- ===== POPUP ===== -->
+<div class="modal no-print" id="infoModal">
+  <div class="modal-box">
+    <span class="close" onclick="closeModal()">✖</span>
+    <h3>📊 अहिलेको परियोजना सारांश</h3>
+    <div id="popupContent"></div>
+  </div>
 </div>
 
-</main>
+<script>
+/* ICON */
+function getIcon(t){
+  t=(t||"").toLowerCase();
+  if(t.includes("बंगुर")||t.includes("pig"))return"🐖";
+  if(t.includes("बाख्रा")||t.includes("goat"))return"🐐";
+  if(t.includes("गाई"))return"🐄";
+  if(t.includes("तरकारी"))return"🥬";
+  return"🌾";
+}
 
-<footer class="no-print">
-© Business Plan Management System
-</footer>
+/* LOAD COVER */
+function loadCover(){
+  let s=JSON.parse(localStorage.getItem("shortInfo")||"{}");
+  bizName.innerText=s.bp_name||"व्यवसायको नाम";
+  bizDesc.innerText=s.bp_products||"व्यवसायिक प्रकृति / वर्णन";
+  orgName.innerText=s.bp_org||s.bp_owner||"";
+  bizLocation.innerText=s.bp_location||"";
+  bizIcon.innerText=getIcon(s.bp_products);
+
+  if(s.bp_location){
+    gmap.src="https://www.google.com/maps?q="+
+      encodeURIComponent(s.bp_location)+"&output=embed";
+  }
+
+  popupContent.innerHTML=`
+    <p><strong>कुल खर्च:</strong> रु. ${localStorage.totalExpense||0}</p>
+    <p><strong>कुल आम्दानी:</strong> रु. ${localStorage.totalIncome||0}</p>
+    <p><strong>ROI:</strong> ${localStorage.roi||""}%</p>
+    <p><strong>Payback:</strong> ${localStorage.payback||""}</p>
+  `;
+}
+
+/* MODAL */
+function openModal(){infoModal.style.display="block";}
+function closeModal(){infoModal.style.display="none";}
+
+/* PROJECT SAVE / LOAD */
+function saveProject(){
+  let n=projectName.value.trim();
+  if(!n){alert("Project नाम लेख्नुहोस्");return;}
+  let d={
+    shortInfo:JSON.parse(localStorage.shortInfo||"{}"),
+    businessDetail:JSON.parse(localStorage.businessDetail||"[]"),
+    expenseData:JSON.parse(localStorage.expenseData||"[]"),
+    incomeData:JSON.parse(localStorage.incomeData||"[]"),
+    totalExpense:localStorage.totalExpense||0,
+    totalIncome:localStorage.totalIncome||0,
+    roi:localStorage.roi||"",
+    payback:localStorage.payback||""
+  };
+  localStorage.setItem("project_"+n,JSON.stringify(d));
+  refreshProjects();alert("Project Save भयो");
+}
+function loadProject(){
+  let k=projectList.value;
+  if(!k)return;
+  let d=JSON.parse(localStorage.getItem(k));
+  if(!d)return;
+  for(let key in d)
+    localStorage.setItem(key,JSON.stringify(d[key]));
+  loadCover();alert("Project Load भयो");
+}
+function refreshProjects(){
+  projectList.innerHTML='<option value="">📂 Load Project</option>';
+  for(let k in localStorage)
+    if(k.startsWith("project_")){
+      let o=document.createElement("option");
+      o.value=k;o.text=k.replace("project_","");
+      projectList.appendChild(o);
+    }
+}
+window.onload=function(){
+  refreshProjects();
+  loadCover();
+};
+</script>
 
 </body>
 </html>
