@@ -2,265 +2,230 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>खर्च विवरण | Business Plan</title>
+<title>Expense Entry | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
 
-/* ===== HEADER ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:20px;
-}
-header h1{margin:0}
-
-nav{
-  margin-top:10px;
-}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:12px;
-  font-weight:600;
-}
-nav a:hover{text-decoration:underline}
-
-.print-btn{
-  margin-top:10px;
-  padding:8px 14px;
-  background:#fff;
-  color:#2e7d32;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* ===== MAIN ===== */
-main{
+/* ===== CONTAINER ===== */
+.container{
   max-width:1100px;
-  margin:25px auto;
+  margin:30px auto;
   background:#fff;
   padding:30px;
   border-radius:10px;
 }
 
-h2,h3{color:#2e7d32}
+h2{
+  margin-top:0;
+  color:#2e7d32;
+}
 
+/* ===== CATEGORY ===== */
+.category{
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:15px;
+  margin-top:22px;
+}
+.category h3{
+  margin:0 0 10px 0;
+}
+
+/* ===== TABLE ===== */
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:10px;
 }
 th,td{
-  border:1px solid #ccc;
-  padding:8px;
+  border:1px solid #ddd;
+  padding:6px;
   text-align:center;
 }
-th{background:#eef6f0}
-td.left{text-align:left}
+th{
+  background:#f0f0f0;
+}
 
-input, select{
+input,textarea{
   width:100%;
   padding:6px;
   font-family:inherit;
 }
+textarea{min-height:40px}
 
 button{
-  padding:8px 14px;
-  background:#2e7d32;
+  padding:6px 12px;
+  background:#1b5e20;
   color:#fff;
   border:none;
-  border-radius:6px;
+  border-radius:5px;
   cursor:pointer;
-  margin-top:10px;
 }
 
-.category-box{
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:15px;
+.total{
   margin-top:25px;
-}
-
-.total-box{
-  margin-top:30px;
-  padding:15px;
-  background:#eef6f0;
-  border-left:6px solid #2e7d32;
   font-size:18px;
-  font-weight:600;
-}
-
-/* ===== FOOTER ===== */
-footer{
-  text-align:center;
-  font-size:13px;
-  color:#555;
-  padding:20px;
+  font-weight:700;
 }
 
 /* ===== PRINT ===== */
 @media print{
-  header,
-  nav,
-  .print-btn,
-  .no-print,
-  footer{
-    display:none !important;
-  }
+  button{display:none}
   body{background:#fff}
-  main{
-    margin:0;
-    padding:0;
-    box-shadow:none;
-    border-radius:0;
-  }
+  .container{margin:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER (SCREEN ONLY) ===== -->
-<header class="no-print">
-  <h1>🌾 farmerbase BPMS</h1>
-  <p>खर्च विवरण (Category-wise Entry)</p>
+<div class="container">
+  <h2>💸 वार्षिक खर्च विवरण</h2>
 
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">📄 Short Info</a>
-    <a href="business-detail.html">📘 विस्तृत विवरण</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
-    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
-    <a href="full-proposal.html">🧾 Full Proposal</a>
-  </nav>
+  <div id="categories"></div>
 
-  <button onclick="window.print()" class="print-btn">
-    🖨️ Print / Save PDF
-  </button>
-</header>
+  <div class="total">
+    कुल वार्षिक खर्च: रु. <span id="grandTotal">0</span>
+  </div>
 
-<!-- ===== MAIN ===== -->
-<main>
-
-<h2>💸 खर्च विवरण</h2>
-
-<div id="categories"></div>
-
-<button onclick="addCategory()">➕ नयाँ खर्च क्याटेगोरी</button>
-
-<div class="total-box">
-  कुल खर्च: रु. <span id="grandTotal">0</span>
+  <button onclick="saveExpense()">💾 Save Expense</button>
 </div>
 
-</main>
-
-<footer class="no-print">
-© Business Plan Management System
-</footer>
-
-<!-- ===== SCRIPT ===== -->
 <script>
-let expenseData = JSON.parse(localStorage.getItem("expenseData")) || [];
+/* ===== FIXED EXPENSE CATEGORIES ===== */
+const CATEGORY_LIST = [
+  "१. मेशिन, औजार, प्रविधि तथा सवारी",
+  "२. पूर्वाधार निर्माण",
+  "३. आवश्यक कच्चा पदार्थ / सामग्री",
+  "४. कामदार तथा श्रमिक खर्च",
+  "५. विविध अन्य खर्च"
+];
 
-/* Add category */
-function addCategory(){
-  expenseData.push({category:"", items:[]});
-  render();
-}
+/* ===== RESTORE ACTIVE PROJECT ===== */
+(function restoreActiveProject(){
+  let key = localStorage.getItem("activeProject");
+  if(!key) return;
 
-/* Add item */
-function addItem(ci){
-  expenseData[ci].items.push({title:"", qty:1, rate:0, total:0});
-  render();
-}
+  let d = JSON.parse(localStorage.getItem(key));
+  if(!d) return;
 
-/* Update item */
-function updateItem(ci,ii,field,value){
-  let it = expenseData[ci].items[ii];
-  it[field] = field==="qty"||field==="rate" ? Number(value) : value;
-  it.total = it.qty * it.rate;
-  save();
-  render();
-}
+  localStorage.setItem("expenseData", JSON.stringify(d.expenseData||[]));
+})();
 
-/* Render */
+/* ===== RENDER ===== */
 function render(){
-  let box = document.getElementById("categories");
-  box.innerHTML = "";
-  let grand = 0;
+  let wrap = document.getElementById("categories");
+  wrap.innerHTML = "";
 
-  expenseData.forEach((cat,ci)=>{
-    let catTotal = 0;
+  let data = JSON.parse(localStorage.getItem("expenseData")||"[]");
+
+  CATEGORY_LIST.forEach((cat,i)=>{
+    let rows = data.filter(r=>r.category===cat);
 
     let html = `
-    <div class="category-box">
-      <label><strong>खर्च क्याटेगोरी</strong></label>
-      <input value="${cat.category}"
-        oninput="expenseData[${ci}].category=this.value; save()">
+      <div class="category">
+        <h3>${cat}</h3>
 
-      <table>
-        <tr>
-          <th class="left">विवरण</th>
-          <th>परिमाण</th>
-          <th>दर (रु.)</th>
-          <th>रकम</th>
-        </tr>
+        <table>
+          <thead>
+            <tr>
+              <th>खर्च शीर्षक</th>
+              <th>परिमाण</th>
+              <th>दर</th>
+              <th>रकम</th>
+              <th>हटाउने</th>
+            </tr>
+          </thead>
+          <tbody id="tbody_${i}"></tbody>
+        </table>
+
+        <textarea id="note_${i}" placeholder="यस क्याटेगोरीको टिप्पणी / विवरण (optional)"></textarea>
+        <br><br>
+        <button onclick="addRow('${cat}',${i})">➕ खर्च थप्नुहोस्</button>
+      </div>
     `;
+    wrap.insertAdjacentHTML("beforeend",html);
 
-    cat.items.forEach((it,ii)=>{
-      catTotal += it.total;
-      html += `
-      <tr>
-        <td class="left">
-          <input value="${it.title}"
-            oninput="updateItem(${ci},${ii},'title',this.value)">
-        </td>
-        <td>
-          <input type="number" value="${it.qty}"
-            oninput="updateItem(${ci},${ii},'qty',this.value)">
-        </td>
-        <td>
-          <input type="number" value="${it.rate}"
-            oninput="updateItem(${ci},${ii},'rate',this.value)">
-        </td>
-        <td>${it.total.toLocaleString()}</td>
-      </tr>
-      `;
-    });
-
-    html += `
-      </table>
-      <button onclick="addItem(${ci})">➕ खर्च थप्नुहोस्</button>
-      <p><strong>क्याटेगोरी जम्मा:</strong> रु. ${catTotal.toLocaleString()}</p>
-    </div>
-    `;
-
-    grand += catTotal;
-    box.innerHTML += html;
+    rows.forEach(r=>addRow(cat,i,r));
   });
 
-  document.getElementById("grandTotal").innerText = grand.toLocaleString();
-  localStorage.setItem("totalExpense", grand);
+  calculateTotal();
 }
 
-/* Save */
-function save(){
-  localStorage.setItem("expenseData", JSON.stringify(expenseData));
+/* ===== ADD ROW ===== */
+function addRow(category,index,rowData={}){
+  let tb = document.getElementById("tbody_"+index);
+  let tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td><input value="${rowData.title||""}"></td>
+    <td><input type="number" value="${rowData.qty||""}" oninput="calcRow(this)"></td>
+    <td><input type="number" value="${rowData.rate||""}" oninput="calcRow(this)"></td>
+    <td class="amount">0</td>
+    <td><button onclick="this.parentElement.parentElement.remove();calculateTotal()">✖</button></td>
+  `;
+  tb.appendChild(tr);
+
+  calcRow(tr.querySelector("input[type=number]"));
 }
 
-/* Load */
-render();
+/* ===== CALC ROW ===== */
+function calcRow(el){
+  let tr = el.parentElement.parentElement;
+  let qty = parseFloat(tr.children[1].querySelector("input").value)||0;
+  let rate = parseFloat(tr.children[2].querySelector("input").value)||0;
+  tr.querySelector(".amount").innerText = qty*rate;
+  calculateTotal();
+}
+
+/* ===== TOTAL ===== */
+function calculateTotal(){
+  let total = 0;
+  document.querySelectorAll(".amount").forEach(td=>{
+    total += parseFloat(td.innerText)||0;
+  });
+  document.getElementById("grandTotal").innerText = total;
+}
+
+/* ===== SAVE ===== */
+function saveExpense(){
+  let result = [];
+
+  CATEGORY_LIST.forEach((cat,i)=>{
+    let tb = document.getElementById("tbody_"+i);
+    [...tb.rows].forEach(r=>{
+      result.push({
+        category:cat,
+        title:r.cells[0].querySelector("input").value,
+        qty:r.cells[1].querySelector("input").value,
+        rate:r.cells[2].querySelector("input").value,
+        amount:r.cells[3].innerText
+      });
+    });
+  });
+
+  localStorage.setItem("expenseData", JSON.stringify(result));
+  localStorage.setItem("totalExpense", document.getElementById("grandTotal").innerText);
+
+  let key = localStorage.getItem("activeProject");
+  if(key){
+    let p = JSON.parse(localStorage.getItem(key));
+    if(p){
+      p.expenseData = result;
+      p.totalExpense = document.getElementById("grandTotal").innerText;
+      localStorage.setItem(key, JSON.stringify(p));
+    }
+  }
+
+  alert("खर्च विवरण Save भयो");
+}
+
+window.onload = render;
 </script>
 
 </body>
