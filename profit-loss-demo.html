@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Income Entry | BPMS</title>
+<title>Profit & Loss | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -14,68 +14,43 @@ body{
 
 /* ===== CONTAINER ===== */
 .container{
-  max-width:1000px;
-  margin:30px auto;
+  max-width:800px;
+  margin:40px auto;
   background:#fff;
-  padding:30px;
+  padding:35px;
   border-radius:10px;
 }
 
 h2{
   margin-top:0;
   color:#2e7d32;
-}
-
-/* ===== CATEGORY ===== */
-.category{
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:15px;
-  margin-top:20px;
-}
-.category h3{
-  margin:0 0 10px 0;
-}
-
-/* ===== TABLE ===== */
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  border:1px solid #ddd;
-  padding:6px;
   text-align:center;
 }
-th{
-  background:#f0f0f0;
-}
 
-input,textarea{
-  width:100%;
-  padding:5px;
-  font-family:inherit;
+/* ===== SUMMARY BOX ===== */
+.summary{
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:20px;
+  margin-top:20px;
 }
-textarea{min-height:40px}
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px dashed #ddd;
+}
+.row:last-child{border-bottom:none}
 
-button{
-  padding:6px 12px;
-  background:#1b5e20;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
+.label{font-weight:600}
+.value{font-weight:700}
 
-.total{
-  margin-top:25px;
-  font-size:18px;
-  font-weight:700;
-}
+/* ===== PROFIT / LOSS ===== */
+.profit{color:green}
+.loss{color:red}
 
 /* ===== PRINT ===== */
 @media print{
-  button{display:none}
   body{background:#fff}
   .container{margin:0;padding:0}
 }
@@ -85,27 +60,39 @@ button{
 <body>
 
 <div class="container">
-  <h2>💰 वार्षिक आम्दानी विवरण</h2>
+  <h2>📊 नाफा / घाटा सारांश</h2>
 
-  <div id="categories"></div>
+  <div class="summary">
+    <div class="row">
+      <div class="label">कुल वार्षिक आम्दानी</div>
+      <div class="value">रु. <span id="totalIncome">0</span></div>
+    </div>
 
-  <div class="total">
-    कुल वार्षिक आम्दानी: रु. <span id="grandTotal">0</span>
+    <div class="row">
+      <div class="label">कुल वार्षिक खर्च</div>
+      <div class="value">रु. <span id="totalExpense">0</span></div>
+    </div>
+
+    <div class="row">
+      <div class="label">वार्षिक नाफा / घाटा</div>
+      <div class="value" id="profitLoss">0</div>
+    </div>
   </div>
 
-  <button onclick="saveIncome()">💾 Save Income</button>
+  <div class="summary" style="margin-top:30px">
+    <div class="row">
+      <div class="label">लगानीको प्रतिफल (ROI)</div>
+      <div class="value"><span id="roi">–</span> %</div>
+    </div>
+
+    <div class="row">
+      <div class="label">लगानी फिर्ता अवधि</div>
+      <div class="value"><span id="payback">–</span> वर्ष</div>
+    </div>
+  </div>
 </div>
 
 <script>
-/* ===== FIXED INCOME CATEGORIES ===== */
-const CATEGORY_LIST = [
-  "१. पशु / उत्पादन बिक्री",
-  "२. मासु तथा प्रशोधित वस्तु बिक्री",
-  "३. सहायक उत्पादन / मल / फोहर",
-  "४. अनुदान / सहयोग",
-  "५. विविध अन्य आम्दानी"
-];
-
 /* ===== RESTORE ACTIVE PROJECT ===== */
 (function restoreActiveProject(){
   let key = localStorage.getItem("activeProject");
@@ -114,118 +101,37 @@ const CATEGORY_LIST = [
   let d = JSON.parse(localStorage.getItem(key));
   if(!d) return;
 
-  localStorage.setItem("incomeData", JSON.stringify(d.incomeData||[]));
+  if(d.totalIncome)  localStorage.setItem("totalIncome", d.totalIncome);
+  if(d.totalExpense) localStorage.setItem("totalExpense", d.totalExpense);
+  if(d.shortInfo){
+    localStorage.setItem("shortInfo", JSON.stringify(d.shortInfo));
+  }
 })();
 
-/* ===== INITIAL RENDER ===== */
-function render(){
-  let wrap = document.getElementById("categories");
-  wrap.innerHTML = "";
+/* ===== LOAD SUMMARY ===== */
+function loadSummary(){
+  let income  = parseFloat(localStorage.getItem("totalIncome")) || 0;
+  let expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+  let pl = income - expense;
 
-  let data = JSON.parse(localStorage.getItem("incomeData")||"[]");
+  document.getElementById("totalIncome").innerText = income;
+  document.getElementById("totalExpense").innerText = expense;
 
-  CATEGORY_LIST.forEach((cat,i)=>{
-    let rows = data.filter(r=>r.category===cat);
+  let plEl = document.getElementById("profitLoss");
+  plEl.innerText = "रु. " + pl;
 
-    let html = `
-      <div class="category">
-        <h3>${cat}</h3>
-
-        <table>
-          <thead>
-            <tr>
-              <th>आम्दानी शीर्षक</th>
-              <th>परिमाण</th>
-              <th>दर</th>
-              <th>रकम</th>
-              <th>हटाउने</th>
-            </tr>
-          </thead>
-          <tbody id="tbody_${i}"></tbody>
-        </table>
-
-        <textarea placeholder="यस शीर्षकको विवरण / टिप्पणी"></textarea>
-        <br><br>
-        <button onclick="addRow('${cat}',${i})">➕ आम्दानी थप्नुहोस्</button>
-      </div>
-    `;
-    wrap.insertAdjacentHTML("beforeend",html);
-
-    rows.forEach(r=>addRow(cat,i,r));
-  });
-
-  calculateTotal();
-}
-
-/* ===== ADD ROW ===== */
-function addRow(category,index,rowData={}){
-  let tb = document.getElementById("tbody_"+index);
-  let tr = document.createElement("tr");
-
-  tr.innerHTML = `
-    <td><input value="${rowData.title||""}"></td>
-    <td><input type="number" value="${rowData.qty||""}" oninput="calcRow(this)"></td>
-    <td><input type="number" value="${rowData.rate||""}" oninput="calcRow(this)"></td>
-    <td class="amount">0</td>
-    <td><button onclick="this.parentElement.parentElement.remove();calculateTotal()">✖</button></td>
-  `;
-  tb.appendChild(tr);
-
-  calcRow(tr.querySelector("input[type=number]"));
-}
-
-/* ===== CALC ROW ===== */
-function calcRow(el){
-  let tr = el.parentElement.parentElement;
-  let qty = parseFloat(tr.children[1].querySelector("input").value)||0;
-  let rate = parseFloat(tr.children[2].querySelector("input").value)||0;
-  tr.querySelector(".amount").innerText = qty*rate;
-  calculateTotal();
-}
-
-/* ===== TOTAL ===== */
-function calculateTotal(){
-  let total = 0;
-  document.querySelectorAll(".amount").forEach(td=>{
-    total += parseFloat(td.innerText)||0;
-  });
-  document.getElementById("grandTotal").innerText = total;
-}
-
-/* ===== SAVE ===== */
-function saveIncome(){
-  let result = [];
-
-  CATEGORY_LIST.forEach((cat,i)=>{
-    let tb = document.getElementById("tbody_"+i);
-    [...tb.rows].forEach(r=>{
-      result.push({
-        category:cat,
-        title:r.cells[0].querySelector("input").value,
-        qty:r.cells[1].querySelector("input").value,
-        rate:r.cells[2].querySelector("input").value,
-        amount:r.cells[3].innerText
-      });
-    });
-  });
-
-  localStorage.setItem("incomeData", JSON.stringify(result));
-  localStorage.setItem("totalIncome", document.getElementById("grandTotal").innerText);
-
-  let key = localStorage.getItem("activeProject");
-  if(key){
-    let p = JSON.parse(localStorage.getItem(key));
-    if(p){
-      p.incomeData = result;
-      p.totalIncome = document.getElementById("grandTotal").innerText;
-      localStorage.setItem(key, JSON.stringify(p));
-    }
+  if(pl >= 0){
+    plEl.className = "value profit";
+  }else{
+    plEl.className = "value loss";
   }
 
-  alert("आम्दानी विवरण Save भयो");
+  let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
+  document.getElementById("roi").innerText = s.bp_roi || "–";
+  document.getElementById("payback").innerText = s.bp_payback || "–";
 }
 
-window.onload = render;
+window.onload = loadSummary;
 </script>
 
 </body>
