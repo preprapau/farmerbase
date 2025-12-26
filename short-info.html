@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Short Info | BPMS</title>
+<title>Short Info Entry | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -12,20 +12,7 @@ body{
   margin:0;
 }
 
-/* ===== HEADER ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:18px;
-}
-header a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:12px;
-  font-weight:600;
-}
-
-/* ===== FORM ===== */
+/* ===== CONTAINER ===== */
 .container{
   max-width:900px;
   margin:30px auto;
@@ -33,24 +20,27 @@ header a{
   padding:30px;
   border-radius:10px;
 }
-h2{margin-top:0}
+h2{
+  margin-top:0;
+  color:#2e7d32;
+}
 
 label{
-  font-weight:600;
   display:block;
-  margin-top:15px;
+  font-weight:600;
+  margin-top:16px;
 }
 input,textarea{
   width:100%;
   padding:8px;
-  margin-top:5px;
+  margin-top:6px;
   font-family:inherit;
 }
 textarea{min-height:80px}
 
 button{
-  margin-top:20px;
-  padding:10px 16px;
+  margin-top:22px;
+  padding:10px 18px;
   background:#1b5e20;
   color:#fff;
   border:none;
@@ -60,7 +50,7 @@ button{
 
 /* ===== PRINT ===== */
 @media print{
-  header,button,.no-print{display:none!important}
+  button{display:none}
   body{background:#fff}
   .container{margin:0;padding:0}
 }
@@ -69,17 +59,8 @@ button{
 
 <body>
 
-<!-- ===== HEADER ===== -->
-<header class="no-print">
-  <strong>✏️ Short Info Edit</strong>
-  |
-  <a href="index.html">🏠 Home</a>
-  <a href="full-proposal.html">🧾 Full Proposal</a>
-</header>
-
-<!-- ===== FORM ===== -->
 <div class="container">
-  <h2>व्यवसाय / प्रस्तावनाको संक्षिप्त विवरण</h2>
+  <h2>✏️ व्यवसाय / प्रस्तावनाको संक्षिप्त विवरण</h2>
 
   <label>१. व्यवसाय / प्रस्तावनाको नाम</label>
   <input id="bp_name">
@@ -124,7 +105,7 @@ button{
 </div>
 
 <script>
-/* ===== RESTORE ACTIVE PROJECT (MANDATORY) ===== */
+/* ===== RESTORE ACTIVE PROJECT ===== */
 (function restoreActiveProject(){
   let key = localStorage.getItem("activeProject");
   if(!key) return;
@@ -139,19 +120,19 @@ button{
 function loadForm(){
   let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
 
-  bp_name.value        = s.bp_name||"";
-  bp_location.value    = s.bp_location||"";
-  bp_org.value         = s.bp_org||"";
-  bp_owner.value       = s.bp_owner||"";
-  bp_contact.value     = s.bp_contact||"";
-  bp_products.value    = s.bp_products||"";
-  bp_market.value      = s.bp_market||"";
-  bp_capital.value     = s.bp_capital||"";
-  bp_working.value     = s.bp_working||"";
-  bp_fixed.value       = s.bp_fixed||"";
-  bp_avg_profit.value  = s.bp_avg_profit||"";
-  bp_roi.value         = s.bp_roi||"";
-  bp_payback.value     = s.bp_payback||"";
+  bp_name.value       = s.bp_name||"";
+  bp_location.value   = s.bp_location||"";
+  bp_org.value        = s.bp_org||"";
+  bp_owner.value      = s.bp_owner||"";
+  bp_contact.value    = s.bp_contact||"";
+  bp_products.value   = s.bp_products||"";
+  bp_market.value     = s.bp_market||"";
+  bp_capital.value    = s.bp_capital||"";
+  bp_working.value    = s.bp_working||"";
+  bp_fixed.value      = s.bp_fixed||"";
+  bp_avg_profit.value = s.bp_avg_profit||"";
+  bp_roi.value        = s.bp_roi||"";
+  bp_payback.value    = s.bp_payback||"";
 }
 
 /* ===== SAVE ===== */
@@ -174,7 +155,6 @@ function saveShortInfo(){
 
   localStorage.setItem("shortInfo", JSON.stringify(data));
 
-  // also update active project if exists
   let key = localStorage.getItem("activeProject");
   if(key){
     let p = JSON.parse(localStorage.getItem(key));
