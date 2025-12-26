@@ -102,6 +102,35 @@ footer{
     🖨️ Print / PDF
   </button>
 </div>
+  <!-- ================= PROJECT MANAGEMENT ================= -->
+<div class="category">
+  <h2>💾 Project Management</h2>
+
+  <label>Project Name</label>
+  <input id="projectName"
+         placeholder="जस्तै: बंगुर पालन व्यवसाय २०८२"
+         style="width:320px">
+
+  <br><br>
+
+  <button onclick="saveProject()"
+    style="padding:8px 14px;background:#1976d2;color:#fff;
+           border:none;border-radius:6px;cursor:pointer">
+    💾 Save Project
+  </button>
+
+  <select id="projectList"
+          onchange="loadProject()"
+          style="padding:8px;margin-left:10px">
+    <option value="">📂 Load Project</option>
+  </select>
+
+  <p style="font-size:13px;color:#555;margin-top:10px">
+    एउटै ब्राउजरमा धेरै Project Save गरेर
+    पछि फेरि खोलेर edit गर्न सकिन्छ।
+  </p>
+</div>
+<!-- ===================================================== -->
 <script>
 function addExpenseRow(btn){
   let table = btn.previousElementSibling;
