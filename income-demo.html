@@ -123,9 +123,13 @@ function calcCategory(cat){
 function calcGrandIncome(){
   let g = 0;
   document.querySelectorAll(".catTotal").forEach(s=>{
-    g += +s.innerText || 0;
+    let val = s.innerText.replace(/,/g, "");
+    g += parseInt(val) || 0;
   });
-  document.getElementById("grandIncome").innerText = g;
+  document.getElementById("grandIncome").innerText = g.toLocaleString();
+
+  // 🔴 LIVE LINK
+  localStorage.setItem("totalIncome", g);
 }
 </script>
 
