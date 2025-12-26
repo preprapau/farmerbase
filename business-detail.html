@@ -2,10 +2,11 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>व्यवसायको विस्तृत विवरण | farmerbase BPMS</title>
+<title>व्यवसायको विस्तृत विवरण</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
@@ -19,6 +20,7 @@ header{
   padding:20px;
 }
 header h1{margin:0}
+
 nav{
   margin-top:10px;
 }
@@ -27,7 +29,6 @@ nav a{
   text-decoration:none;
   margin-right:12px;
   font-weight:600;
-  display:inline-block;
 }
 nav a:hover{text-decoration:underline}
 
@@ -42,7 +43,7 @@ nav a:hover{text-decoration:underline}
   font-weight:600;
 }
 
-/* ===== MAIN CONTENT ===== */
+/* ===== MAIN ===== */
 main{
   max-width:1000px;
   margin:25px auto;
@@ -52,17 +53,20 @@ main{
 }
 
 h2,h3{color:#2e7d32}
+
 label{
   display:block;
   margin-top:15px;
   font-weight:600;
 }
+
 input, textarea{
   width:100%;
   padding:8px;
   margin-top:6px;
   font-family:inherit;
 }
+
 textarea{min-height:130px}
 
 .topic-box{
@@ -97,24 +101,40 @@ footer{
   padding:20px;
 }
 
-/* ===== PRINT ===== */
+/* ===== PRINT (FINAL FIX) ===== */
 @media print{
-  .no-print{display:none}
-  body{background:#fff}
-  header{background:#fff;color:#000}
+  /* ⛔ farmerbase / header / menu / button सबै हटाउने */
+  header,
+  nav,
+  .print-btn,
+  .no-print,
+  footer{
+    display:none !important;
+  }
+
+  body{
+    background:#fff;
+    margin:0;
+  }
+
+  main{
+    margin:0;
+    padding:0;
+    box-shadow:none;
+    border-radius:0;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER ===== -->
-<header>
+<!-- ===== HEADER (SCREEN ONLY) ===== -->
+<header class="no-print">
   <h1>🌾 farmerbase BPMS</h1>
   <p>व्यवसायिक योजनाको विस्तृत विवरण</p>
 
-  <!-- MENU -->
-  <nav class="no-print">
+  <nav>
     <a href="index.html">🏠 Home</a>
     <a href="short-info.html">📄 Short Info</a>
     <a href="business-detail.html">📘 विस्तृत विवरण</a>
@@ -125,15 +145,15 @@ footer{
     <a href="full-proposal.html">🧾 Full Proposal</a>
   </nav>
 
-  <button onclick="window.print()" class="print-btn no-print">
+  <button onclick="window.print()" class="print-btn">
     🖨️ Print / Save PDF
   </button>
 </header>
 
-<!-- ===== MAIN ===== -->
+<!-- ===== CONTENT ===== -->
 <main>
 
-<h2>📘 व्यवसायको विस्तृत विवरण</h2>
+<h2>व्यवसायको विस्तृत विवरण</h2>
 
 <div class="toc" id="toc">
   <em>विषय थपिएपछि यहाँ विषयसूची देखिन्छ</em>
@@ -146,21 +166,19 @@ footer{
 
 </main>
 
-<footer>
-© farmerbase BPMS | Business Detail
+<footer class="no-print">
+© farmerbase BPMS
 </footer>
 
-<!-- ===== SCRIPT (UNCHANGED CORE LOGIC) ===== -->
+<!-- ===== SCRIPT (UNCHANGED LOGIC) ===== -->
 <script>
 let topics = [];
 
-/* Add new topic */
 function addTopic(){
   topics.push({title:"", content:""});
   renderTopics();
 }
 
-/* Render topics */
 function renderTopics(){
   let box = document.getElementById("topics");
   box.innerHTML = "";
@@ -182,7 +200,6 @@ function renderTopics(){
   renderTOC();
 }
 
-/* Table of contents */
 function renderTOC(){
   let toc = document.getElementById("toc");
   if(topics.length === 0){
@@ -191,17 +208,15 @@ function renderTOC(){
   }
   toc.innerHTML =
     "<strong>विषयसूची</strong><ol>" +
-    topics.map(t => `<li>${t.title || "—"}</li>`).join("") +
+    topics.map(t=>`<li>${t.title || "—"}</li>`).join("") +
     "</ol>";
 }
 
-/* Save */
 function saveDetail(){
   localStorage.setItem("businessDetail", JSON.stringify(topics));
   alert("विस्तृत विवरण Save भयो");
 }
 
-/* Load */
 function loadDetail(){
   let d = JSON.parse(localStorage.getItem("businessDetail"));
   if(d){
