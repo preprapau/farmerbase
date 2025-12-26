@@ -2,109 +2,90 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase BPMS</title>
+<title>Home | Business Plan Management System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
-  font-family:
-   "Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",
-   system-ui,Arial,sans-serif;
-  margin:0;
-  background:#f4f7f6;
+  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
+  background:#f4f7f6;margin:0;
 }
 header{
-  background:#2e7d32;
-  color:#fff;
-  padding:15px 20px;
-}
-nav{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
+  background:#2e7d32;color:#fff;padding:25px;
 }
 nav a{
-  color:#fff;
-  text-decoration:none;
-  padding:8px 12px;
-  background:rgba(255,255,255,0.15);
-  border-radius:6px;
-  font-size:14px;
+  color:#fff;text-decoration:none;margin-right:14px;font-weight:600;
 }
-nav a:hover{background:#1b5e20}
+.print-btn{
+  margin-top:10px;padding:8px 14px;
+  background:#fff;color:#2e7d32;
+  border:none;border-radius:6px;cursor:pointer;
+}
 main{
-  max-width:1100px;
-  margin:30px auto;
-  background:#fff;
-  padding:30px;
-  border-radius:10px;
+  max-width:1000px;margin:30px auto;
+  background:#fff;padding:30px;border-radius:10px;
 }
 .card{
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:20px;
-  margin-top:20px;
+  border:1px solid #ddd;border-radius:8px;
+  padding:20px;margin-top:20px;
 }
-footer{
-  text-align:center;
-  font-size:13px;
-  color:#555;
-  padding:20px;
+footer{text-align:center;font-size:13px;color:#555;padding:20px}
+
+@media print{
+  header,nav,.print-btn,footer{display:none!important}
+  body{background:#fff}
+  main{margin:0;padding:0;border-radius:0}
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>🌾 farmerbase BPMS</h1>
-<p>कुनै झन्झट विना व्यवसायिक योजना बनाउने यन्त्र</p>
+<header class="no-print">
+  <h1>🌾 Business Plan Management System</h1>
+  <p>कुनै झन्झट विना व्यवसायिक योजना/प्रस्तावना बनाउने यन्त्र</p>
 
-<nav>
-  <a href="index.html">🏠 Home</a>
-  <a href="expense-demo.html">💸 खर्च</a>
-  <a href="income-demo.html">💰 आम्दानी</a>
-  <a href="profit-loss-demo.html">📊 नाफा / घाटा</a>
-  <a href="five-year-roi.html">📈 ५-वर्षे योजना</a>
-</nav>
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="short-info.html">📄 Short Info</a>
+    <a href="business-detail.html">📘 विस्तृत विवरण</a>
+    <a href="expense-demo.html">💸 खर्च</a>
+    <a href="income-demo.html">💰 आम्दानी</a>
+    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
+    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
+    <a href="full-proposal.html">🧾 Full Proposal</a>
+  </nav>
+
+  <button onclick="window.print()" class="print-btn">🖨️ Print</button>
 </header>
 
 <main>
 
+<h2>📌 प्रणाली परिचय</h2>
 <div class="card">
-<h2>📌 प्रणालीको परिचय</h2>
-<p>
-farmerbase BPMS प्रणाली किसान तथा व्यवसायीले
-खर्च, आम्दानी, नाफा, लगानी प्रतिफल र
-५-वर्षे वित्तीय प्रक्षेपण
-कुनै प्राविधिक ज्ञान बिना तयार गर्न सक्ने गरी विकास गरिएको हो।
-</p>
+यो प्रणाली किसान तथा व्यवसायीले
+खर्च, आम्दानी, नाफा, लगानी प्रतिफल तथा
+पूर्ण व्यवसायिक प्रस्तावना
+एउटै ठाउँमा तयार गर्न सहयोग गर्छ।
 </div>
 
-<div class="card">
 <h2>🚀 कसरी सुरु गर्ने ?</h2>
-<ol>
-  <li>पहिले <strong>खर्च</strong> विवरण भर्नुहोस्</li>
-  <li>पछि <strong>आम्दानी</strong> विवरण भर्नुहोस्</li>
-  <li><strong>नाफा / घाटा</strong> हेर्नुहोस्</li>
-  <li><strong>५-वर्षे योजना</strong> बाट ROI जाँच गर्नुहोस्</li>
-  <li>Print गरेर Proposal बनाउनुहोस्</li>
-</ol>
-</div>
-
 <div class="card">
-<h2>📂 Project Management</h2>
-<p>
-एउटै Project मा सबै page आपसमा जोडिएका छन्।
-Project Save गरेपछि सबै Menu बाट खोल्दा
-डाटा स्वतः आउनेछ।
-</p>
+<ol>
+  <li>📄 Short Info भर्नुहोस्</li>
+  <li>📘 विस्तृत विवरण लेख्नुहोस्</li>
+  <li>💸 खर्च विवरण भर्नुहोस्</li>
+  <li>💰 आम्दानी विवरण भर्नुहोस्</li>
+  <li>📊 नाफा/घाटा हेर्नुहोस्</li>
+  <li>📈 ५-वर्षे ROI विश्लेषण</li>
+  <li>🧾 Full Proposal Print गर्नुहोस्</li>
+</ol>
 </div>
 
 </main>
 
-<footer>
-© farmerbase BPMS | Home
+<footer class="no-print">
+© Business Plan Management System
 </footer>
 
 </body>
