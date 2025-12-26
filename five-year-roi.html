@@ -2,227 +2,187 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase – ५ वर्षे वित्तीय प्रक्षेपण तथा ROI</title>
+<title>नाफा / घाटा विवरण | Business Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* ===== BASE ===== */
 body{
-  font-family:
-   "Noto Sans Devanagari",
-   "Kalimati",
-   "Mangal",
-   "Nirmala UI",
-   system-ui,
-   Arial,
-   sans-serif;
+  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
+
+/* ===== HEADER ===== */
 header{
   background:#2e7d32;
   color:#fff;
-  padding:22px;
-  text-align:center;
+  padding:20px;
 }
-main{
-  max-width:1100px;
-  margin:20px auto;
+header h1{margin:0}
+
+nav{margin-top:10px}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  margin-right:12px;
+  font-weight:600;
+}
+nav a:hover{text-decoration:underline}
+
+.print-btn{
+  margin-top:10px;
+  padding:8px 14px;
   background:#fff;
-  padding:25px;
+  color:#2e7d32;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* ===== MAIN ===== */
+main{
+  max-width:900px;
+  margin:25px auto;
+  background:#fff;
+  padding:30px;
   border-radius:10px;
 }
-h2,h3{color:#2e7d32;margin-top:30px}
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
+
+h2{color:#2e7d32}
+
+.summary-box{
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:20px;
+  margin-top:20px;
 }
-th,td{
-  border:1px solid #ccc;
-  padding:10px;
-  text-align:right;
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px dashed #ccc;
+  font-size:18px;
 }
-th{
-  background:#eef6f0;
-  text-align:center;
-}
-td.left{text-align:left}
-.highlight{
-  background:#eef6f0;
-  font-weight:700;
-}
+.row:last-child{border-bottom:none}
+
+.profit{color:#2e7d32;font-weight:700}
+.loss{color:#c62828;font-weight:700}
+
 .note{
-  background:#eef6f0;
+  margin-top:20px;
   padding:15px;
-  margin-top:25px;
-  border-left:5px solid #2e7d32;
+  background:#eef6f0;
+  border-left:6px solid #2e7d32;
+  font-size:15px;
 }
-input{
-  padding:8px;
-  width:220px;
-  margin-top:6px;
-}
-.footer-note{
-  font-size:13px;
-  color:#555;
-  margin-top:10px;
-}
+
+/* ===== FOOTER ===== */
 footer{
   text-align:center;
   font-size:13px;
   color:#555;
-  padding:15px;
+  padding:20px;
+}
+
+/* ===== PRINT ===== */
+@media print{
+  header,
+  nav,
+  .print-btn,
+  .no-print,
+  footer{
+    display:none !important;
+  }
+  body{background:#fff}
+  main{
+    margin:0;
+    padding:0;
+    box-shadow:none;
+    border-radius:0;
+  }
 }
 </style>
 </head>
 
 <body>
-<header>
-<h1>🌾 farmerbase – ५ वर्षे वित्तीय प्रक्षेपण</h1>
-<p>वार्षिक परिवर्तन दर सहित Payback Period तथा ROI</p>
+
+<!-- ===== HEADER (SCREEN ONLY) ===== -->
+<header class="no-print">
+  <h1>🌾 farmerbase BPMS</h1>
+  <p>नाफा / घाटा विवरण (Auto Calculation)</p>
+
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="short-info.html">📄 Short Info</a>
+    <a href="business-detail.html">📘 विस्तृत विवरण</a>
+    <a href="expense-demo.html">💸 खर्च</a>
+    <a href="income-demo.html">💰 आम्दानी</a>
+    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
+    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
+    <a href="full-proposal.html">🧾 Full Proposal</a>
+  </nav>
+
+  <button onclick="window.print()" class="print-btn">
+    🖨️ Print / Save PDF
+  </button>
 </header>
 
+<!-- ===== MAIN ===== -->
 <main>
 
-<h2>🔢 आधारभूत इनपुट</h2>
+<h2>📊 वार्षिक वित्तीय सारांश</h2>
 
-<label>प्रारम्भिक लगानी (रु.)</label><br>
-<input type="number" id="investment" placeholder="जस्तै: 5000000" oninput="calculate()" />
+<div class="summary-box">
+  <div class="row">
+    <div>कुल वार्षिक खर्च</div>
+    <div>रु. <span id="totalExpense">0</span></div>
+  </div>
 
-<h3>📈 वार्षिक परिवर्तन दर</h3>
+  <div class="row">
+    <div>कुल वार्षिक आम्दानी</div>
+    <div>रु. <span id="totalIncome">0</span></div>
+  </div>
 
-<label>वार्षिक खर्च वृद्धि (%)</label><br>
-<input type="number" id="expGrowth" value="5" oninput="calculate()" />
-
-<br><br>
-
-<label>वार्षिक आम्दानी वृद्धि (%)</label><br>
-<input type="number" id="incGrowth" value="10" oninput="calculate()" />
-
-<p class="footer-note">
-Year-1 को खर्च र आम्दानी प्रणालीबाट स्वतः लिइन्छ।
-</p>
-
-<h2>📊 ५ वर्षे नगद प्रवाह (Cash Flow Projection)</h2>
-
-<table>
-<thead>
-<tr>
-  <th>वर्ष</th>
-  <th>वार्षिक आम्दानी (रु.)</th>
-  <th>वार्षिक खर्च (रु.)</th>
-  <th>वार्षिक नाफा (रु.)</th>
-  <th>संचित नगद प्रवाह (रु.)</th>
-</tr>
-</thead>
-<tbody id="projectionBody"></tbody>
-</table>
-
-<h2>📈 लगानी प्रतिफल विश्लेषण</h2>
-
-<table>
-<tr>
-  <td class="left highlight">कुल ५ वर्षको नाफा</td>
-  <td class="highlight">रु. <span id="totalProfit">0</span></td>
-</tr>
-<tr>
-  <td class="left highlight">Payback Period</td>
-  <td class="highlight"><span id="payback">—</span></td>
-</tr>
-<tr>
-  <td class="left highlight">ROI (%)</td>
-  <td class="highlight"><span id="roi">—</span></td>
-</tr>
-</table>
-
-<div class="note" id="analysisText"></div>
-
-<!-- Debug (optional) -->
-<div class="footer-note">
-<strong>Debug:</strong>
-Expense=<span id="dExp"></span> |
-Income=<span id="dInc"></span>
+  <div class="row">
+    <div>नाफा / घाटा</div>
+    <div id="profitLoss" class="profit">0</div>
+  </div>
 </div>
+
+<div class="note" id="noteText"></div>
 
 </main>
 
-<footer>
-© farmerbase BPMS | 5-Year Projection & ROI (Final)
+<footer class="no-print">
+© Business Plan Management System
 </footer>
 
+<!-- ===== SCRIPT ===== -->
 <script>
-function calculate(){
+let expense = Number(localStorage.getItem("totalExpense")) || 0;
+let income  = Number(localStorage.getItem("totalIncome")) || 0;
 
-  let baseExpense = Number(localStorage.getItem("totalExpense")) || 0;
-  let baseIncome  = Number(localStorage.getItem("totalIncome")) || 0;
+document.getElementById("totalExpense").innerText = expense.toLocaleString();
+document.getElementById("totalIncome").innerText  = income.toLocaleString();
 
-  let expGrowth = Number(document.getElementById("expGrowth").value) || 0;
-  let incGrowth = Number(document.getElementById("incGrowth").value) || 0;
-  let invest    = Number(document.getElementById("investment").value) || 0;
+let diff = income - expense;
+let plBox = document.getElementById("profitLoss");
+let note  = document.getElementById("noteText");
 
-  document.getElementById("dExp").innerText = baseExpense;
-  document.getElementById("dInc").innerText = baseIncome;
-
-  let body = document.getElementById("projectionBody");
-  body.innerHTML = "";
-
-  let curExpense = baseExpense;
-  let curIncome  = baseIncome;
-
-  let cumulative = -invest;
-  let totalProfit = 0;
-  let paybackYear = "नभएको";
-
-  for(let y=1; y<=5; y++){
-
-    if(y > 1){
-      curExpense = curExpense * (1 + expGrowth/100);
-      curIncome  = curIncome  * (1 + incGrowth/100);
-    }
-
-    let yearlyProfit = curIncome - curExpense;
-    cumulative += yearlyProfit;
-    totalProfit += yearlyProfit;
-
-    if(cumulative >= 0 && paybackYear === "नभएको"){
-      paybackYear = "वर्ष " + y;
-    }
-
-    body.innerHTML += `
-      <tr>
-        <td class="left">वर्ष ${y}</td>
-        <td>${Math.round(curIncome).toLocaleString()}</td>
-        <td>${Math.round(curExpense).toLocaleString()}</td>
-        <td>${Math.round(yearlyProfit).toLocaleString()}</td>
-        <td>${Math.round(cumulative).toLocaleString()}</td>
-      </tr>
-    `;
-  }
-
-  document.getElementById("totalProfit").innerText =
-    Math.round(totalProfit).toLocaleString();
-
-  document.getElementById("payback").innerText = paybackYear;
-
-  if(invest > 0){
-    let roi = (totalProfit / invest) * 100;
-    document.getElementById("roi").innerText =
-      roi.toFixed(2) + " %";
-  }else{
-    document.getElementById("roi").innerText = "—";
-  }
-
-  document.getElementById("analysisText").innerText =
-    `व्यवसायको पहिलो वर्षको खर्च तथा आम्दानीलाई आधार मानी
-     वार्षिक खर्चमा ${expGrowth}% र आम्दानीमा ${incGrowth}% परिवर्तन
-     हुने मान्यताका साथ ५ वर्षे वित्तीय प्रक्षेपण गरिएको छ।
-     यस अवधिमा कुल रु. ${Math.round(totalProfit).toLocaleString()}
-     नाफा आर्जन हुने, प्रारम्भिक लगानीको Payback ${paybackYear} मा
-     हुने तथा कुल ROI ${invest>0 ? ((totalProfit/invest)*100).toFixed(2) : 0}% रहने
-     देखिन्छ।`;
+if(diff >= 0){
+  plBox.innerHTML = "रु. " + diff.toLocaleString() + " (नाफा)";
+  plBox.className = "profit";
+  note.innerText =
+    "प्रस्तावित व्यवसायबाट वार्षिक रूपमा नाफा आर्जन हुने देखिएको छ, जसले व्यवसायको आर्थिक व्यवहारिकता र दीगोता पुष्टि गर्दछ।";
+}else{
+  plBox.innerHTML = "रु. " + Math.abs(diff).toLocaleString() + " (घाटा)";
+  plBox.className = "loss";
+  note.innerText =
+    "हालको प्रक्षेपण अनुसार घाटा देखिएको हुँदा खर्च व्यवस्थापन वा आम्दानी वृद्धिका उपायहरू आवश्यक देखिन्छ।";
 }
-
-window.onload = calculate;
 </script>
 
 </body>
