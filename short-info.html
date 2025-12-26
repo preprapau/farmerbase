@@ -84,22 +84,22 @@ button{
   <input id="bp_market">
 
   <label>८. कुल पूँजी (रु.)</label>
-  <input id="bp_capital">
+  <input id="bp_capital" type="number">
 
   <label>९. चालु पूँजी (रु.)</label>
-  <input id="bp_working">
+  <input id="bp_working" type="number">
 
   <label>१०. स्थिर पूँजी (रु.)</label>
-  <input id="bp_fixed">
+  <input id="bp_fixed" type="number">
 
   <label>११. वार्षिक खुद नाफा (५ वर्षको सरदर)</label>
-  <input id="bp_avg_profit">
+  <input id="bp_avg_profit" type="number">
 
   <label>१२. लगानीको प्रतिफल (%)</label>
-  <input id="bp_roi">
+  <input id="bp_roi" type="number">
 
   <label>१३. लगानी फिर्ता अवधि (वर्ष)</label>
-  <input id="bp_payback">
+  <input id="bp_payback" type="number">
 
   <button onclick="saveShortInfo()">💾 Save Short Info</button>
 </div>
@@ -120,19 +120,19 @@ button{
 function loadForm(){
   let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
 
-  bp_name.value       = s.bp_name||"";
-  bp_location.value   = s.bp_location||"";
-  bp_org.value        = s.bp_org||"";
-  bp_owner.value      = s.bp_owner||"";
-  bp_contact.value    = s.bp_contact||"";
-  bp_products.value   = s.bp_products||"";
-  bp_market.value     = s.bp_market||"";
-  bp_capital.value    = s.bp_capital||"";
-  bp_working.value    = s.bp_working||"";
-  bp_fixed.value      = s.bp_fixed||"";
-  bp_avg_profit.value = s.bp_avg_profit||"";
-  bp_roi.value        = s.bp_roi||"";
-  bp_payback.value    = s.bp_payback||"";
+  bp_name.value        = s.bp_name||"";
+  bp_location.value    = s.bp_location||"";
+  bp_org.value         = s.bp_org||"";
+  bp_owner.value       = s.bp_owner||"";
+  bp_contact.value     = s.bp_contact||"";
+  bp_products.value    = s.bp_products||"";
+  bp_market.value      = s.bp_market||"";
+  bp_capital.value     = s.bp_capital||"";
+  bp_working.value     = s.bp_working||"";
+  bp_fixed.value       = s.bp_fixed||"";
+  bp_avg_profit.value  = s.bp_avg_profit||"";
+  bp_roi.value         = s.bp_roi||"";
+  bp_payback.value     = s.bp_payback||"";
 }
 
 /* ===== SAVE ===== */
