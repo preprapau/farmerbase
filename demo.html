@@ -1,1 +1,103 @@
-Coming soon
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>farmerbase Demo – व्यवसायिक योजना बनाउने यन्त्र</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:system-ui,Arial;background:#f4f7f6;margin:0}
+header{background:#2e7d32;color:#fff;padding:20px;text-align:center}
+main{max-width:900px;margin:20px auto;background:#fff;padding:20px;border-radius:10px}
+h2{color:#2e7d32}
+label{display:block;margin-top:10px;font-weight:600}
+input,select{width:100%;padding:8px;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border:1px solid #ccc;padding:8px;text-align:right}
+th{text-align:center;background:#eef6f0}
+.box{background:#eef6f0;padding:15px;margin-top:20px;border-left:5px solid #2e7d32}
+button{margin-top:15px;padding:10px 18px;background:#2e7d32;color:#fff;border:none;border-radius:6px}
+footer{text-align:center;font-size:13px;color:#555;padding:15px}
+</style>
+</head>
+
+<body>
+<header>
+<h1>🌾 farmerbase Demo System</h1>
+<p>कुनै झन्झट विना व्यवसायिक योजना/प्रस्तावना बनाउने यन्त्र</p>
+</header>
+
+<main>
+
+<h2>१️⃣ वार्षिक खर्च (Demo)</h2>
+<label>परिमाण</label>
+<input id="qty" type="number" value="300">
+
+<label>दर (रु.)</label>
+<input id="rate" type="number" value="20000">
+
+<button onclick="calcExpense()">कुल खर्च निकाल्नुहोस्</button>
+
+<div class="box">
+<strong>कुल वार्षिक खर्च:</strong>
+<span id="totalExpense">–</span>
+</div>
+
+<h2>२️⃣ खर्च व्यहोरिने स्रोत (%)</h2>
+<label>सरकार (%)</label>
+<input id="gov" type="number" value="40">
+<label>सहकारी (%)</label>
+<input id="coop" type="number" value="30">
+<label>निजी/संस्थागत (%)</label>
+<input id="private" type="number" value="30">
+
+<button onclick="calcFunding()">रकम बाँडफाँट</button>
+
+<table>
+<tr><th>स्रोत</th><th>रकम (रु.)</th></tr>
+<tr><td style="text-align:left">सरकार</td><td id="govAmt">–</td></tr>
+<tr><td style="text-align:left">सहकारी</td><td id="coopAmt">–</td></tr>
+<tr><td style="text-align:left">निजी/संस्थागत</td><td id="privAmt">–</td></tr>
+</table>
+
+<h2>३️⃣ ५ वर्षे नाफा–नोक्सान (Demo)</h2>
+<div class="box">
+<strong>अनुमानित Payback Period:</strong> ४ वर्ष<br>
+<strong>ROI (५ वर्ष):</strong> 180%
+</div>
+
+<h2>४️⃣ लाभांश बाँडफाँट / लगानी (Demo)</h2>
+<table>
+<tr><th>शीर्षक</th><th>%</th><th>रकम (रु.)</th></tr>
+<tr><td style="text-align:left">पशु संख्या वृद्धि</td><td>40%</td><td>6,00,000</td></tr>
+<tr><td style="text-align:left">खोर विस्तार</td><td>30%</td><td>4,50,000</td></tr>
+<tr><td style="text-align:left">प्रविधि सुधार</td><td>30%</td><td>4,50,000</td></tr>
+</table>
+
+<div class="box">
+👉 यो Demo Version हो। वास्तविक सिस्टममा सबै हिसाब Auto हुनेछन्।
+</div>
+
+</main>
+
+<footer>
+© farmerbase Demo | Nepali Farmer Business Plan Management System
+</footer>
+
+<script>
+function calcExpense(){
+  let q = +document.getElementById("qty").value;
+  let r = +document.getElementById("rate").value;
+  let total = q * r;
+  document.getElementById("totalExpense").innerText = "रु. " + total.toLocaleString();
+}
+function calcFunding(){
+  let total = +document.getElementById("qty").value * +document.getElementById("rate").value;
+  document.getElementById("govAmt").innerText = "रु. " + (total*0.4).toLocaleString();
+  document.getElementById("coopAmt").innerText = "रु. " + (total*0.3).toLocaleString();
+  document.getElementById("privAmt").innerText = "रु. " + (total*0.3).toLocaleString();
+}
+</script>
+
+</body>
+</html>
+
