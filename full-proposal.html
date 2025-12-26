@@ -2,290 +2,231 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>farmerbase BPMS – Final Fixed</title>
+<title>Full Business Proposal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
- font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
- margin:0;background:#f4f7f6;
-}
-header{
- background:#2e7d32;color:#fff;padding:15px 20px;
-}
-nav{
- display:flex;gap:8px;flex-wrap:wrap;margin-top:10px
-}
-nav button{
- background:#ffffff22;color:#fff;border:none;
- padding:8px 14px;border-radius:6px;cursor:pointer
-}
-nav button.active{background:#1b5e20}
-
-.project-bar{
- margin-top:10px;display:flex;gap:8px;flex-wrap:wrap
-}
-.project-bar input,.project-bar select{
- padding:6px;font-family:inherit
+  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
+  background:#f4f7f6;
+  margin:0;
 }
 
-main{
- max-width:1200px;margin:20px auto;background:#fff;
- padding:25px;border-radius:10px
+/* ===== WRAP ===== */
+.wrapper{
+  max-width:1000px;
+  margin:30px auto;
+  background:#fff;
+  padding:40px;
 }
-.section{display:none}
-.section.active{display:block}
 
-h2,h3{color:#2e7d32}
-label{font-weight:600;display:block;margin-top:10px}
-input,textarea{
- width:100%;padding:8px;margin-top:5px;font-family:inherit
+/* ===== HEADINGS ===== */
+h1{
+  text-align:center;
+  margin-bottom:5px;
 }
-textarea{min-height:120px}
+h2{
+  border-bottom:2px solid #2e7d32;
+  padding-bottom:6px;
+  color:#2e7d32;
+  margin-top:40px;
+}
+h3{
+  margin-bottom:5px;
+}
 
+/* ===== TABLE ===== */
 table{
- width:100%;border-collapse:collapse;margin-top:10px
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
 }
 th,td{
- border:1px solid #ccc;padding:6px;text-align:right
+  border:1px solid #333;
+  padding:6px;
+  text-align:left;
 }
-th{text-align:center;background:#eef6f0}
-td.left{text-align:left}
-
-.box{
- background:#eef6f0;padding:15px;border-left:5px solid #2e7d32
-}
-
-button.green{
- background:#2e7d32;color:#fff;border:none;
- padding:8px 14px;border-radius:6px;cursor:pointer
+th{
+  background:#f0f0f0;
 }
 
-footer{
- text-align:center;font-size:13px;color:#555;padding:15px
-}
+/* ===== UTIL ===== */
+.center{text-align:center}
+.right{text-align:right}
+.profit{color:green;font-weight:700}
+.loss{color:red;font-weight:700}
 
-/* ✅ PRINT SAFE */
+/* ===== PRINT ===== */
 @media print{
- .no-print{display:none}
- body{background:#fff}
- header{background:#fff;color:#000}
+  body{background:#fff}
+  .wrapper{margin:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>🌾 farmerbase BPMS</h1>
-<p>कुनै झन्झट विना व्यवसायिक योजना/प्रस्तावना बनाउने यन्त्र</p>
+<div class="wrapper">
 
-<!-- GLOBAL PROJECT BAR -->
-<div class="project-bar no-print">
- <input id="projectName" placeholder="Project Name">
- <button class="green" onclick="saveProject()">💾 Save</button>
- <select id="projectList" onchange="loadProject()">
-  <option value="">📂 Load Project</option>
- </select>
- <button class="green" onclick="window.print()">🖨️ Print / PDF</button>
+  <!-- ================= COVER ================= -->
+  <h1 id="bp_name">व्यवसायको नाम</h1>
+  <p class="center" id="bp_products">व्यवसायिक प्रकृति</p>
+
+  <table>
+    <tr><th>सञ्चालन गर्ने संस्था</th><td id="bp_org"></td></tr>
+    <tr><th>प्रोप्राइटर</th><td id="bp_owner"></td></tr>
+    <tr><th>सम्पर्क व्यक्ति</th><td id="bp_contact"></td></tr>
+    <tr><th>सञ्चालन हुने स्थान</th><td id="bp_location"></td></tr>
+    <tr><th>मुख्य बजार</th><td id="bp_market"></td></tr>
+  </table>
+
+  <!-- ================= DETAIL ================= -->
+  <h2>१. व्यवसायको विस्तृत विवरण</h2>
+  <div id="businessDetail"></div>
+
+  <!-- ================= EXPENSE ================= -->
+  <h2>२. वार्षिक खर्च विवरण</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>क्याटेगोरी</th>
+        <th>शीर्षक</th>
+        <th class="right">परिमाण</th>
+        <th class="right">दर</th>
+        <th class="right">रकम</th>
+      </tr>
+    </thead>
+    <tbody id="expenseBody"></tbody>
+    <tfoot>
+      <tr>
+        <th colspan="4" class="right">कुल खर्च</th>
+        <th class="right" id="totalExpense"></th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- ================= INCOME ================= -->
+  <h2>३. वार्षिक आम्दानी विवरण</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>क्याटेगोरी</th>
+        <th>शीर्षक</th>
+        <th class="right">परिमाण</th>
+        <th class="right">दर</th>
+        <th class="right">रकम</th>
+      </tr>
+    </thead>
+    <tbody id="incomeBody"></tbody>
+    <tfoot>
+      <tr>
+        <th colspan="4" class="right">कुल आम्दानी</th>
+        <th class="right" id="totalIncome"></th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- ================= PROFIT ================= -->
+  <h2>४. नाफा / घाटा सारांश</h2>
+  <table>
+    <tr>
+      <th>कुल आम्दानी</th>
+      <td class="right" id="sumIncome"></td>
+    </tr>
+    <tr>
+      <th>कुल खर्च</th>
+      <td class="right" id="sumExpense"></td>
+    </tr>
+    <tr>
+      <th>वार्षिक नाफा / घाटा</th>
+      <td class="right" id="profitLoss"></td>
+    </tr>
+  </table>
+
+  <!-- ================= ROI ================= -->
+  <h2>५. लगानी प्रतिफल (५ वर्ष)</h2>
+  <table>
+    <tr><th>कुल पूँजी</th><td class="right" id="bp_capital"></td></tr>
+    <tr><th>५ वर्षको कुल नाफा</th><td class="right" id="fiveYearProfit"></td></tr>
+    <tr><th>ROI (%)</th><td class="right" id="roi"></td></tr>
+    <tr><th>लगानी फिर्ता अवधि</th><td class="right" id="payback"></td></tr>
+  </table>
+
 </div>
-
-<nav class="no-print">
- <button onclick="openTab('home',this)" class="active">🏠 Home</button>
- <button onclick="openTab('short',this)">📄 Short Info</button>
- <button onclick="openTab('detail',this)">📘 विस्तृत विवरण</button>
- <button onclick="openTab('expense',this)">💸 खर्च</button>
- <button onclick="openTab('income',this)">💰 आम्दानी</button>
- <button onclick="openTab('pl',this)">📊 नाफा/घाटा</button>
- <button onclick="openTab('roi',this)">📈 ५-वर्षे ROI</button>
- <button onclick="openTab('proposal',this)">🧾 Full Proposal</button>
-</nav>
-</header>
-
-<main>
-
-<div id="home" class="section active">
-<h2>📌 प्रणाली परिचय</h2>
-<p>
-यो प्रणाली किसान/व्यवसायीले खर्च, आम्दानी, नाफा,
-लगानी प्रतिफल र पूर्ण व्यवसायिक प्रस्तावना
-एउटै ठाउँमा तयार गर्न सहयोग गर्छ।
-</p>
-</div>
-
-<div id="short" class="section">
-<h2>📄 व्यवसायको संक्षिप्त विवरण</h2>
-<label>व्यवसायको नाम</label><input id="bp_name">
-<label>सञ्चालन स्थान</label><input id="bp_location">
-<label>सञ्चालन गर्ने संस्था</label><input id="bp_org">
-<label>प्रोप्राइटर</label><input id="bp_owner">
-<label>सम्पर्क व्यक्ति</label><input id="bp_contact">
-<label>उत्पादन</label><textarea id="bp_products"></textarea>
-<label>मुख्य बजार</label><textarea id="bp_market"></textarea>
-<button class="green" onclick="buildProposal()">Save</button>
-</div>
-
-<div id="detail" class="section">
-<h2>📘 व्यवसायको विस्तृत विवरण</h2>
-<div class="box" id="toc"></div>
-<div id="topics"></div>
-<button class="green" onclick="addTopic()">➕ विषय थप्नुहोस्</button>
-<button class="green" onclick="buildProposal()">Save</button>
-</div>
-
-<div id="expense" class="section">
-<h2>💸 खर्च</h2>
-<div class="box">खर्च Entry Module यहाँ Embed हुन्छ</div>
-</div>
-
-<div id="income" class="section">
-<h2>💰 आम्दानी</h2>
-<div class="box">आम्दानी Entry Module यहाँ Embed हुन्छ</div>
-</div>
-
-<div id="pl" class="section">
-<h2>📊 नाफा / घाटा</h2>
-<div class="box">
-कुल खर्च: <span id="exp">0</span><br>
-कुल आम्दानी: <span id="inc">0</span><br>
-<strong>नाफा: <span id="profit">0</span></strong>
-</div>
-</div>
-
-<div id="roi" class="section">
-<h2>📈 ५-वर्षे प्रतिफल</h2>
-<label>ROI (%)</label><input id="roiVal">
-<label>Payback (वर्ष)</label><input id="payback">
-<button class="green" onclick="buildProposal()">Save</button>
-</div>
-
-<div id="proposal" class="section">
-<h2>🧾 पूर्ण व्यवसायिक प्रस्तावना</h2>
-
-<h3 id="p_title"></h3>
-<p id="p_location"></p>
-
-<h3>१. संक्षिप्त विवरण</h3>
-<div id="p_short"></div>
-
-<h3>२. विस्तृत विवरण</h3>
-<div id="p_detail"></div>
-
-<h3>३. वित्तीय सारांश</h3>
-<table>
-<tr><th class="left">विवरण</th><th>रकम</th></tr>
-<tr><td class="left">कुल खर्च</td><td id="p_exp"></td></tr>
-<tr><td class="left">कुल आम्दानी</td><td id="p_inc"></td></tr>
-<tr><td class="left">नाफा</td><td id="p_profit"></td></tr>
-</table>
-
-<h3>४. प्रतिफल</h3>
-<div id="p_roi"></div>
-</div>
-
-</main>
-
-<footer>
-© farmerbase BPMS | Final Fixed Version
-</footer>
 
 <script>
-/* TAB FIXED */
-function openTab(id,btn){
- document.querySelectorAll(".section")
-  .forEach(s=>s.classList.remove("active"));
- document.querySelectorAll("nav button")
-  .forEach(b=>b.classList.remove("active"));
-
- document.getElementById(id).classList.add("active");
- if(btn) btn.classList.add("active");
-}
-
-/* DETAIL */
-let topics=[];
-function addTopic(){
- topics.push({title:"",content:""});
- renderTopics();
-}
-function renderTopics(){
- topicsDiv.innerHTML="";
- topics.forEach((t,i)=>{
-  topicsDiv.innerHTML+=`
-   <label>${i+1}. विषय</label>
-   <input oninput="topics[${i}].title=this.value" value="${t.title}">
-   <textarea oninput="topics[${i}].content=this.value">${t.content}</textarea>
-  `;
- });
- toc.innerHTML="<strong>विषयसूची</strong><ol>"+
-  topics.map(t=>`<li>${t.title}</li>`).join("")+"</ol>";
-}
-
-/* PROJECT */
-function saveProject(){
- let n=projectName.value;
- if(!n){alert("Project Name लेख्नुहोस्");return;}
- let data={
-  short:{
-   name:bp_name.value,loc:bp_location.value
-  },
-  detail:topics,
-  roi:roiVal.value,
-  payback:payback.value,
-  exp:localStorage.totalExpense||0,
-  inc:localStorage.totalIncome||0
- };
- localStorage.setItem("project_"+n,JSON.stringify(data));
- refreshList();alert("Project Save भयो");
-}
-function loadProject(){
- let k=projectList.value;
- if(!k)return;
- let d=JSON.parse(localStorage.getItem(k));
- if(!d)return;
- bp_name.value=d.short.name||"";
- bp_location.value=d.short.loc||"";
- topics=d.detail||[];
- renderTopics();
- roiVal.value=d.roi||"";
- payback.value=d.payback||"";
- localStorage.totalExpense=d.exp||0;
- localStorage.totalIncome=d.inc||0;
- updatePL();buildProposal();
-}
-function refreshList(){
- projectList.innerHTML='<option value="">📂 Load Project</option>';
- for(let k in localStorage)
-  if(k.startsWith("project_")){
-   let o=document.createElement("option");
-   o.value=k;o.text=k.replace("project_","");
-   projectList.appendChild(o);
+/* ===== LOAD PROJECT ===== */
+(function(){
+  let key = localStorage.getItem("activeProject");
+  if(!key){
+    alert("Project Load भएको छैन");
+    return;
   }
-}
-window.onload=refreshList;
+  let p = JSON.parse(localStorage.getItem(key));
+  if(!p) return;
 
-/* PL */
-function updatePL(){
- exp.innerText=localStorage.totalExpense||0;
- inc.innerText=localStorage.totalIncome||0;
- profit.innerText=(localStorage.totalIncome||0)-(localStorage.totalExpense||0);
-}
+  let s = p.shortInfo||{};
+  bp_name.innerText = s.bp_name||"";
+  bp_products.innerText = s.bp_products||"";
+  bp_org.innerText = s.bp_org||"";
+  bp_owner.innerText = s.bp_owner||"";
+  bp_contact.innerText = s.bp_contact||"";
+  bp_location.innerText = s.bp_location||"";
+  bp_market.innerText = s.bp_market||"";
+  bp_capital.innerText = s.bp_capital||"";
 
-/* PROPOSAL */
-function buildProposal(){
- p_title.innerText=bp_name.value;
- p_location.innerText=bp_location.value;
- p_short.innerHTML=`
-  <p><strong>संस्था:</strong> ${bp_org.value}</p>
-  <p><strong>उत्पादन:</strong> ${bp_products.value}</p>
- `;
- p_detail.innerHTML=topics.map((t,i)=>
-  `<h4>${i+1}. ${t.title}</h4><p>${t.content}</p>`
- ).join("");
- p_exp.innerText=localStorage.totalExpense||0;
- p_inc.innerText=localStorage.totalIncome||0;
- p_profit.innerText=(localStorage.totalIncome||0)-(localStorage.totalExpense||0);
- p_roi.innerText=`ROI: ${roiVal.value}% | Payback: ${payback.value} वर्ष`;
-}
+  /* ===== BUSINESS DETAIL ===== */
+  let bd = p.businessDetail||[];
+  let bdWrap = document.getElementById("businessDetail");
+  bd.forEach((b,i)=>{
+    let div = document.createElement("div");
+    div.innerHTML = `<h3>${i+1}. ${b.title}</h3><p>${b.content}</p>`;
+    bdWrap.appendChild(div);
+  });
+
+  /* ===== EXPENSE ===== */
+  let exp = p.expenseData||[];
+  let expTotal = 0;
+  exp.forEach(e=>{
+    expTotal += parseFloat(e.amount)||0;
+    expenseBody.innerHTML += `
+      <tr>
+        <td>${e.category}</td>
+        <td>${e.title}</td>
+        <td class="right">${e.qty}</td>
+        <td class="right">${e.rate}</td>
+        <td class="right">${e.amount}</td>
+      </tr>`;
+  });
+  totalExpense.innerText = expTotal;
+  sumExpense.innerText = expTotal;
+
+  /* ===== INCOME ===== */
+  let inc = p.incomeData||[];
+  let incTotal = 0;
+  inc.forEach(i=>{
+    incTotal += parseFloat(i.amount)||0;
+    incomeBody.innerHTML += `
+      <tr>
+        <td>${i.category}</td>
+        <td>${i.title}</td>
+        <td class="right">${i.qty}</td>
+        <td class="right">${i.rate}</td>
+        <td class="right">${i.amount}</td>
+      </tr>`;
+  });
+  totalIncome.innerText = incTotal;
+  sumIncome.innerText = incTotal;
+
+  let pl = incTotal - expTotal;
+  profitLoss.innerText = pl;
+  profitLoss.className = pl>=0?"profit":"loss";
+
+  /* ===== ROI ===== */
+  fiveYearProfit.innerText = localStorage.fiveYearProfit||"";
+  roi.innerText = localStorage.roi||"";
+  payback.innerText = localStorage.payback||"";
+})();
 </script>
 
 </body>
