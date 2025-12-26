@@ -2,17 +2,18 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Project Cover | Business Plan</title>
+<title>Project Cover | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER (SCREEN ONLY) ===== */
 header{
   background:#2e7d32;
   color:#fff;
@@ -75,7 +76,7 @@ nav a{
   font-size:15px;
 }
 
-/* ===== POPUP ===== */
+/* ===== POPUP (SCREEN ONLY) ===== */
 .modal{
   display:none;
   position:fixed;
@@ -96,38 +97,62 @@ nav a{
   font-weight:700;
 }
 
-/* ===== PRINT ===== */
+/* ===== PRINT (FINAL CLEAN) ===== */
 @media print{
-  header,.no-print,.modal{display:none!important}
-  body{background:#fff}
-  .cover{margin:0;padding:0;border-radius:0}
+  /* hide all app UI */
+  header,
+  nav,
+  .project-bar,
+  .no-print,
+  .modal{
+    display:none !important;
+  }
+
+  /* page reset */
+  body{
+    background:#fff;
+    margin:0;
+  }
+
+  /* cover only */
+  .cover{
+    margin:0;
+    padding:0;
+    border-radius:0;
+    box-shadow:none;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER (SCREEN ONLY) ===== -->
+<!-- ===== HEADER ===== -->
 <header class="no-print">
   <h2>🌾 Business Plan Management System</h2>
 
   <nav>
     <a href="index.html">🏠 Home</a>
-    <a href="#" onclick="openModal()">ℹ️ अहिलेका सूचना</a>
-    <a href="short-info.html">✏️ Edit Info</a>
+    <a href="#" onclick="openModal()">ℹ️ Project सारांश</a>
+    <a href="short-info.html">✏️ Edit Short Info</a>
     <a href="full-proposal.html">🧾 Full Proposal</a>
   </nav>
 
-  <!-- PROJECT MANAGER -->
+  <!-- PROJECT CONTROLS -->
   <div class="project-bar">
     <input id="projectName" placeholder="Project / प्रस्तावनाको नाम">
-    <button onclick="saveProject()">💾 Save Project</button>
+    <button onclick="saveProject()">💾 Save</button>
 
     <select id="projectList">
       <option value="">📂 Project छान्नुहोस्</option>
     </select>
+    <button onclick="loadProject()">📥 Load</button>
 
-    <button onclick="loadProject()">📥 Load Project</button>
+    <button onclick="exportProject()">📤 Export</button>
+    <input type="file" id="importFile" accept=".json" style="display:none"
+           onchange="importProject(this.files[0])">
+    <button onclick="document.getElementById('importFile').click()">📥 Import</button>
+
     <button onclick="window.print()">🖨️ Print Cover</button>
   </div>
 </header>
@@ -142,7 +167,7 @@ nav a{
     व्यवसायिक प्रकृति / वर्णन
   </div>
 
-  <!-- Map (screen only) -->
+  <!-- Map (screen only, auto hidden in print) -->
   <div class="map no-print">
     <iframe id="gmap" width="100%" height="250"
       style="border:0" loading="lazy"></iframe>
@@ -158,24 +183,23 @@ nav a{
 <div class="modal no-print" id="infoModal">
   <div class="modal-box">
     <span class="close" onclick="closeModal()">✖</span>
-    <h3>📊 अहिलेको परियोजना सारांश</h3>
+    <h3>📊 Project सारांश</h3>
     <div id="popupContent"></div>
   </div>
 </div>
 
 <script>
-/* ===== ICON SELECTOR ===== */
-function getIcon(text){
-  text=(text||"").toLowerCase();
-  if(text.includes("बंगुर")||text.includes("pig")) return "🐖";
-  if(text.includes("बाख्रा")||text.includes("goat")) return "🐐";
-  if(text.includes("गाई")||text.includes("cow")) return "🐄";
-  if(text.includes("तरकारी")||text.includes("vegetable")) return "🥬";
-  if(text.includes("कृषि")) return "🌾";
-  return "🏭";
+/* ===== ICON BY BUSINESS TYPE ===== */
+function getIcon(t){
+  t=(t||"").toLowerCase();
+  if(t.includes("बंगुर")||t.includes("pig")) return "🐖";
+  if(t.includes("बाख्रा")||t.includes("goat")) return "🐐";
+  if(t.includes("गाई")||t.includes("cow")) return "🐄";
+  if(t.includes("तरकारी")) return "🥬";
+  return "🌾";
 }
 
-/* ===== LOAD COVER ===== */
+/* ===== LOAD COVER FROM SHORT INFO ===== */
 function loadCover(){
   let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
 
@@ -193,10 +217,10 @@ function loadCover(){
   }
 
   popupContent.innerHTML = `
-    <p><strong>कुल खर्च:</strong> रु. ${localStorage.getItem("totalExpense")||0}</p>
-    <p><strong>कुल आम्दानी:</strong> रु. ${localStorage.getItem("totalIncome")||0}</p>
-    <p><strong>ROI:</strong> ${localStorage.getItem("roi")||""}%</p>
-    <p><strong>Payback:</strong> ${localStorage.getItem("payback")||""}</p>
+    <p>कुल खर्च: रु. ${localStorage.totalExpense||0}</p>
+    <p>कुल आम्दानी: रु. ${localStorage.totalIncome||0}</p>
+    <p>ROI: ${localStorage.roi||""}%</p>
+    <p>Payback: ${localStorage.payback||""}</p>
   `;
 }
 
@@ -213,14 +237,14 @@ function saveProject(){
   }
 
   let data = {
-    shortInfo: JSON.parse(localStorage.getItem("shortInfo")||"{}"),
-    businessDetail: JSON.parse(localStorage.getItem("businessDetail")||"[]"),
-    expenseData: JSON.parse(localStorage.getItem("expenseData")||"[]"),
-    incomeData: JSON.parse(localStorage.getItem("incomeData")||"[]"),
-    totalExpense: localStorage.getItem("totalExpense")||0,
-    totalIncome: localStorage.getItem("totalIncome")||0,
-    roi: localStorage.getItem("roi")||"",
-    payback: localStorage.getItem("payback")||""
+    shortInfo: JSON.parse(localStorage.shortInfo||"{}"),
+    businessDetail: JSON.parse(localStorage.businessDetail||"[]"),
+    expenseData: JSON.parse(localStorage.expenseData||"[]"),
+    incomeData: JSON.parse(localStorage.incomeData||"[]"),
+    totalExpense: localStorage.totalExpense||0,
+    totalIncome: localStorage.totalIncome||0,
+    roi: localStorage.roi||"",
+    payback: localStorage.payback||""
   };
 
   localStorage.setItem("project_"+name, JSON.stringify(data));
@@ -228,18 +252,17 @@ function saveProject(){
   alert("Project Save भयो");
 }
 
-/* ===== PROJECT LOAD (COMMAND BASED) ===== */
+/* ===== PROJECT LOAD ===== */
 function loadProject(){
-  let key = document.getElementById("projectList").value;
-
+  let key = projectList.value;
   if(!key){
-    alert("पहिला Project छान्नुहोस्");
+    alert("Project छान्नुहोस्");
     return;
   }
 
   let d = JSON.parse(localStorage.getItem(key));
   if(!d){
-    alert("Project data भेटिएन");
+    alert("Project भेटिएन");
     return;
   }
 
@@ -252,24 +275,50 @@ function loadProject(){
   localStorage.setItem("roi", d.roi||"");
   localStorage.setItem("payback", d.payback||"");
 
-  // 🔑 ACTIVE PROJECT
   localStorage.setItem("activeProject", key);
 
   loadCover();
-  alert("Project सफलतापूर्वक Load भयो");
+  alert("Project Load भयो");
+}
+
+/* ===== EXPORT ===== */
+function exportProject(){
+  let key = localStorage.getItem("activeProject");
+  if(!key){
+    alert("पहिला Project Load गर्नुहोस्");
+    return;
+  }
+  let data = localStorage.getItem(key);
+  let blob = new Blob([data], {type:"application/json"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = key.replace("project_","") + ".json";
+  a.click();
+}
+
+/* ===== IMPORT ===== */
+function importProject(file){
+  let r = new FileReader();
+  r.onload = function(){
+    let data = JSON.parse(r.result);
+    let name = prompt("Project नाम लेख्नुहोस्");
+    if(!name) return;
+    localStorage.setItem("project_"+name, JSON.stringify(data));
+    refreshProjects();
+    alert("Project Import भयो");
+  };
+  r.readAsText(file);
 }
 
 /* ===== PROJECT LIST ===== */
 function refreshProjects(){
-  let sel = document.getElementById("projectList");
-  sel.innerHTML = '<option value="">📂 Project छान्नुहोस्</option>';
-
+  projectList.innerHTML = '<option value="">📂 Project छान्नुहोस्</option>';
   for(let k in localStorage){
     if(k.startsWith("project_")){
       let o = document.createElement("option");
       o.value = k;
       o.text = k.replace("project_","");
-      sel.appendChild(o);
+      projectList.appendChild(o);
     }
   }
 }
