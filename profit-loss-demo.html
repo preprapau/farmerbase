@@ -69,6 +69,33 @@ footer{
 <h1>🌾 farmerbase – नाफा / घाटा विवरण</h1>
 <p>Expense + Income आधारित स्वचालित सारांश</p>
 </header>
+  <h2>📊 वार्षिक वित्तीय सारांश</h2>
+
+<div class="summary-box">
+
+  <div class="row">
+    <div class="label">कुल वार्षिक खर्च</div>
+    <div class="value">रु. <span id="exp">0</span></div>
+  </div>
+
+  <div class="row">
+    <div class="label">कुल वार्षिक आम्दानी</div>
+    <div class="value">रु. <span id="inc">0</span></div>
+  </div>
+
+  <div class="row">
+    <div class="label">नाफा / घाटा</div>
+    <div class="value" id="netVal">0</div>
+  </div>
+
+</div>
+
+<div class="note" id="noteText"></div>
+
+<!-- 🔍 Debug box -->
+<div style="margin-top:15px;font-size:13px;color:#555">
+  <strong>Debug:</strong> <span id="debug"></span>
+</div>
 
 <main>
   <script>
