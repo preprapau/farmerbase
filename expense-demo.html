@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Business Detail | BPMS</title>
+<title>Expense Detail | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -12,13 +12,13 @@ body{
   margin:0;
 }
 .wrap{
-  max-width:900px;
+  max-width:1000px;
   margin:25px auto;
   background:#fff;
   padding:25px;
   border-radius:10px;
 }
-h2{margin-top:0;color:#2e7d32}
+h2{color:#2e7d32;margin-top:0}
 
 /* ===== PROGRESS ===== */
 .progress{
@@ -46,36 +46,52 @@ h2{margin-top:0;color:#2e7d32}
 .bar span{
   display:block;
   height:100%;
-  width:29%;
+  width:43%;
   background:#2e7d32;
 }
 
 /* ===== FORM ===== */
-label{font-weight:700}
-input,textarea{
-  width:100%;
+.form{
+  display:grid;
+  grid-template-columns:2fr 3fr 1fr 1fr auto;
+  gap:8px;
+  margin-bottom:12px;
+}
+input,select{
   padding:8px;
-  margin:6px 0 12px;
   font-family:inherit;
 }
-textarea{min-height:90px}
-
-/* ===== TOPIC BLOCK ===== */
-.block{
-  border-left:4px solid #2e7d32;
-  background:#f9fdf9;
-  padding:12px;
-  margin-top:12px;
-  border-radius:6px;
-}
-.block h4{margin:0 0 6px}
-.del{
-  background:#c62828;
+.add{
+  background:#2e7d32;
   color:#fff;
   border:none;
-  padding:4px 8px;
-  border-radius:4px;
+  border-radius:6px;
+  padding:8px 14px;
   cursor:pointer;
+}
+
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:6px;
+  text-align:right;
+}
+th{background:#f0f0f0}
+.left{text-align:left}
+
+/* ===== CATEGORY BLOCK ===== */
+.cat-head{
+  background:#e8f5e9;
+  font-weight:700;
+}
+.subtotal{
+  font-weight:700;
+  background:#fafafa;
 }
 
 /* ===== NAV ===== */
@@ -92,9 +108,16 @@ button{
   background:#2e7d32;
   color:#fff;
 }
+.del{
+  background:#c62828;
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  padding:4px 8px;
+}
 
 @media print{
-  button,.progress{display:none}
+  button,.progress,.form{display:none}
 }
 </style>
 </head>
@@ -105,11 +128,11 @@ button{
 
 <!-- ===== PROGRESS ===== -->
 <div class="progress">
-  <b>चरण 2 / 7</b><br><br>
+  <b>चरण 3 / 7</b><br><br>
   <div class="steps">
     <span class="done">Short Info</span> →
-    <span class="active">Detail</span> →
-    <span>Expense</span> →
+    <span class="done">Detail</span> →
+    <span class="active">Expense</span> →
     <span>Income</span> →
     <span>Profit</span> →
     <span>ROI</span> →
@@ -118,18 +141,43 @@ button{
   <div class="bar"><span></span></div>
 </div>
 
-<h2>📋 व्यवसाय / परियोजनाको विस्तृत विवरण</h2>
-<div id="saveStatus">✔ Saved</div>
+<h2>💰 खर्च विवरण (वार्षिक)</h2>
 
-<label>विषयगत शीर्षक</label>
-<input id="topic" placeholder="जस्तै: व्यवसायको पृष्ठभूमि">
+<!-- ===== ENTRY FORM ===== -->
+<div class="form">
+  <select id="category">
+    <option>मेशीन औजार / प्रविधि</option>
+    <option>पूर्वाधार निर्माण</option>
+    <option>कच्चा पदार्थ</option>
+    <option>कामदार खर्च</option>
+    <option>विविध खर्च</option>
+  </select>
+  <input id="title" placeholder="खर्च शीर्षक">
+  <input id="qty" type="number" placeholder="परिमाण">
+  <input id="rate" type="number" placeholder="दर">
+  <button class="add" onclick="addExpense()">+ Add</button>
+</div>
 
-<label>विवरण</label>
-<textarea id="content" placeholder="यस शीर्षक अन्तर्गतको विवरण लेख्नुहोस्"></textarea>
-
-<button onclick="addSection()">➕ Add Section</button>
-
-<div id="sectionList"></div>
+<!-- ===== DISPLAY ===== -->
+<table>
+<thead>
+<tr>
+  <th class="left">शीर्षक</th>
+  <th>परिमाण</th>
+  <th>दर</th>
+  <th>रकम</th>
+  <th></th>
+</tr>
+</thead>
+<tbody id="expenseBody"></tbody>
+<tfoot>
+<tr class="subtotal">
+  <td colspan="3" class="left">कुल खर्च</td>
+  <td id="grandTotal">0</td>
+  <td></td>
+</tr>
+</tfoot>
+</table>
 
 <div class="nav">
   <button onclick="goPrev()">⬅ Previous</button>
@@ -139,55 +187,93 @@ button{
 </div>
 
 <script>
-/* ===== LOAD PROJECT ===== */
+/* ===== LOAD ===== */
 let key = localStorage.getItem("activeProject");
 if(!key){
   alert("पहिले Project खोल्नुहोस्");
   location.href="index.html";
 }
 let project = JSON.parse(localStorage.getItem(key));
-let details = project.businessDetail || [];
-
-/* ===== RENDER ===== */
-function render(){
-  sectionList.innerHTML="";
-  details.forEach((d,i)=>{
-    sectionList.innerHTML+=`
-      <div class="block">
-        <h4>${d.topic}</h4>
-        <p>${d.content}</p>
-        <button class="del" onclick="remove(${i})">Delete</button>
-      </div>`;
-  });
-}
-render();
+let expenses = project.expenseData || [];
 
 /* ===== ADD ===== */
-function addSection(){
-  if(!topic.value && !content.value) return;
-  details.push({topic:topic.value,content:content.value});
-  topic.value=""; content.value="";
+function addExpense(){
+  if(!title.value) return;
+  let amt = Number(qty.value||0)*Number(rate.value||0);
+  expenses.push({
+    category:category.value,
+    title:title.value,
+    qty:qty.value||0,
+    rate:rate.value||0,
+    amount:amt
+  });
+  title.value=""; qty.value=""; rate.value="";
   save();
 }
 
 /* ===== REMOVE ===== */
-function remove(i){
-  details.splice(i,1);
+function removeExpense(i){
+  expenses.splice(i,1);
   save();
 }
 
 /* ===== SAVE ===== */
 function save(){
-  project.businessDetail=details;
-  project.lastEdited=new Date().toLocaleString("ne-NP");
+  project.expenseData = expenses;
+  project.lastEdited = new Date().toLocaleString("ne-NP");
   localStorage.setItem(key,JSON.stringify(project));
-  saveStatus.innerText="✔ Saved";
   render();
 }
 
+/* ===== RENDER (CATEGORY = HEADING) ===== */
+function render(){
+  expenseBody.innerHTML="";
+  let groups={};
+  expenses.forEach(e=>{
+    if(!groups[e.category]) groups[e.category]=[];
+    groups[e.category].push(e);
+  });
+
+  let grand=0;
+
+  for(let cat in groups){
+    expenseBody.innerHTML+=`
+      <tr class="cat-head">
+        <td colspan="5">🔹 ${cat}</td>
+      </tr>
+    `;
+    let sub=0;
+
+    groups[cat].forEach((e,i)=>{
+      sub+=Number(e.amount);
+      grand+=Number(e.amount);
+      expenseBody.innerHTML+=`
+        <tr>
+          <td class="left">${e.title}</td>
+          <td>${e.qty}</td>
+          <td>${e.rate}</td>
+          <td>${e.amount}</td>
+          <td><button class="del" onclick="removeExpense(${i})">✖</button></td>
+        </tr>
+      `;
+    });
+
+    expenseBody.innerHTML+=`
+      <tr class="subtotal">
+        <td colspan="3" class="left">उप–जम्मा (${cat})</td>
+        <td>${sub}</td>
+        <td></td>
+      </tr>
+    `;
+  }
+
+  grandTotal.innerText = grand;
+}
+render();
+
 /* ===== FINAL LOCK ===== */
 if(project.status==="final"){
-  document.querySelectorAll("input,textarea,button").forEach(b=>{
+  document.querySelectorAll("input,select,button").forEach(b=>{
     if(b.innerText.includes("Previous")||b.innerText.includes("Next")) return;
     b.disabled=true;
     b.style.opacity=.6;
@@ -195,8 +281,8 @@ if(project.status==="final"){
 }
 
 /* ===== NAV ===== */
-function goPrev(){location.href="short-info.html";}
-function goNext(){save();location.href="expense-demo.html";}
+function goPrev(){location.href="business-detail.html";}
+function goNext(){save();location.href="income-demo.html";}
 </script>
 
 </body>
