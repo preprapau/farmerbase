@@ -20,25 +20,20 @@ body{
 }
 h1{margin-top:0;color:#2e7d32}
 
-/* ===== INFO BOX ===== */
-.info{
+/* BOX */
+.box{
   background:#e8f5e9;
   border:1px solid #c8e6c9;
   padding:12px;
   border-radius:8px;
   margin-bottom:15px;
 }
-
-/* ===== STATUS BOX ===== */
 .status{
   background:#fff3e0;
   border:1px solid #ffcc80;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:15px;
 }
 
-/* ===== BUTTON ===== */
+/* BUTTON */
 button{
   padding:6px 12px;
   border:none;
@@ -49,12 +44,12 @@ button{
 .btn2{background:#0277bd;color:#fff}
 .btn3{background:#6a1b9a;color:#fff}
 
-/* ===== TABLE ===== */
+/* TABLE */
 table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ccc;padding:6px;text-align:left}
+th,td{border:1px solid #ccc;padding:6px}
 th{background:#f0f0f0}
 
-/* ===== PROGRESS ===== */
+/* PROGRESS */
 .progress-wrap{
   background:#ddd;
   height:8px;
@@ -74,15 +69,21 @@ th{background:#f0f0f0}
 <div class="wrap">
 <h1>🌾 FarmerBase – Business Plan Management System</h1>
 
-<!-- ===== CREATE / LOAD ===== -->
-<div class="info">
-  <b>नयाँ / Existing Project</b><br><br>
-  <input id="projectName" placeholder="Project Name">
-  <button class="btn" onclick="createOrLoadProject()">Open Project</button>
+<!-- ===== CREATE / IMPORT / EXPORT ===== -->
+<div class="box">
+  <b>📁 Business / Project Management</b><br><br>
+
+  <input id="projectName" placeholder="नयाँ व्यवसाय / परियोजनाको नाम">
+
+  <button class="btn" onclick="createProject()">➕ Create New</button>
+
+  <input type="file" id="importFile" style="display:none" onchange="importProject(event)">
+  <button class="btn3" onclick="document.getElementById('importFile').click()">⬆ Import</button>
+  <button class="btn3" onclick="exportActive()">⬇ Export</button>
 </div>
 
 <!-- ===== STATUS ===== -->
-<div class="status" id="statusBox" style="display:none">
+<div class="box status" id="statusBox" style="display:none">
   📌 Status :
   <b><span id="pStatus">Draft</span></b>
   | Version : v<span id="pVersion">1.0</span><br>
@@ -94,8 +95,8 @@ th{background:#f0f0f0}
   <button class="btn3" onclick="changeAdminPassword()">Change Admin Password</button>
 </div>
 
-<!-- ===== COMPLETENESS ===== -->
-<div class="info">
+<!-- ===== PROGRESS ===== -->
+<div class="box">
   📊 Project Progress :
   <b><span id="completePercent">0</span>%</b>
   <div class="progress-wrap">
@@ -103,15 +104,15 @@ th{background:#f0f0f0}
   </div>
 </div>
 
-<!-- ===== ACTIONS ===== -->
-<div class="info">
+<!-- ===== NAV ===== -->
+<div class="box">
   <button onclick="openPage('short-info.html')">Short Info</button>
   <button onclick="openPage('business-detail.html')">Business Detail</button>
   <button onclick="openPage('expense-demo.html')">Expense</button>
   <button onclick="openPage('income-demo.html')">Income</button>
   <button onclick="openPage('profit-loss-demo.html')">Profit/Loss</button>
   <button onclick="openPage('five-year-roi.html')">5-Year ROI</button>
-  <button onclick="openProposal()">Full Proposal</button>
+  <button onclick="openPage('full-proposal.html')">Full Proposal</button>
 </div>
 
 <!-- ===== DASHBOARD ===== -->
@@ -132,102 +133,98 @@ th{background:#f0f0f0}
 </div>
 
 <script>
-/* ===== CREATE / LOAD PROJECT ===== */
-function createOrLoadProject(){
+// 🔒 IMPORTANT: Home load हुँदा active project clear
+localStorage.removeItem("activeProject");
+
+/* ===== CREATE ===== */
+function createProject(){
   let name = projectName.value.trim();
-  if(!name) return alert("Project name लेख्नुहोस्");
+  if(!name) return alert("व्यवसायको नाम लेख्नुहोस्");
 
   let key = "bpms_"+name.replace(/\s+/g,"_");
+  if(localStorage.getItem(key)) return alert("यो नामको Project पहिले नै छ");
 
-  if(!localStorage.getItem(key)){
-    localStorage.setItem(key, JSON.stringify({
-      shortInfo:{},
-      expenseData:[],
-      incomeData:[],
-      businessDetail:[],
-      status:"draft",
-      version:"1.0",
-      adminPassword:"1234",
-      createdAt:new Date().toLocaleString("ne-NP"),
-      lastEdited:new Date().toLocaleString("ne-NP")
-    }));
-  }
+  let data={
+    shortInfo:{},
+    businessDetail:[],
+    expenseData:[],
+    incomeData:[],
+    status:"draft",
+    version:"1.0",
+    adminPassword:"1234",
+    createdAt:new Date().toLocaleString("ne-NP"),
+    lastEdited:new Date().toLocaleString("ne-NP")
+  };
+  localStorage.setItem(key,JSON.stringify(data));
+  alert("नयाँ Project तयार भयो");
+  listProjects();
+}
 
-  localStorage.setItem("activeProject", key);
+/* ===== OPEN ===== */
+function openSelected(key){
+  localStorage.setItem("activeProject",key);
   loadActiveProject();
 }
 
 /* ===== LOAD ACTIVE ===== */
 function loadActiveProject(){
-  let key = localStorage.getItem("activeProject");
+  let key=localStorage.getItem("activeProject");
   if(!key) return;
-
-  let p = JSON.parse(localStorage.getItem(key));
+  let p=JSON.parse(localStorage.getItem(key));
   statusBox.style.display="block";
-
-  pStatus.innerText = p.status;
-  pVersion.innerText = p.version;
-  pCreated.innerText = p.createdAt;
-  pEdited.innerText = p.lastEdited;
-
+  pStatus.innerText=p.status;
+  pVersion.innerText=p.version;
+  pCreated.innerText=p.createdAt;
+  pEdited.innerText=p.lastEdited;
   calcCompleteness();
-  listProjects();
 }
 
-/* ===== DRAFT / FINAL + AUTO VERSION ===== */
+/* ===== DRAFT / FINAL ===== */
 function toggleProjectStatus(){
-  let key = localStorage.getItem("activeProject");
-  let p = JSON.parse(localStorage.getItem(key));
-
+  let key=localStorage.getItem("activeProject");
+  let p=JSON.parse(localStorage.getItem(key));
   if(p.status==="final"){
-    let pass = prompt("Admin Password:");
+    let pass=prompt("Admin Password:");
     if(pass!==p.adminPassword) return alert("Password गलत");
-
     p.status="draft";
   }else{
-    if(p.finalDate){
-      p.version = (parseFloat(p.version)+0.1).toFixed(1);
-    }
+    if(p.finalDate) p.version=(parseFloat(p.version)+0.1).toFixed(1);
     p.status="final";
     p.finalDate=new Date().toLocaleString("ne-NP");
   }
-
   p.lastEdited=new Date().toLocaleString("ne-NP");
-  localStorage.setItem(key, JSON.stringify(p));
+  localStorage.setItem(key,JSON.stringify(p));
   loadActiveProject();
 }
 
-/* ===== CHANGE PASSWORD ===== */
+/* ===== PASSWORD ===== */
 function changeAdminPassword(){
-  let key = localStorage.getItem("activeProject");
-  let p = JSON.parse(localStorage.getItem(key));
-  let old = prompt("Old Password:");
+  let key=localStorage.getItem("activeProject");
+  let p=JSON.parse(localStorage.getItem(key));
+  let old=prompt("Old Password:");
   if(old!==p.adminPassword) return alert("गलत");
-  let neu = prompt("New Password:");
+  let neu=prompt("New Password:");
   if(!neu) return;
   p.adminPassword=neu;
-  localStorage.setItem(key, JSON.stringify(p));
+  localStorage.setItem(key,JSON.stringify(p));
   alert("Password Changed");
 }
 
 /* ===== COMPLETENESS ===== */
 function calcCompleteness(){
-  let key = localStorage.getItem("activeProject");
-  let p = JSON.parse(localStorage.getItem(key));
-
-  let score=0,total=5;
+  let p=JSON.parse(localStorage.getItem(localStorage.getItem("activeProject")));
+  let score=0;
   if(Object.keys(p.shortInfo).length) score++;
   if(p.businessDetail.length) score++;
   if(p.expenseData.length) score++;
   if(p.incomeData.length) score++;
   if(p.finalDate) score++;
-
-  let percent=Math.round(score/total*100);
+  let percent=Math.round(score/5*100);
   completePercent.innerText=percent;
   homeProgress.style.width=percent+"%";
 }
 
-/* ===== DASHBOARD LIST ===== */
+/* ===== DASHBOARD ===== */
 function listProjects(){
   projectList.innerHTML="";
   for(let k in localStorage){
@@ -239,11 +236,37 @@ function listProjects(){
         <td>${p.status}</td>
         <td>${p.version}</td>
         <td>${p.lastEdited}</td>
-        <td>
-          <button onclick="localStorage.setItem('activeProject','${k}');loadActiveProject()">Open</button>
-        </td>
+        <td><button onclick="openSelected('${k}')">Open</button></td>
       </tr>`;
   }
+}
+
+/* ===== IMPORT ===== */
+function importProject(e){
+  let file=e.target.files[0];
+  if(!file) return;
+  let r=new FileReader();
+  r.onload=()=>{
+    let data=JSON.parse(r.result);
+    let name=prompt("Import Project Name:");
+    if(!name) return;
+    let key="bpms_"+name.replace(/\s+/g,"_");
+    localStorage.setItem(key,JSON.stringify(data));
+    alert("Project Import भयो");
+    listProjects();
+  };
+  r.readAsText(file);
+}
+
+/* ===== EXPORT ===== */
+function exportActive(){
+  let key=localStorage.getItem("activeProject");
+  if(!key) return alert("पहिले Project खोल्नुहोस्");
+  let blob=new Blob([localStorage.getItem(key)],{type:"application/json"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=key+".json";
+  a.click();
 }
 
 /* ===== NAV ===== */
@@ -251,9 +274,6 @@ function openPage(p){
   if(!localStorage.getItem("activeProject"))
     return alert("पहिले Project खोल्नुहोस्");
   window.open(p,"_blank");
-}
-function openProposal(){
-  window.open("full-proposal.html","_blank");
 }
 
 window.onload=listProjects;
