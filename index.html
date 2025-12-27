@@ -2,279 +2,261 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>BPMS Home | Project Controller</title>
+<title>FarmerBase BPMS – Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
-  margin:0;
   background:#f4f7f6;
+  margin:0;
+}
+.wrap{
+  max-width:1100px;
+  margin:25px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:10px;
+}
+h1{margin-top:0;color:#2e7d32}
+
+/* ===== INFO BOX ===== */
+.info{
+  background:#e8f5e9;
+  border:1px solid #c8e6c9;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
 }
 
-/* ===== HEADER ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:18px 20px;
-}
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.brand{
-  font-size:22px;
-  font-weight:700;
-}
+/* ===== STATUS BOX ===== */
 .status{
-  font-size:14px;
-  opacity:.9;
+  background:#fff3e0;
+  border:1px solid #ffcc80;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
 }
 
-/* ===== NAV ===== */
-nav{
-  margin-top:12px;
-}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:14px;
-  font-weight:600;
-  white-space:nowrap;
-}
-nav a:hover{ text-decoration:underline; }
-
-/* ===== PROJECT BAR ===== */
-.project-bar{
-  margin-top:12px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.project-bar input,
-.project-bar select{
-  padding:6px;
-  font-family:inherit;
-}
-.project-bar button{
+/* ===== BUTTON ===== */
+button{
   padding:6px 12px;
-  background:#1b5e20;
-  color:#fff;
   border:none;
   border-radius:5px;
   cursor:pointer;
 }
+.btn{background:#2e7d32;color:#fff}
+.btn2{background:#0277bd;color:#fff}
+.btn3{background:#6a1b9a;color:#fff}
 
-/* ===== COVER ===== */
-.cover{
-  max-width:900px;
-  margin:30px auto;
-  background:#fff;
-  padding:50px 40px;
-  border-radius:10px;
-  text-align:center;
-}
-.cover h1{
-  font-size:32px;
-  margin-bottom:8px;
-}
-.icon{
-  font-size:90px;
-  margin:25px 0;
-}
-.desc{
-  font-size:18px;
-}
-.footer{
-  margin-top:35px;
-  border-top:1px solid #ddd;
-  padding-top:15px;
-  font-size:15px;
-}
-.map{
-  margin-top:25px;
-}
+/* ===== TABLE ===== */
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border:1px solid #ccc;padding:6px;text-align:left}
+th{background:#f0f0f0}
 
-/* ===== PRINT ===== */
-@media print{
-  header,nav,.project-bar,.no-print{display:none!important}
-  body{background:#fff}
-  .cover{
-    margin:0;
-    padding:0;
-    border-radius:0;
-    box-shadow:none;
-  }
+/* ===== PROGRESS ===== */
+.progress-wrap{
+  background:#ddd;
+  height:8px;
+  border-radius:6px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  background:#2e7d32;
+  width:0%;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="topbar">
-    <div class="brand">🌾 BPMS – Business Plan Management System</div>
-    <div class="status" id="projectStatus">🔴 Project Loaded छैन</div>
-  </div>
+<div class="wrap">
+<h1>🌾 FarmerBase – Business Plan Management System</h1>
 
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">✏️ Short Info</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="#" onclick="openProposal()">📄 Full Proposal</a>
-  </nav>
+<!-- ===== CREATE / LOAD ===== -->
+<div class="info">
+  <b>नयाँ / Existing Project</b><br><br>
+  <input id="projectName" placeholder="Project Name">
+  <button class="btn" onclick="createOrLoadProject()">Open Project</button>
+</div>
 
-  <div class="project-bar">
-    <input id="projectName" placeholder="Project / प्रस्तावनाको नाम">
-    <button onclick="saveProject()">💾 Save</button>
+<!-- ===== STATUS ===== -->
+<div class="status" id="statusBox" style="display:none">
+  📌 Status :
+  <b><span id="pStatus">Draft</span></b>
+  | Version : v<span id="pVersion">1.0</span><br>
 
-    <select id="projectList">
-      <option value="">📂 Project छान्नुहोस्</option>
-    </select>
-    <button onclick="loadProject()">📥 Load</button>
+  🗓️ Created : <span id="pCreated"></span><br>
+  ✏️ Last Edited : <span id="pEdited"></span><br><br>
 
-    <button onclick="exportProject()">📤 Export</button>
-    <input type="file" id="importFile" accept=".json" style="display:none"
-           onchange="importProject(this.files[0])">
-    <button onclick="document.getElementById('importFile').click()">📥 Import</button>
+  <button class="btn2" onclick="toggleProjectStatus()">Draft / Final</button>
+  <button class="btn3" onclick="changeAdminPassword()">Change Admin Password</button>
+</div>
 
-    <button onclick="window.print()">🖨️ Print Cover</button>
-  </div>
-</header>
-
-<!-- ===== COVER ===== -->
-<div class="cover">
-  <h1 id="bizName">व्यवसायको नाम</h1>
-  <div class="icon" id="bizIcon">🌾</div>
-  <div class="desc" id="bizDesc">व्यवसायिक प्रकृति / वर्णन</div>
-
-  <div class="map no-print">
-    <iframe id="gmap" width="100%" height="250" style="border:0" loading="lazy"></iframe>
-  </div>
-
-  <div class="footer">
-    <div id="orgName"></div>
-    <div id="bizLocation"></div>
+<!-- ===== COMPLETENESS ===== -->
+<div class="info">
+  📊 Project Progress :
+  <b><span id="completePercent">0</span>%</b>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="homeProgress"></div>
   </div>
 </div>
 
+<!-- ===== ACTIONS ===== -->
+<div class="info">
+  <button onclick="openPage('short-info.html')">Short Info</button>
+  <button onclick="openPage('business-detail.html')">Business Detail</button>
+  <button onclick="openPage('expense-demo.html')">Expense</button>
+  <button onclick="openPage('income-demo.html')">Income</button>
+  <button onclick="openPage('profit-loss-demo.html')">Profit/Loss</button>
+  <button onclick="openPage('five-year-roi.html')">5-Year ROI</button>
+  <button onclick="openProposal()">Full Proposal</button>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<h3>📂 My Projects</h3>
+<table>
+<thead>
+<tr>
+  <th>Name</th>
+  <th>Status</th>
+  <th>Ver</th>
+  <th>Last Edited</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody id="projectList"></tbody>
+</table>
+
+</div>
+
 <script>
-/* ===== UTIL ===== */
-function mustHaveProject(){
-  if(!localStorage.getItem("activeProject")){
-    alert("पहिला Project Load वा Save गर्नुहोस्");
-    return false;
+/* ===== CREATE / LOAD PROJECT ===== */
+function createOrLoadProject(){
+  let name = projectName.value.trim();
+  if(!name) return alert("Project name लेख्नुहोस्");
+
+  let key = "bpms_"+name.replace(/\s+/g,"_");
+
+  if(!localStorage.getItem(key)){
+    localStorage.setItem(key, JSON.stringify({
+      shortInfo:{},
+      expenseData:[],
+      incomeData:[],
+      businessDetail:[],
+      status:"draft",
+      version:"1.0",
+      adminPassword:"1234",
+      createdAt:new Date().toLocaleString("ne-NP"),
+      lastEdited:new Date().toLocaleString("ne-NP")
+    }));
   }
-  return true;
+
+  localStorage.setItem("activeProject", key);
+  loadActiveProject();
 }
 
-/* ===== FULL PROPOSAL (ONLY FROM HOME) ===== */
+/* ===== LOAD ACTIVE ===== */
+function loadActiveProject(){
+  let key = localStorage.getItem("activeProject");
+  if(!key) return;
+
+  let p = JSON.parse(localStorage.getItem(key));
+  statusBox.style.display="block";
+
+  pStatus.innerText = p.status;
+  pVersion.innerText = p.version;
+  pCreated.innerText = p.createdAt;
+  pEdited.innerText = p.lastEdited;
+
+  calcCompleteness();
+  listProjects();
+}
+
+/* ===== DRAFT / FINAL + AUTO VERSION ===== */
+function toggleProjectStatus(){
+  let key = localStorage.getItem("activeProject");
+  let p = JSON.parse(localStorage.getItem(key));
+
+  if(p.status==="final"){
+    let pass = prompt("Admin Password:");
+    if(pass!==p.adminPassword) return alert("Password गलत");
+
+    p.status="draft";
+  }else{
+    if(p.finalDate){
+      p.version = (parseFloat(p.version)+0.1).toFixed(1);
+    }
+    p.status="final";
+    p.finalDate=new Date().toLocaleString("ne-NP");
+  }
+
+  p.lastEdited=new Date().toLocaleString("ne-NP");
+  localStorage.setItem(key, JSON.stringify(p));
+  loadActiveProject();
+}
+
+/* ===== CHANGE PASSWORD ===== */
+function changeAdminPassword(){
+  let key = localStorage.getItem("activeProject");
+  let p = JSON.parse(localStorage.getItem(key));
+  let old = prompt("Old Password:");
+  if(old!==p.adminPassword) return alert("गलत");
+  let neu = prompt("New Password:");
+  if(!neu) return;
+  p.adminPassword=neu;
+  localStorage.setItem(key, JSON.stringify(p));
+  alert("Password Changed");
+}
+
+/* ===== COMPLETENESS ===== */
+function calcCompleteness(){
+  let key = localStorage.getItem("activeProject");
+  let p = JSON.parse(localStorage.getItem(key));
+
+  let score=0,total=5;
+  if(Object.keys(p.shortInfo).length) score++;
+  if(p.businessDetail.length) score++;
+  if(p.expenseData.length) score++;
+  if(p.incomeData.length) score++;
+  if(p.finalDate) score++;
+
+  let percent=Math.round(score/total*100);
+  completePercent.innerText=percent;
+  homeProgress.style.width=percent+"%";
+}
+
+/* ===== DASHBOARD LIST ===== */
+function listProjects(){
+  projectList.innerHTML="";
+  for(let k in localStorage){
+    if(!k.startsWith("bpms_")) continue;
+    let p=JSON.parse(localStorage.getItem(k));
+    projectList.innerHTML+=`
+      <tr>
+        <td>${k.replace("bpms_","")}</td>
+        <td>${p.status}</td>
+        <td>${p.version}</td>
+        <td>${p.lastEdited}</td>
+        <td>
+          <button onclick="localStorage.setItem('activeProject','${k}');loadActiveProject()">Open</button>
+        </td>
+      </tr>`;
+  }
+}
+
+/* ===== NAV ===== */
+function openPage(p){
+  if(!localStorage.getItem("activeProject"))
+    return alert("पहिले Project खोल्नुहोस्");
+  window.open(p,"_blank");
+}
 function openProposal(){
-  if(!mustHaveProject()) return;
   window.open("full-proposal.html","_blank");
 }
 
-/* ===== ICON ===== */
-function getIcon(t){
-  t=(t||"").toLowerCase();
-  if(t.includes("बंगुर")||t.includes("pig"))return"🐖";
-  if(t.includes("बाख्रा")||t.includes("goat"))return"🐐";
-  if(t.includes("गाई"))return"🐄";
-  if(t.includes("तरकारी"))return"🥬";
-  return"🌾";
-}
-
-/* ===== LOAD COVER ===== */
-function loadCover(){
-  let s=JSON.parse(localStorage.getItem("shortInfo")||"{}");
-
-  bizName.innerText=s.bp_name||"व्यवसायको नाम";
-  bizDesc.innerText=s.bp_products||"व्यवसायिक प्रकृति / वर्णन";
-  orgName.innerText=s.bp_org||s.bp_owner||"";
-  bizLocation.innerText=s.bp_location||"";
-  bizIcon.innerText=getIcon(s.bp_products);
-
-  if(s.bp_location){
-    gmap.src="https://www.google.com/maps?q="+
-      encodeURIComponent(s.bp_location)+"&output=embed";
-  }
-
-  projectStatus.innerText =
-    localStorage.getItem("activeProject")
-    ? "🟢 Project Loaded: "+localStorage.getItem("activeProject").replace("project_","")
-    : "🔴 Project Loaded छैन";
-}
-
-/* ===== SAVE / LOAD / EXPORT / IMPORT ===== */
-function saveProject(){
-  let name=projectName.value.trim();
-  if(!name){alert("Project नाम लेख्नुहोस्");return;}
-
-  let data={
-    shortInfo:JSON.parse(localStorage.shortInfo||"{}"),
-    expenseData:JSON.parse(localStorage.expenseData||"[]"),
-    incomeData:JSON.parse(localStorage.incomeData||"[]")
-  };
-  localStorage.setItem("project_"+name,JSON.stringify(data));
-  refreshProjects();
-  alert("Project Save भयो");
-}
-
-function loadProject(){
-  let key=projectList.value;
-  if(!key){alert("Project छान्नुहोस्");return;}
-  let d=JSON.parse(localStorage.getItem(key));
-  if(!d){alert("Project भेटिएन");return;}
-
-  localStorage.setItem("shortInfo",JSON.stringify(d.shortInfo||{}));
-  localStorage.setItem("expenseData",JSON.stringify(d.expenseData||[]));
-  localStorage.setItem("incomeData",JSON.stringify(d.incomeData||[]));
-  localStorage.setItem("activeProject",key);
-
-  loadCover();
-}
-
-function exportProject(){
-  if(!mustHaveProject())return;
-  let key=localStorage.getItem("activeProject");
-  let blob=new Blob([localStorage.getItem(key)],{type:"application/json"});
-  let a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=key.replace("project_","")+".json";
-  a.click();
-}
-
-function importProject(file){
-  let r=new FileReader();
-  r.onload=function(){
-    let data=JSON.parse(r.result);
-    let name=prompt("Project नाम लेख्नुहोस्");
-    if(!name)return;
-    localStorage.setItem("project_"+name,JSON.stringify(data));
-    refreshProjects();
-    alert("Project Import भयो");
-  };
-  r.readAsText(file);
-}
-
-function refreshProjects(){
-  projectList.innerHTML='<option value="">📂 Project छान्नुहोस्</option>';
-  for(let k in localStorage){
-    if(k.startsWith("project_")){
-      let o=document.createElement("option");
-      o.value=k;o.text=k.replace("project_","");
-      projectList.appendChild(o);
-    }
-  }
-}
-
-window.onload=function(){
-  refreshProjects();
-  loadCover();
-};
+window.onload=listProjects;
 </script>
 
 </body>
