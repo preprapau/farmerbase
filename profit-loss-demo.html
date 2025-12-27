@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Profit & Loss | BPMS</title>
+<title>Profit / Loss | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -11,48 +11,75 @@ body{
   background:#f4f7f6;
   margin:0;
 }
-
-/* ===== CONTAINER ===== */
 .container{
-  max-width:800px;
-  margin:40px auto;
+  max-width:900px;
+  margin:25px auto;
   background:#fff;
-  padding:35px;
+  padding:25px;
   border-radius:10px;
 }
+h2{margin-top:0;color:#2e7d32}
 
-h2{
-  margin-top:0;
-  color:#2e7d32;
-  text-align:center;
+/* ===== PROGRESS ===== */
+.progress-wrap{
+  background:#e8f5e9;
+  border:1px solid #c8e6c9;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
 }
+.progress-title{font-weight:700;margin-bottom:6px}
+.steps{font-size:13px}
+.steps span{padding:3px 6px;border-radius:10px;background:#eee}
+.steps .active{background:#2e7d32;color:#fff}
+.steps .done{background:#a5d6a7}
+.bar-wrap{height:8px;background:#ddd;border-radius:6px;overflow:hidden;margin-top:8px}
+.bar{height:100%;background:#2e7d32;width:71%}
 
 /* ===== SUMMARY BOX ===== */
-.summary{
+.box{
   border:1px solid #ddd;
   border-radius:8px;
-  padding:20px;
-  margin-top:20px;
+  padding:15px;
+  margin-bottom:15px;
 }
-.row{
+.box.green{background:#e8f5e9}
+.box.red{background:#ffebee}
+.big{
+  font-size:20px;
+  font-weight:700;
+}
+.right{text-align:right}
+
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th,td{
+  border:1px solid #ccc;
+  padding:6px;
+}
+th{background:#f0f0f0}
+
+/* ===== NAV ===== */
+.nav{
   display:flex;
   justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px dashed #ddd;
+  margin-top:30px;
 }
-.row:last-child{border-bottom:none}
+button{
+  padding:8px 16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#2e7d32;
+  color:#fff;
+}
 
-.label{font-weight:600}
-.value{font-weight:700}
-
-/* ===== PROFIT / LOSS ===== */
-.profit{color:green}
-.loss{color:red}
-
-/* ===== PRINT ===== */
 @media print{
-  body{background:#fff}
-  .container{margin:0;padding:0}
+  button,.progress-wrap{display:none}
 }
 </style>
 </head>
@@ -60,78 +87,104 @@ h2{
 <body>
 
 <div class="container">
-  <h2>📊 नाफा / घाटा सारांश</h2>
 
-  <div class="summary">
-    <div class="row">
-      <div class="label">कुल वार्षिक आम्दानी</div>
-      <div class="value">रु. <span id="totalIncome">0</span></div>
-    </div>
-
-    <div class="row">
-      <div class="label">कुल वार्षिक खर्च</div>
-      <div class="value">रु. <span id="totalExpense">0</span></div>
-    </div>
-
-    <div class="row">
-      <div class="label">वार्षिक नाफा / घाटा</div>
-      <div class="value" id="profitLoss">0</div>
-    </div>
+<!-- ===== PROGRESS ===== -->
+<div class="progress-wrap">
+  <div class="progress-title">चरण 5 / 7 (71%)</div>
+  <div class="steps">
+    <span class="done">Short Info</span> →
+    <span class="done">Detail</span> →
+    <span class="done">Expense</span> →
+    <span class="done">Income</span> →
+    <span class="active">Profit/Loss</span> →
+    <span>ROI</span> →
+    <span>Proposal</span>
   </div>
+  <div class="bar-wrap"><div class="bar"></div></div>
+</div>
 
-  <div class="summary" style="margin-top:30px">
-    <div class="row">
-      <div class="label">लगानीको प्रतिफल (ROI)</div>
-      <div class="value"><span id="roi">–</span> %</div>
-    </div>
+<h2>📊 नाफा / नोक्सान विश्लेषण (वार्षिक)</h2>
 
-    <div class="row">
-      <div class="label">लगानी फिर्ता अवधि</div>
-      <div class="value"><span id="payback">–</span> वर्ष</div>
-    </div>
-  </div>
+<!-- ===== TOTALS ===== -->
+<div class="box">
+  <table>
+    <tr>
+      <th>कुल आम्दानी</th>
+      <td class="right" id="totalIncome">0</td>
+    </tr>
+    <tr>
+      <th>कुल खर्च</th>
+      <td class="right" id="totalExpense">0</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ===== PROFIT / LOSS ===== -->
+<div id="resultBox" class="box green">
+  <div>परिणाम</div>
+  <div class="big" id="profitText">0</div>
+</div>
+
+<!-- ===== DETAILS ===== -->
+<div class="box">
+  <b>नोट:</b>
+  <ul>
+    <li>यो गणना Expense र Income पेजबाट स्वतः आएको हो।</li>
+    <li>यस पेजमा कुनै पनि edit गर्न मिल्दैन।</li>
+    <li>Final proposal मा यही परिणाम देखिन्छ।</li>
+  </ul>
+</div>
+
+<div class="nav">
+  <button onclick="goPrev()">⬅ Previous</button>
+  <button onclick="goNext()">Next ➡</button>
+</div>
+
 </div>
 
 <script>
-/* ===== RESTORE ACTIVE PROJECT ===== */
-(function restoreActiveProject(){
-  let key = localStorage.getItem("activeProject");
-  if(!key) return;
+/* ===== SAFETY ===== */
+let activeKey = localStorage.getItem("activeProject");
+if(!activeKey){
+  alert("पहिले Home बाट Project खोल्नुहोस्");
+  location.href="index.html";
+}
+let project = JSON.parse(localStorage.getItem(activeKey));
 
-  let d = JSON.parse(localStorage.getItem(key));
-  if(!d) return;
+/* ===== CALCULATION ===== */
+let totalIncome = 0;
+let totalExpense = 0;
 
-  if(d.totalIncome)  localStorage.setItem("totalIncome", d.totalIncome);
-  if(d.totalExpense) localStorage.setItem("totalExpense", d.totalExpense);
-  if(d.shortInfo){
-    localStorage.setItem("shortInfo", JSON.stringify(d.shortInfo));
-  }
-})();
+(project.incomeData||[]).forEach(i=> totalIncome += Number(i.amount||0));
+(project.expenseData||[]).forEach(e=> totalExpense += Number(e.amount||0));
 
-/* ===== LOAD SUMMARY ===== */
-function loadSummary(){
-  let income  = parseFloat(localStorage.getItem("totalIncome")) || 0;
-  let expense = parseFloat(localStorage.getItem("totalExpense")) || 0;
-  let pl = income - expense;
+document.getElementById("totalIncome").innerText = totalIncome;
+document.getElementById("totalExpense").innerText = totalExpense;
 
-  document.getElementById("totalIncome").innerText = income;
-  document.getElementById("totalExpense").innerText = expense;
+let diff = totalIncome - totalExpense;
+let resultBox = document.getElementById("resultBox");
+let profitText = document.getElementById("profitText");
 
-  let plEl = document.getElementById("profitLoss");
-  plEl.innerText = "रु. " + pl;
-
-  if(pl >= 0){
-    plEl.className = "value profit";
-  }else{
-    plEl.className = "value loss";
-  }
-
-  let s = JSON.parse(localStorage.getItem("shortInfo")||"{}");
-  document.getElementById("roi").innerText = s.bp_roi || "–";
-  document.getElementById("payback").innerText = s.bp_payback || "–";
+if(diff >= 0){
+  resultBox.className = "box green";
+  profitText.innerText = "नाफा : रु. " + diff;
+}else{
+  resultBox.className = "box red";
+  profitText.innerText = "नोक्सान : रु. " + Math.abs(diff);
 }
 
-window.onload = loadSummary;
+/* ===== SAVE SNAPSHOT ===== */
+project.profitLoss = {
+  income: totalIncome,
+  expense: totalExpense,
+  net: diff
+};
+project.lastEdited = new Date().toLocaleString("ne-NP");
+localStorage.setItem(activeKey, JSON.stringify(project));
+
+/* ===== NAV ===== */
+function goPrev(){location.href="income-demo.html";}
+function goNext(){location.href="five-year-roi.html";}
 </script>
 
 </body>
