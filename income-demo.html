@@ -2,56 +2,69 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>आम्दानी विवरण | Business Plan</title>
+<title>Income Entry | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== BASE ===== */
 body{
   font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
   background:#f4f7f6;
   margin:0;
 }
-
-/* ===== HEADER ===== */
-header{
-  background:#2e7d32;
-  color:#fff;
-  padding:20px;
-}
-header h1{margin:0}
-
-nav{margin-top:10px}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-right:12px;
-  font-weight:600;
-}
-nav a:hover{text-decoration:underline}
-
-.print-btn{
-  margin-top:10px;
-  padding:8px 14px;
-  background:#fff;
-  color:#2e7d32;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* ===== MAIN ===== */
-main{
-  max-width:1100px;
+.container{
+  max-width:1000px;
   margin:25px auto;
   background:#fff;
-  padding:30px;
+  padding:25px;
   border-radius:10px;
 }
+h2{margin-top:0;color:#2e7d32}
 
-h2{color:#2e7d32}
+/* ===== PROGRESS ===== */
+.progress-wrap{
+  background:#e8f5e9;
+  border:1px solid #c8e6c9;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
+}
+.progress-title{font-weight:700;margin-bottom:6px}
+.steps{font-size:13px}
+.steps span{padding:3px 6px;border-radius:10px;background:#eee}
+.steps .active{background:#2e7d32;color:#fff}
+.steps .done{background:#a5d6a7}
+.bar-wrap{height:8px;background:#ddd;border-radius:6px;overflow:hidden;margin-top:8px}
+.bar{height:100%;background:#2e7d32;width:57%}
 
+/* ===== AUTOSAVE ===== */
+#autosaveStatus{
+  font-size:13px;
+  color:#2e7d32;
+  margin-bottom:10px;
+}
+
+/* ===== NOTICE ===== */
+#noticeBox{
+  display:none;
+  background:#fff8e1;
+  border:1px solid #ffe082;
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:15px;
+  font-size:14px;
+}
+
+/* ===== FORM ===== */
+label{font-weight:600}
+select,input{
+  padding:6px;
+  margin-right:6px;
+  font-family:inherit;
+}
+input[type=number]{width:90px}
+input[type=text]{width:200px}
+
+/* ===== TABLE ===== */
 table{
   width:100%;
   border-collapse:collapse;
@@ -59,172 +72,207 @@ table{
 }
 th,td{
   border:1px solid #ccc;
-  padding:8px;
-  text-align:center;
-}
-th{background:#eef6f0}
-td.left{text-align:left}
-
-input{
-  width:100%;
   padding:6px;
-  font-family:inherit;
+  text-align:left;
 }
+th{background:#f0f0f0}
+.right{text-align:right}
 
+/* ===== NAV ===== */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
 button{
-  padding:8px 14px;
-  background:#2e7d32;
-  color:#fff;
+  padding:8px 16px;
   border:none;
   border-radius:6px;
   cursor:pointer;
-  margin-top:10px;
+  background:#2e7d32;
+  color:#fff;
+}
+.del{background:#c62828}
+
+/* highlight */
+.highlight{
+  border:2px solid #ff9800 !important;
+  background:#fff3e0;
 }
 
-.total-box{
-  margin-top:30px;
-  padding:15px;
-  background:#eef6f0;
-  border-left:6px solid #2e7d32;
-  font-size:18px;
-  font-weight:600;
-}
-
-/* ===== FOOTER ===== */
-footer{
-  text-align:center;
-  font-size:13px;
-  color:#555;
-  padding:20px;
-}
-
-/* ===== PRINT ===== */
 @media print{
-  header,
-  nav,
-  .print-btn,
-  .no-print,
-  footer{
-    display:none !important;
-  }
-  body{background:#fff}
-  main{
-    margin:0;
-    padding:0;
-    box-shadow:none;
-    border-radius:0;
-  }
+  button,.progress-wrap,#autosaveStatus,#noticeBox{display:none}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== HEADER (SCREEN ONLY) ===== -->
-<header class="no-print">
-  <h1>🌾 farmerbase BPMS</h1>
-  <p>आम्दानी विवरण (Income Entry)</p>
+<div class="container">
 
-  <nav>
-    <a href="index.html">🏠 Home</a>
-    <a href="short-info.html">📄 Short Info</a>
-    <a href="business-detail.html">📘 विस्तृत विवरण</a>
-    <a href="expense-demo.html">💸 खर्च</a>
-    <a href="income-demo.html">💰 आम्दानी</a>
-    <a href="profit-loss-demo.html">📊 नाफा/घाटा</a>
-    <a href="five-year-roi.html">📈 ५-वर्षे ROI</a>
-    <a href="full-proposal.html">🧾 Full Proposal</a>
-  </nav>
-
-  <button onclick="window.print()" class="print-btn">
-    🖨️ Print / Save PDF
-  </button>
-</header>
-
-<!-- ===== MAIN ===== -->
-<main>
-
-<h2>💰 आम्दानी विवरण</h2>
-
-<table>
-  <tr>
-    <th class="left">आम्दानीको श्रोत</th>
-    <th>परिमाण</th>
-    <th>दर (रु.)</th>
-    <th>रकम</th>
-  </tr>
-  <tbody id="incomeRows"></tbody>
-</table>
-
-<button onclick="addIncome()">➕ आम्दानी थप्नुहोस्</button>
-
-<div class="total-box">
-  कुल आम्दानी: रु. <span id="totalIncome">0</span>
+<!-- ===== PROGRESS ===== -->
+<div class="progress-wrap">
+  <div class="progress-title">चरण 4 / 7 (57%)</div>
+  <div class="steps">
+    <span class="done">Short Info</span> →
+    <span class="done">Detail</span> →
+    <span class="done">Expense</span> →
+    <span class="active">Income</span> →
+    <span>Profit</span> →
+    <span>ROI</span> →
+    <span>Proposal</span>
+  </div>
+  <div class="bar-wrap"><div class="bar"></div></div>
 </div>
 
-</main>
+<div id="autosaveStatus">💾 Saved</div>
+<div id="noticeBox"></div>
 
-<footer class="no-print">
-© Business Plan Management System
-</footer>
+<h2>💰 आम्दानी विवरण (वार्षिक)</h2>
 
-<!-- ===== SCRIPT ===== -->
+<!-- ===== ENTRY ===== -->
+<label>क्याटेगोरी</label>
+<select id="category">
+  <option value="उत्पादन बिक्री">उत्पादन बिक्री</option>
+  <option value="पशु / पशुजन्य उत्पादन">पशु / पशुजन्य उत्पादन</option>
+  <option value="सेवा / भाडा / अन्य">सेवा / भाडा / अन्य</option>
+  <option value="अनुदान / सहयोग">अनुदान / सहयोग</option>
+  <option value="विविध आम्दानी">विविध आम्दानी</option>
+</select>
+
+<input id="title" type="text" placeholder="आम्दानी शीर्षक">
+<input id="qty" type="number" placeholder="परिमाण">
+<input id="rate" type="number" placeholder="दर">
+<button onclick="addIncome()">➕ Add</button>
+
+<!-- ===== TABLE ===== -->
+<table>
+<thead>
+<tr>
+  <th>क्याटेगोरी</th>
+  <th>शीर्षक</th>
+  <th class="right">परिमाण</th>
+  <th class="right">दर</th>
+  <th class="right">रकम</th>
+  <th></th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+<tfoot>
+<tr>
+  <th colspan="4" class="right">कुल आम्दानी</th>
+  <th class="right" id="totalIncome">0</th>
+  <th></th>
+</tr>
+</tfoot>
+</table>
+
+<div class="nav">
+  <button onclick="goPrev()">⬅ Previous</button>
+  <button onclick="goNext()">Next ➡</button>
+</div>
+
+</div>
+
 <script>
-let incomeData = JSON.parse(localStorage.getItem("incomeData")) || [];
-
-/* Add income row */
-function addIncome(){
-  incomeData.push({title:"", qty:1, rate:0, total:0});
-  render();
+/* ===== SAFETY ===== */
+let activeKey = localStorage.getItem("activeProject");
+if(!activeKey){
+  alert("पहिले Home बाट Project खोल्नुहोस्");
+  location.href="index.html";
 }
+let project = JSON.parse(localStorage.getItem(activeKey));
 
-/* Update */
-function updateIncome(i, field, value){
-  let it = incomeData[i];
-  it[field] = field==="qty"||field==="rate" ? Number(value) : value;
-  it.total = it.qty * it.rate;
-  save();
-  render();
-}
+/* ===== DATA ===== */
+let incomeData = project.incomeData || [];
 
-/* Render */
+/* ===== RENDER ===== */
 function render(){
-  let rows = document.getElementById("incomeRows");
-  rows.innerHTML = "";
-  let sum = 0;
+  tbody.innerHTML="";
+  let total=0;
 
-  incomeData.forEach((it,i)=>{
-    sum += it.total;
-    rows.innerHTML += `
+  incomeData.forEach((e,i)=>{
+    total += e.amount;
+    tbody.innerHTML += `
       <tr>
-        <td class="left">
-          <input value="${it.title}"
-            oninput="updateIncome(${i},'title',this.value)">
-        </td>
-        <td>
-          <input type="number" value="${it.qty}"
-            oninput="updateIncome(${i},'qty',this.value)">
-        </td>
-        <td>
-          <input type="number" value="${it.rate}"
-            oninput="updateIncome(${i},'rate',this.value)">
-        </td>
-        <td>${it.total.toLocaleString()}</td>
-      </tr>
-    `;
+        <td>${e.category}</td>
+        <td>${e.title}</td>
+        <td class="right">${e.qty}</td>
+        <td class="right">${e.rate}</td>
+        <td class="right">${e.amount}</td>
+        <td><button class="del" onclick="removeIncome(${i})">✖</button></td>
+      </tr>`;
   });
 
-  document.getElementById("totalIncome").innerText = sum.toLocaleString();
-  localStorage.setItem("totalIncome", sum);
+  totalIncome.innerText = total;
+  checkNotices();
 }
-
-/* Save */
-function save(){
-  localStorage.setItem("incomeData", JSON.stringify(incomeData));
-}
-
-/* Load */
 render();
+
+/* ===== ADD ===== */
+function addIncome(){
+  let q = Number(qty.value||0);
+  let r = Number(rate.value||0);
+  let amt = q*r;
+
+  incomeData.push({
+    category:category.value,
+    title:title.value,
+    qty:q,
+    rate:r,
+    amount:amt
+  });
+
+  title.value="";qty.value="";rate.value="";
+  saveIncome();
+}
+
+/* ===== REMOVE ===== */
+function removeIncome(i){
+  incomeData.splice(i,1);
+  saveIncome();
+}
+
+/* ===== SAVE ===== */
+function saveIncome(){
+  project.incomeData = incomeData;
+  project.lastEdited = new Date().toLocaleString("ne-NP");
+  localStorage.setItem(activeKey, JSON.stringify(project));
+  autosaveStatus.innerText="✔ Saved";
+  render();
+}
+
+/* ===== AUTOSAVE ===== */
+let t;
+document.querySelectorAll("input,select").forEach(el=>{
+  el.addEventListener("input",()=>{
+    autosaveStatus.innerText="⏳ Saving...";
+    clearTimeout(t);
+    t=setTimeout(saveIncome,700);
+  });
+});
+
+/* ===== NOTICE ===== */
+function checkNotices(){
+  if(incomeData.length===0){
+    noticeBox.style.display="block";
+    noticeBox.innerHTML="ℹ️ <b>सूचना:</b> हालसम्म कुनै आम्दानी विवरण थपिएको छैन।";
+  }else{
+    noticeBox.style.display="none";
+  }
+}
+
+/* ===== FINAL LOCK ===== */
+if(project.status==="final"){
+  document.querySelectorAll("input,select,button").forEach(b=>{
+    if(b.innerText.includes("Previous")||b.innerText.includes("Next")) return;
+    b.disabled=true;b.style.opacity=.7;
+  });
+}
+
+/* ===== NAV ===== */
+function goPrev(){location.href="expense-demo.html";}
+function goNext(){saveIncome();location.href="profit-loss-demo.html";}
 </script>
 
 </body>
