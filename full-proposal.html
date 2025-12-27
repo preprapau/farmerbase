@@ -2,7 +2,7 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Full Business Proposal</title>
+<title>Full Proposal | BPMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -11,222 +11,262 @@ body{
   background:#f4f7f6;
   margin:0;
 }
-
-/* ===== WRAP ===== */
-.wrapper{
-  max-width:1000px;
-  margin:30px auto;
+.container{
+  max-width:900px;
+  margin:25px auto;
   background:#fff;
-  padding:40px;
+  padding:30px;
+  border-radius:10px;
 }
+h1,h2,h3{color:#2e7d32}
+h1{text-align:center;margin-top:0}
 
-/* ===== HEADINGS ===== */
-h1{
+.meta{
   text-align:center;
-  margin-bottom:5px;
-}
-h2{
-  border-bottom:2px solid #2e7d32;
-  padding-bottom:6px;
-  color:#2e7d32;
-  margin-top:40px;
-}
-h3{
-  margin-bottom:5px;
+  font-size:13px;
+  color:#555;
+  margin-bottom:20px;
 }
 
-/* ===== TABLE ===== */
+.section{
+  margin-top:25px;
+}
+.section h2{
+  border-bottom:2px solid #e0e0e0;
+  padding-bottom:5px;
+}
+
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:10px;
 }
 th,td{
-  border:1px solid #333;
+  border:1px solid #ccc;
   padding:6px;
   text-align:left;
 }
-th{
-  background:#f0f0f0;
+th{background:#f0f0f0}
+.right{text-align:right}
+
+.note{
+  font-size:13px;
+  color:#666;
 }
 
-/* ===== UTIL ===== */
-.center{text-align:center}
-.right{text-align:right}
-.profit{color:green;font-weight:700}
-.loss{color:red;font-weight:700}
+.nav{
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+button{
+  padding:8px 16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#2e7d32;
+  color:#fff;
+}
 
-/* ===== PRINT ===== */
 @media print{
+  button,.nav{display:none}
   body{background:#fff}
-  .wrapper{margin:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="container">
 
-  <!-- ================= COVER ================= -->
-  <h1 id="bp_name">व्यवसायको नाम</h1>
-  <p class="center" id="bp_products">व्यवसायिक प्रकृति</p>
+<h1 id="bpTitle">व्यवसायिक प्रस्तावना</h1>
 
-  <table>
-    <tr><th>सञ्चालन गर्ने संस्था</th><td id="bp_org"></td></tr>
-    <tr><th>प्रोप्राइटर</th><td id="bp_owner"></td></tr>
-    <tr><th>सम्पर्क व्यक्ति</th><td id="bp_contact"></td></tr>
-    <tr><th>सञ्चालन हुने स्थान</th><td id="bp_location"></td></tr>
-    <tr><th>मुख्य बजार</th><td id="bp_market"></td></tr>
-  </table>
+<div class="meta">
+  <span id="fpStatus"></span> |
+  Version : v<span id="fpVersion"></span><br>
+  Created : <span id="fpCreated"></span> |
+  Last Edited : <span id="fpEdited"></span>
+</div>
 
-  <!-- ================= DETAIL ================= -->
-  <h2>१. व्यवसायको विस्तृत विवरण</h2>
-  <div id="businessDetail"></div>
+<!-- ===== SHORT INFO ===== -->
+<div class="section">
+<h2>१. संक्षिप्त परिचय</h2>
+<table>
+<tr><th>व्यवसाय/प्रस्तावनाको नाम</th><td id="si_name"></td></tr>
+<tr><th>सञ्चालन हुने स्थान</th><td id="si_location"></td></tr>
+<tr><th>सञ्चालन गर्ने संस्था</th><td id="si_org"></td></tr>
+<tr><th>प्रोप्राइटर</th><td id="si_owner"></td></tr>
+<tr><th>सम्पर्क व्यक्ति</th><td id="si_contact"></td></tr>
+<tr><th>सम्पर्क नम्बर</th><td id="si_phone"></td></tr>
+<tr><th>उत्पादन/व्यवसायिक प्रकृति</th><td id="si_products"></td></tr>
+<tr><th>मुख्य बजार</th><td id="si_market"></td></tr>
+<tr><th>कुल पूँजी</th><td id="si_capital"></td></tr>
+</table>
+</div>
 
-  <!-- ================= EXPENSE ================= -->
-  <h2>२. वार्षिक खर्च विवरण</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>क्याटेगोरी</th>
-        <th>शीर्षक</th>
-        <th class="right">परिमाण</th>
-        <th class="right">दर</th>
-        <th class="right">रकम</th>
-      </tr>
-    </thead>
-    <tbody id="expenseBody"></tbody>
-    <tfoot>
-      <tr>
-        <th colspan="4" class="right">कुल खर्च</th>
-        <th class="right" id="totalExpense"></th>
-      </tr>
-    </tfoot>
-  </table>
+<!-- ===== BUSINESS DETAIL ===== -->
+<div class="section">
+<h2>२. व्यवसायको विस्तृत विवरण</h2>
+<div id="detailBox"></div>
+</div>
 
-  <!-- ================= INCOME ================= -->
-  <h2>३. वार्षिक आम्दानी विवरण</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>क्याटेगोरी</th>
-        <th>शीर्षक</th>
-        <th class="right">परिमाण</th>
-        <th class="right">दर</th>
-        <th class="right">रकम</th>
-      </tr>
-    </thead>
-    <tbody id="incomeBody"></tbody>
-    <tfoot>
-      <tr>
-        <th colspan="4" class="right">कुल आम्दानी</th>
-        <th class="right" id="totalIncome"></th>
-      </tr>
-    </tfoot>
-  </table>
+<!-- ===== EXPENSE ===== -->
+<div class="section">
+<h2>३. खर्च विवरण (वार्षिक)</h2>
+<table>
+<thead>
+<tr>
+  <th>क्याटेगोरी</th>
+  <th>शीर्षक</th>
+  <th class="right">परिमाण</th>
+  <th class="right">दर</th>
+  <th class="right">रकम</th>
+</tr>
+</thead>
+<tbody id="expenseBody"></tbody>
+<tfoot>
+<tr>
+  <th colspan="4" class="right">कुल खर्च</th>
+  <th class="right" id="expenseTotal"></th>
+</tr>
+</tfoot>
+</table>
+</div>
 
-  <!-- ================= PROFIT ================= -->
-  <h2>४. नाफा / घाटा सारांश</h2>
-  <table>
-    <tr>
-      <th>कुल आम्दानी</th>
-      <td class="right" id="sumIncome"></td>
-    </tr>
-    <tr>
-      <th>कुल खर्च</th>
-      <td class="right" id="sumExpense"></td>
-    </tr>
-    <tr>
-      <th>वार्षिक नाफा / घाटा</th>
-      <td class="right" id="profitLoss"></td>
-    </tr>
-  </table>
+<!-- ===== INCOME ===== -->
+<div class="section">
+<h2>४. आम्दानी विवरण (वार्षिक)</h2>
+<table>
+<thead>
+<tr>
+  <th>क्याटेगोरी</th>
+  <th>शीर्षक</th>
+  <th class="right">परिमाण</th>
+  <th class="right">दर</th>
+  <th class="right">रकम</th>
+</tr>
+</thead>
+<tbody id="incomeBody"></tbody>
+<tfoot>
+<tr>
+  <th colspan="4" class="right">कुल आम्दानी</th>
+  <th class="right" id="incomeTotal"></th>
+</tr>
+</tfoot>
+</table>
+</div>
 
-  <!-- ================= ROI ================= -->
-  <h2>५. लगानी प्रतिफल (५ वर्ष)</h2>
-  <table>
-    <tr><th>कुल पूँजी</th><td class="right" id="bp_capital"></td></tr>
-    <tr><th>५ वर्षको कुल नाफा</th><td class="right" id="fiveYearProfit"></td></tr>
-    <tr><th>ROI (%)</th><td class="right" id="roi"></td></tr>
-    <tr><th>लगानी फिर्ता अवधि</th><td class="right" id="payback"></td></tr>
-  </table>
+<!-- ===== PROFIT LOSS ===== -->
+<div class="section">
+<h2>५. नाफा / नोक्सान</h2>
+<table>
+<tr><th>कुल आम्दानी</th><td class="right" id="pl_income"></td></tr>
+<tr><th>कुल खर्च</th><td class="right" id="pl_expense"></td></tr>
+<tr><th>नाफा / नोक्सान</th><td class="right" id="pl_net"></td></tr>
+</table>
+</div>
+
+<!-- ===== ROI ===== -->
+<div class="section">
+<h2>६. पाँच वर्षे ROI सारांश</h2>
+<table>
+<tr><th>प्रारम्भिक लगानी</th><td class="right" id="roi_inv"></td></tr>
+<tr><th>कुल नाफा (५ वर्ष)</th><td class="right" id="roi_profit"></td></tr>
+<tr><th>ROI (%)</th><td class="right" id="roi_percent"></td></tr>
+<tr><th>Payback Period</th><td id="roi_payback"></td></tr>
+</table>
+</div>
+
+<div class="nav">
+  <button onclick="goHome()">⬅ Home</button>
+  <button onclick="window.print()">🖨 Print</button>
+</div>
 
 </div>
 
 <script>
-/* ===== LOAD PROJECT ===== */
-(function(){
-  let key = localStorage.getItem("activeProject");
-  if(!key){
-    alert("Project Load भएको छैन");
-    return;
-  }
-  let p = JSON.parse(localStorage.getItem(key));
-  if(!p) return;
+/* ===== SAFETY ===== */
+let key = localStorage.getItem("activeProject");
+if(!key){
+  alert("Project भेटिएन");
+  location.href="index.html";
+}
+let p = JSON.parse(localStorage.getItem(key)||"{}");
 
-  let s = p.shortInfo||{};
-  bp_name.innerText = s.bp_name||"";
-  bp_products.innerText = s.bp_products||"";
-  bp_org.innerText = s.bp_org||"";
-  bp_owner.innerText = s.bp_owner||"";
-  bp_contact.innerText = s.bp_contact||"";
-  bp_location.innerText = s.bp_location||"";
-  bp_market.innerText = s.bp_market||"";
-  bp_capital.innerText = s.bp_capital||"";
+/* ===== HELPERS ===== */
+function safe(v){ return v && v!=="" ? v : "<i>(सूचना उपलब्ध छैन)</i>"; }
 
-  /* ===== BUSINESS DETAIL ===== */
-  let bd = p.businessDetail||[];
-  let bdWrap = document.getElementById("businessDetail");
-  bd.forEach((b,i)=>{
-    let div = document.createElement("div");
-    div.innerHTML = `<h3>${i+1}. ${b.title}</h3><p>${b.content}</p>`;
-    bdWrap.appendChild(div);
-  });
+/* ===== META ===== */
+fpStatus.innerText = p.status==="final" ? "Final Proposal" : "Draft Proposal";
+fpVersion.innerText = p.version || "1.0";
+fpCreated.innerText = p.createdAt || "";
+fpEdited.innerText = p.lastEdited || "";
 
-  /* ===== EXPENSE ===== */
-  let exp = p.expenseData||[];
-  let expTotal = 0;
-  exp.forEach(e=>{
-    expTotal += parseFloat(e.amount)||0;
-    expenseBody.innerHTML += `
-      <tr>
-        <td>${e.category}</td>
-        <td>${e.title}</td>
-        <td class="right">${e.qty}</td>
-        <td class="right">${e.rate}</td>
-        <td class="right">${e.amount}</td>
-      </tr>`;
-  });
-  totalExpense.innerText = expTotal;
-  sumExpense.innerText = expTotal;
+/* ===== SHORT INFO ===== */
+let s = p.shortInfo || {};
+bpTitle.innerText = s.bp_name || "व्यवसायिक प्रस्तावना";
+si_name.innerHTML = safe(s.bp_name);
+si_location.innerHTML = safe(s.bp_location);
+si_org.innerHTML = safe(s.bp_org);
+si_owner.innerHTML = safe(s.bp_owner);
+si_contact.innerHTML = safe(s.bp_contact_person);
+si_phone.innerHTML = safe(s.bp_phone);
+si_products.innerHTML = safe(s.bp_products);
+si_market.innerHTML = safe(s.bp_market);
+si_capital.innerHTML = safe(s.bp_capital);
 
-  /* ===== INCOME ===== */
-  let inc = p.incomeData||[];
-  let incTotal = 0;
-  inc.forEach(i=>{
-    incTotal += parseFloat(i.amount)||0;
-    incomeBody.innerHTML += `
-      <tr>
-        <td>${i.category}</td>
-        <td>${i.title}</td>
-        <td class="right">${i.qty}</td>
-        <td class="right">${i.rate}</td>
-        <td class="right">${i.amount}</td>
-      </tr>`;
-  });
-  totalIncome.innerText = incTotal;
-  sumIncome.innerText = incTotal;
+/* ===== DETAIL ===== */
+let dbox = document.getElementById("detailBox");
+(p.businessDetail||[]).forEach(d=>{
+  dbox.innerHTML += `<h3>${d.topic}</h3><p>${d.content}</p>`;
+});
+if(!dbox.innerHTML) dbox.innerHTML="<i>(विवरण उपलब्ध छैन)</i>";
 
-  let pl = incTotal - expTotal;
-  profitLoss.innerText = pl;
-  profitLoss.className = pl>=0?"profit":"loss";
+/* ===== EXPENSE ===== */
+let eTotal=0;
+(p.expenseData||[]).forEach(e=>{
+  eTotal+=e.amount;
+  expenseBody.innerHTML+=`
+    <tr>
+      <td>${e.category}</td>
+      <td>${e.title}</td>
+      <td class="right">${e.qty}</td>
+      <td class="right">${e.rate}</td>
+      <td class="right">${e.amount}</td>
+    </tr>`;
+});
+expenseTotal.innerText = eTotal;
 
-  /* ===== ROI ===== */
-  fiveYearProfit.innerText = localStorage.fiveYearProfit||"";
-  roi.innerText = localStorage.roi||"";
-  payback.innerText = localStorage.payback||"";
-})();
+/* ===== INCOME ===== */
+let iTotal=0;
+(p.incomeData||[]).forEach(i=>{
+  iTotal+=i.amount;
+  incomeBody.innerHTML+=`
+    <tr>
+      <td>${i.category}</td>
+      <td>${i.title}</td>
+      <td class="right">${i.qty}</td>
+      <td class="right">${i.rate}</td>
+      <td class="right">${i.amount}</td>
+    </tr>`;
+});
+incomeTotal.innerText = iTotal;
+
+/* ===== PROFIT LOSS ===== */
+pl_income.innerText = iTotal;
+pl_expense.innerText = eTotal;
+let net = iTotal - eTotal;
+pl_net.innerText = net>=0 ? "नाफा : रु. "+net : "नोक्सान : रु. "+Math.abs(net);
+
+/* ===== ROI ===== */
+let r = p.fiveYearROI || {};
+roi_inv.innerText = r.investment || "";
+roi_profit.innerText = r.totalProfit || "";
+roi_percent.innerText = r.roi || "";
+roi_payback.innerText = r.payback || "";
+
+/* ===== NAV ===== */
+function goHome(){location.href="index.html";}
 </script>
 
 </body>
