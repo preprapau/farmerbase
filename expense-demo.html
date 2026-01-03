@@ -16,7 +16,7 @@ header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
 
 /* ===== Layout ===== */
 .container{
- max-width:1300px;
+ max-width:1400px;
  margin:auto;
  background:#fff;
  padding:20px;
@@ -29,7 +29,7 @@ h2{margin-top:30px;color:#333}
 table{
  width:100%;
  border-collapse:collapse;
- table-layout:fixed; /* 🔒 width lock */
+ table-layout:fixed;
  margin-top:10px
 }
 th,td{
@@ -42,12 +42,14 @@ th{background:#e8f5e9}
 
 /* ===== Column widths ===== */
 .col-cat{width:150px}
-.col-title{width:220px}
+.col-title{width:210px}
 .col-unit{width:90px}
 .col-qty{width:90px}
 .col-rate{width:110px}
+.col-totalcost{width:130px}
 .col-life{width:90px}
-.col-total{width:140px}
+.col-dep{width:130px}
+.col-percent{width:80px}
 .col-action{width:60px}
 
 /* ===== Inputs ===== */
@@ -92,7 +94,7 @@ td input, td select{
   </select>
   <input id="catName" placeholder="उपशीर्षक नाम">
   <button class="btn add" onclick="addCategory()">➕ Add</button>
-  <span class="small">(Add / Edit / Delete सबै सम्भव)</span>
+  <span class="small">(Add / Edit / Delete)</span>
 </div>
 
 <!-- ================= VARIABLE EXPENSE TABLE ================= -->
@@ -105,7 +107,7 @@ td input, td select{
   <th class="col-unit">इकाई</th>
   <th class="col-qty">परिमाण</th>
   <th class="col-rate">दर</th>
-  <th class="col-total">जम्मा खर्च</th>
+  <th class="col-totalcost">जम्मा खर्च</th>
   <th class="col-action">🗑️</th>
 </tr>
 </thead>
@@ -114,7 +116,7 @@ td input, td select{
 <button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च थप्नुहोस्</button>
 
 <!-- ================= FIXED EXPENSE TABLE ================= -->
-<h2>🏗️ स्थिर खर्च (ह्रासकट्टी)</h2>
+<h2>🏗️ स्थिर खर्च (ह्रासकट्टी सहित)</h2>
 <table id="fixedTable">
 <thead>
 <tr>
@@ -123,8 +125,10 @@ td input, td select{
   <th class="col-unit">इकाई</th>
   <th class="col-qty">परिमाण</th>
   <th class="col-rate">दर</th>
-  <th class="col-life">आयु (वर्ष)</th>
-  <th class="col-total">वार्षिक ह्रास</th>
+  <th class="col-totalcost">जम्मा खर्च</th>
+  <th class="col-life">आयु</th>
+  <th class="col-dep">वार्षिक ह्रास</th>
+  <th class="col-percent">%</th>
   <th class="col-action">🗑️</th>
 </tr>
 </thead>
@@ -182,7 +186,7 @@ function addExpense(type){
   unit:"",
   qty:0,
   rate:0,
-  life: type==="fixed" ? 1 : null
+  life:type==="fixed"?1:null
  });
  save(); render();
 }
@@ -190,11 +194,7 @@ function addExpense(type){
 function update(id,field,value){
  const e=expenses.find(x=>x.id===id);
  e[field]=value;
-
- // 🔒 Rule enforcement
- if(field==="type" && value==="variable"){
-   e.life=null;
- }
+ if(field==="type" && value==="variable"){ e.life=null; }
  save(); render();
 }
 
@@ -203,6 +203,13 @@ function removeExp(id){
   expenses=expenses.filter(x=>x.id!==id);
   save(); render();
  }
+}
+
+/* ================= HELPERS ================= */
+function totalFixedCost(){
+ return expenses
+  .filter(e=>e.type==="fixed")
+  .reduce((s,e)=>s+(e.qty*e.rate||0),0);
 }
 
 /* ================= RENDER ================= */
@@ -215,7 +222,7 @@ function renderVariable(){
  const tb=document.querySelector("#variableTable tbody");
  tb.innerHTML="";
  expenses.filter(e=>e.type==="variable").forEach(e=>{
-  const total=(e.qty*e.rate)||0;
+  const total=e.qty*e.rate||0;
   const catOpt=categories.variable.map(c=>
    `<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`
   ).join("");
@@ -236,9 +243,13 @@ function renderVariable(){
 function renderFixed(){
  const tb=document.querySelector("#fixedTable tbody");
  tb.innerHTML="";
+ const totalFixed=totalFixedCost();
+
  expenses.filter(e=>e.type==="fixed").forEach(e=>{
-  const total=(e.qty*e.rate)||0;
+  const total=e.qty*e.rate||0;
   const dep=e.life?(total/e.life).toFixed(2):"0.00";
+  const percent=totalFixed?((total/totalFixed)*100).toFixed(1):"0";
+
   const catOpt=categories.fixed.map(c=>
    `<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`
   ).join("");
@@ -250,8 +261,10 @@ function renderFixed(){
 <td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
 <td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
 <td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
+<td>${total.toFixed(2)}</td>
 <td><input type="number" value="${e.life}" onchange="update('${e.id}','life',this.value)"></td>
 <td>${dep}</td>
+<td>${percent}%</td>
 <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
 </tr>`;
  });
