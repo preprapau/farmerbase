@@ -13,7 +13,7 @@ header,footer{
 header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
 
 .container{
- max-width:1100px;
+ max-width:1200px;
  margin:auto;
  background:#fff;
  padding:20px;
@@ -21,6 +21,13 @@ header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
 }
 
 h1{text-align:center;font-size:32px;color:#2e7d32;margin:15px 0}
+
+.summary{
+ background:#f1f8e9;
+ padding:15px;
+ margin-bottom:20px;
+ font-size:15px
+}
 
 table{
  width:100%;
@@ -50,12 +57,6 @@ td input{
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
 
-.summary{
- background:#f1f8e9;
- padding:12px;
- margin-bottom:15px;
- font-size:15px
-}
 .warn{color:#c62828;font-weight:bold}
 .ok{color:#2e7d32;font-weight:bold}
 </style>
@@ -72,18 +73,32 @@ td input{
 <div class="container">
 <h1>पूँजीको स्रोत</h1>
 
+<!-- ================= SUMMARY ================= -->
 <div class="summary">
-  🔹 <b>कुल आवश्यक पूँजी (स्थिर खर्च):</b>
-  <span id="totalCapital">0.00</span>
-  <br>
+  🔹 <b>स्थिर पुँजी (Fixed Capital):</b>
+  <span id="fixedCap">0.00</span><br>
+
+  🔹 <b>कार्यशील पुँजी (%):</b>
+  <input type="number" id="wcPct" value="20" style="width:80px"
+         onchange="render()"> %<br>
+
+  🔹 <b>कार्यशील पुँजी रकम:</b>
+  <span id="workingCap">0.00</span><br>
+
+  <hr>
+
+  🔹 <b>कुल आवश्यक पुँजी:</b>
+  <span id="totalCapital">0.00</span><br>
+
   🔹 <b>कुल स्रोत रकम:</b>
-  <span id="totalSource">0.00</span>
-  <br>
+  <span id="totalSource">0.00</span><br>
+
   🔹 <b>कुल %:</b>
   <span id="totalPercent">0%</span>
   <span id="status"></span>
 </div>
 
+<!-- ================= CAPITAL SOURCE TABLE ================= -->
 <table>
 <thead>
 <tr>
@@ -104,15 +119,15 @@ td input{
 </footer>
 
 <script>
-/* ================= LOAD ================= */
+/* ================= LOAD DATA ================= */
 const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 let sources = JSON.parse(localStorage.getItem("capitalSources")) || [];
 
-/* ================= CAPITAL NEED ================= */
-function totalFixedCapital(){
+/* ================= FIXED CAPITAL ================= */
+function fixedCapital(){
  return expenses
   .filter(e=>e.type==="fixed")
-  .reduce((s,e)=>s+(e.qty*e.rate||0),0);
+  .reduce((sum,e)=>sum+(e.qty*e.rate||0),0);
 }
 
 /* ================= SAVE ================= */
@@ -131,51 +146,61 @@ function addSource(){
 }
 
 function update(id,field,val){
- const s=sources.find(x=>x.id===id);
- s[field]=val;
+ const s = sources.find(x=>x.id===id);
+ s[field] = Number(val)||val;
  save(); render();
 }
 
 function removeSource(id){
- if(confirm("हटाउने ?")){
-  sources=sources.filter(s=>s.id!==id);
+ if(confirm("हटाउने हो ?")){
+  sources = sources.filter(s=>s.id!==id);
   save(); render();
  }
 }
 
 /* ================= RENDER ================= */
 function render(){
- const tb=document.getElementById("capBody");
- tb.innerHTML="";
+ const tb = document.getElementById("capBody");
+ tb.innerHTML = "";
 
- const totalCap=totalFixedCapital();
- const totalSrc=sources.reduce((s,x)=>s+(Number(x.amount)||0),0);
+ const fixed = fixedCapital();
+ const wcPct = Number(document.getElementById("wcPct").value)||0;
+ const working = fixed * wcPct / 100;
+ const totalCap = fixed + working;
+
+ const totalSrc = sources.reduce((s,x)=>s+(Number(x.amount)||0),0);
 
  sources.forEach(s=>{
   const pct = totalCap
    ? ((s.amount/totalCap)*100).toFixed(1)
    : "0";
 
-  tb.innerHTML+=`
+  tb.innerHTML += `
 <tr>
 <td><input value="${s.name}" onchange="update('${s.id}','name',this.value)"></td>
-<td><input type="number" value="${s.amount}" onchange="update('${s.id}','amount',this.value)"></td>
+<td><input type="number" value="${s.amount}"
+           onchange="update('${s.id}','amount',this.value)"></td>
 <td>${pct}%</td>
 <td><button class="btn del" onclick="removeSource('${s.id}')">🗑️</button></td>
 </tr>`;
  });
 
+ document.getElementById("fixedCap").innerText = fixed.toFixed(2);
+ document.getElementById("workingCap").innerText = working.toFixed(2);
  document.getElementById("totalCapital").innerText = totalCap.toFixed(2);
  document.getElementById("totalSource").innerText = totalSrc.toFixed(2);
 
- const totalPct = totalCap ? ((totalSrc/totalCap)*100).toFixed(1) : "0";
+ const totalPct = totalCap
+  ? ((totalSrc/totalCap)*100).toFixed(1)
+  : "0";
+
  document.getElementById("totalPercent").innerText = totalPct + "%";
 
- const status=document.getElementById("status");
- if(totalPct==100){
-  status.innerHTML=' <span class="ok">✔️ मिल्यो</span>';
+ const status = document.getElementById("status");
+ if(totalPct == 100){
+  status.innerHTML = ' <span class="ok">✔️ मिल्यो</span>';
  }else{
-  status.innerHTML=' <span class="warn">❗ 100% हुनुपर्छ</span>';
+  status.innerHTML = ' <span class="warn">❗ 100% हुनुपर्छ</span>';
  }
 }
 
