@@ -3,268 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <title>Expenses</title>
-
 <style>
 body{font-family:Arial;background:#f5f5f5;margin:0}
-
-/* ===== Header / Footer ===== */
 header,footer{
  background:#2e7d32;color:#fff;padding:12px 20px;
  display:flex;justify-content:space-between;align-items:center
 }
 header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
 
-/* ===== Layout ===== */
-.container{
- max-width:1400px;
- margin:auto;
- background:#fff;
- padding:20px;
- min-height:70vh
-}
-h1{text-align:center;font-size:32px;color:#2e7d32;margin:15px 0}
-h2{margin-top:30px;color:#333}
+.container{max-width:1400px;margin:auto;background:#fff;padding:20px}
+h1{text-align:center;font-size:32px;color:#2e7d32}
+h2{margin-top:30px}
 
-/* ===== Table ===== */
-table{
- width:100%;
- border-collapse:collapse;
- table-layout:fixed;
- margin-top:10px
-}
-th,td{
- border:1px solid #ccc;
- padding:6px;
- text-align:center;
- font-size:14px
-}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border:1px solid #ccc;padding:6px;text-align:center;font-size:14px}
 th{background:#e8f5e9}
 
-/* ===== Column widths ===== */
-.col-cat{width:150px}
-.col-title{width:210px}
-.col-unit{width:90px}
-.col-qty{width:90px}
-.col-rate{width:110px}
-.col-totalcost{width:130px}
-.col-life{width:90px}
-.col-dep{width:130px}
-.col-percent{width:80px}
+.col-title{width:200px}
+.col-unit{width:80px}
+.col-qty{width:80px}
+.col-rate{width:100px}
+.col-life{width:80px}
+.col-cost{width:120px}
+.col-map{width:200px}
 .col-action{width:60px}
 
-/* ===== Inputs ===== */
-td input, td select{
- width:100%;
- box-sizing:border-box;
- padding:5px
-}
+td input{width:100%;box-sizing:border-box}
 
-/* ===== Buttons ===== */
-.btn{padding:6px 12px;border:none;cursor:pointer}
+.btn{padding:6px 10px;border:none;cursor:pointer}
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
-
-/* ===== Category Box ===== */
-.catBox{
- background:#f1f8e9;
- padding:12px;
- margin-bottom:15px
-}
-.small{font-size:12px;color:#555}
 </style>
 </head>
 
 <body>
 
 <header>
-  <a href="production.html">⬅️ Production</a>
-  <span>Farmer Base BP Engine</span>
-  <a href="income-demo.html">Income ➡️</a>
+ <a href="production.html">⬅️ Production</a>
+ <span>Farmer Base BP Engine</span>
+ <a href="income-demo.html">Income ➡️</a>
 </header>
 
 <div class="container">
 <h1>EXPENSES</h1>
 
-<!-- ================= CATEGORY MANAGER ================= -->
-<div class="catBox">
-  <b>📂 खर्च उपशीर्षक व्यवस्थापन</b><br><br>
-  <select id="catType">
-    <option value="variable">चालु खर्च</option>
-    <option value="fixed">स्थिर खर्च</option>
-  </select>
-  <input id="catName" placeholder="उपशीर्षक नाम">
-  <button class="btn add" onclick="addCategory()">➕ Add</button>
-  <span class="small">(Add / Edit / Delete)</span>
-</div>
-
-<!-- ================= VARIABLE EXPENSE TABLE ================= -->
+<!-- ================= VARIABLE ================= -->
 <h2>🔄 चालु खर्च</h2>
-<table id="variableTable">
+<table id="varTable">
 <thead>
 <tr>
-  <th class="col-cat">उपशीर्षक</th>
-  <th class="col-title">खर्च शीर्षक</th>
-  <th class="col-unit">इकाई</th>
-  <th class="col-qty">परिमाण</th>
-  <th class="col-rate">दर</th>
-  <th class="col-totalcost">जम्मा खर्च</th>
-  <th class="col-action">🗑️</th>
+ <th class="col-title">खर्च शीर्षक</th>
+ <th class="col-unit">इकाई</th>
+ <th class="col-qty">परिमाण</th>
+ <th class="col-rate">दर</th>
+ <th class="col-cost">जम्मा</th>
+ <th class="col-map">कुन उत्पादनमा</th>
+ <th class="col-action">🗑️</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
-<button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च थप्नुहोस्</button>
+<button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च</button>
 
-<!-- ================= FIXED EXPENSE TABLE ================= -->
-<h2>🏗️ स्थिर खर्च (ह्रासकट्टी सहित)</h2>
-<table id="fixedTable">
+<!-- ================= FIXED ================= -->
+<h2>🏗️ स्थिर खर्च</h2>
+<table id="fixTable">
 <thead>
 <tr>
-  <th class="col-cat">उपशीर्षक</th>
-  <th class="col-title">खर्च शीर्षक</th>
-  <th class="col-unit">इकाई</th>
-  <th class="col-qty">परिमाण</th>
-  <th class="col-rate">दर</th>
-  <th class="col-totalcost">जम्मा खर्च</th>
-  <th class="col-life">आयु</th>
-  <th class="col-dep">वार्षिक ह्रास</th>
-  <th class="col-percent">%</th>
-  <th class="col-action">🗑️</th>
+ <th class="col-title">खर्च शीर्षक</th>
+ <th class="col-unit">इकाई</th>
+ <th class="col-qty">परिमाण</th>
+ <th class="col-rate">दर</th>
+ <th class="col-life">आयु</th>
+ <th class="col-cost">वार्षिक ह्रास</th>
+ <th class="col-map">कुन उत्पादनमा</th>
+ <th class="col-action">🗑️</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
-<button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च थप्नुहोस्</button>
+<button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च</button>
 
 </div>
 
 <footer>
-  <a href="production.html">⬅️ Production</a>
-  <span>Expense Module</span>
-  <a href="income-demo.html">Income ➡️</a>
+ <span>Expense Module</span>
 </footer>
 
 <script>
-/* ================= DATA ================= */
-let categories = JSON.parse(localStorage.getItem("expenseCategories")) || {
-  variable:[
-    {id:"v1",name:"कच्चा पदार्थ"},
-    {id:"v2",name:"कामदार"},
-    {id:"v3",name:"अन्य"}
-  ],
-  fixed:[
-    {id:"f1",name:"मेशीन औजार"},
-    {id:"f2",name:"पूर्वाधार निर्माण"}
-  ]
-};
-
+const productions = JSON.parse(localStorage.getItem("productions")) || [];
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
-/* ================= SAVE ================= */
 function save(){
- localStorage.setItem("expenseCategories",JSON.stringify(categories));
- localStorage.setItem("expenses",JSON.stringify(expenses));
+ localStorage.setItem("expenses", JSON.stringify(expenses));
 }
 
-/* ================= CATEGORY ================= */
-function addCategory(){
- const t=document.getElementById("catType").value;
- const n=document.getElementById("catName").value.trim();
- if(!n) return;
- categories[t].push({id:t[0]+Date.now(),name:n});
- document.getElementById("catName").value="";
- save(); render();
-}
-
-/* ================= EXPENSE ================= */
 function addExpense(type){
  expenses.push({
   id:"e"+Date.now(),
   type:type,
-  category:"",
   title:"",
   unit:"",
   qty:0,
   rate:0,
-  life:type==="fixed"?1:null
+  life:type==="fixed"?1:null,
+  map:{}
  });
  save(); render();
 }
 
-function update(id,field,value){
- const e=expenses.find(x=>x.id===id);
- e[field]=value;
- if(field==="type" && value==="variable"){ e.life=null; }
+function toggleMap(eid,pid,val){
+ const e=expenses.find(x=>x.id===eid);
+ if(val) e.map[pid]=true;
+ else delete e.map[pid];
+ save();
+}
+
+function update(eid,f,v){
+ const e=expenses.find(x=>x.id===eid);
+ e[f]=v;
  save(); render();
 }
 
 function removeExp(id){
- if(confirm("खर्च हटाउने हो ?")){
-  expenses=expenses.filter(x=>x.id!==id);
+ if(confirm("हटाउने ?")){
+  expenses=expenses.filter(e=>e.id!==id);
   save(); render();
  }
 }
 
-/* ================= HELPERS ================= */
-function totalFixedCost(){
- return expenses
-  .filter(e=>e.type==="fixed")
-  .reduce((s,e)=>s+(e.qty*e.rate||0),0);
+function mapUI(e){
+ return productions.map(p=>{
+  const chk=e.map[p.id]?"checked":"";
+  return `<label>
+   <input type="checkbox" ${chk}
+    onchange="toggleMap('${e.id}','${p.id}',this.checked)">
+   ${p.name}
+  </label><br>`;
+ }).join("");
 }
 
-/* ================= RENDER ================= */
 function render(){
- renderVariable();
- renderFixed();
+ renderVar();
+ renderFix();
 }
 
-function renderVariable(){
- const tb=document.querySelector("#variableTable tbody");
+function renderVar(){
+ const tb=document.querySelector("#varTable tbody");
  tb.innerHTML="";
  expenses.filter(e=>e.type==="variable").forEach(e=>{
   const total=e.qty*e.rate||0;
-  const catOpt=categories.variable.map(c=>
-   `<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`
-  ).join("");
-
   tb.innerHTML+=`
 <tr>
-<td><select onchange="update('${e.id}','category',this.value)"><option></option>${catOpt}</select></td>
 <td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
 <td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
 <td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
 <td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
 <td>${total.toFixed(2)}</td>
+<td>${mapUI(e)}</td>
 <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
 </tr>`;
  });
 }
 
-function renderFixed(){
- const tb=document.querySelector("#fixedTable tbody");
+function renderFix(){
+ const tb=document.querySelector("#fixTable tbody");
  tb.innerHTML="";
- const totalFixed=totalFixedCost();
-
  expenses.filter(e=>e.type==="fixed").forEach(e=>{
   const total=e.qty*e.rate||0;
-  const dep=e.life?(total/e.life).toFixed(2):"0.00";
-  const percent=totalFixed?((total/totalFixed)*100).toFixed(1):"0";
-
-  const catOpt=categories.fixed.map(c=>
-   `<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`
-  ).join("");
-
+  const dep=e.life?(total/e.life):0;
   tb.innerHTML+=`
 <tr>
-<td><select onchange="update('${e.id}','category',this.value)"><option></option>${catOpt}</select></td>
 <td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
 <td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
 <td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
 <td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
-<td>${total.toFixed(2)}</td>
 <td><input type="number" value="${e.life}" onchange="update('${e.id}','life',this.value)"></td>
-<td>${dep}</td>
-<td>${percent}%</td>
+<td>${dep.toFixed(2)}</td>
+<td>${mapUI(e)}</td>
 <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
 </tr>`;
  });
