@@ -10,18 +10,17 @@ header,footer{
  display:flex;justify-content:space-between;align-items:center
 }
 header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
-.container{max-width:1200px;margin:auto;background:#fff;padding:20px;min-height:70vh}
-h1{text-align:center;color:#2e7d32;font-size:32px}
-h2{color:#444;margin-top:30px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
+.container{max-width:1200px;margin:auto;background:#fff;padding:20px}
+h1{text-align:center;font-size:32px;color:#2e7d32}
+h2{margin-top:30px}
+table{width:100%;border-collapse:collapse}
 th,td{border:1px solid #ccc;padding:8px;text-align:center;font-size:14px}
 th{background:#e8f5e9}
 input,select{width:95%;padding:5px}
 .btn{padding:5px 10px;border:none;cursor:pointer}
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
-.small{font-size:12px;color:#555}
-.mapbox{text-align:left;font-size:13px}
+.catBox{background:#f1f8e9;padding:10px;margin-bottom:10px}
 </style>
 </head>
 
@@ -30,127 +29,134 @@ input,select{width:95%;padding:5px}
 <header>
 <a href="production.html">⬅️ Production</a>
 <span>Farmer Base BP Engine</span>
-<a href="profit-loss.html">Profit ➡️</a>
+<a href="income-demo.html">Income ➡️</a>
 </header>
 
 <div class="container">
 <h1>EXPENSES</h1>
 
-<!-- ================= चालु खर्च ================= -->
-<h2>🔄 चालु खर्च</h2>
-<table id="variableTable">
+<!-- CATEGORY MANAGER -->
+<div class="catBox">
+<b>📂 खर्च उपशीर्षक व्यवस्थापन</b><br><br>
+<select id="catType">
+<option value="variable">चालु खर्च</option>
+<option value="fixed">स्थिर खर्च</option>
+</select>
+<input id="catName" placeholder="उपशीर्षक नाम">
+<button class="btn add" onclick="addCategory()">➕ Add</button>
+</div>
+
+<!-- EXPENSE TABLE -->
+<table>
 <thead>
 <tr>
+<th>प्रकार</th>
+<th>उपशीर्षक</th>
 <th>खर्च शीर्षक</th>
 <th>इकाई</th>
 <th>परिमाण</th>
 <th>दर</th>
-<th>जम्मा</th>
-<th>उत्पादनमा प्रयोग</th>
+<th>आयु</th>
+<th>जम्मा / ह्रास</th>
 <th>🗑️</th>
 </tr>
 </thead>
-<tbody></tbody>
+<tbody id="expBody"></tbody>
 </table>
-<button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च थप्नुहोस्</button>
 
-<!-- ================= स्थिर खर्च ================= -->
-<h2>🏗️ स्थिर खर्च (ह्रासकट्टी सहित)</h2>
-<table id="fixedTable">
-<thead>
-<tr>
-<th>खर्च शीर्षक</th>
-<th>इकाई</th>
-<th>परिमाण</th>
-<th>दर</th>
-<th>आयु (वर्ष)</th>
-<th>वार्षिक ह्रास</th>
-<th>उत्पादनमा प्रयोग</th>
-<th>🗑️</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-<button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च थप्नुहोस्</button>
-
+<button class="btn add" onclick="addExpense()">➕ खर्च थप्नुहोस्</button>
 </div>
 
 <footer>
 <a href="production.html">⬅️ Production</a>
 <span>Expense Module</span>
-<a href="profit-loss.html">Profit ➡️</a>
+<a href="income-demo.html">Income ➡️</a>
 </footer>
 
 <script>
-const productions = JSON.parse(localStorage.getItem("productions")) || [];
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+const productions = JSON.parse(localStorage.getItem("productions"))||[];
 
-function save(){ localStorage.setItem("expenses", JSON.stringify(expenses)); }
+let categories = JSON.parse(localStorage.getItem("expenseCategories")) || {
+ variable:[
+  {id:"v1",name:"कच्चा पदार्थ"},
+  {id:"v2",name:"कामदार"},
+  {id:"v3",name:"अन्य"}
+ ],
+ fixed:[
+  {id:"f1",name:"मेशीन औजार"},
+  {id:"f2",name:"पूर्वाधार निर्माण"}
+ ]
+};
 
-function productionCheckboxes(map={}, eid){
- return productions.map(p=>{
-   const chk = map[p.id] ? "checked" : "";
-   return `<label>
-   <input type="checkbox" ${chk}
-    onchange="toggleMap('${eid}','${p.id}',this.checked)"> ${p.name}
-   </label><br>`;
- }).join("");
+let expenses = JSON.parse(localStorage.getItem("expenses"))||[];
+
+function save(){
+ localStorage.setItem("expenses",JSON.stringify(expenses));
+ localStorage.setItem("expenseCategories",JSON.stringify(categories));
 }
 
-function toggleMap(eid,pid,val){
- const e = expenses.find(x=>x.id===eid);
- if(val) e.map[pid]=true; else delete e.map[pid];
- save();
+function addCategory(){
+ const t=document.getElementById("catType").value;
+ const n=document.getElementById("catName").value.trim();
+ if(!n) return;
+ categories[t].push({id:t[0]+Date.now(),name:n});
+ document.getElementById("catName").value="";
+ save(); render();
 }
 
-function render(){
- ["variable","fixed"].forEach(type=>{
-   const tbody=document.querySelector(`#${type}Table tbody`);
-   tbody.innerHTML="";
-   expenses.filter(e=>e.type===type).forEach(e=>{
-     const total=e.qty*e.rate||0;
-     const dep = type==="fixed" && e.life ? (total/e.life).toFixed(2):"-";
-     const row=document.createElement("tr");
-     row.innerHTML=`
-<td><input value="${e.title}" onchange="eUpdate('${e.id}','title',this.value)"></td>
-<td><input value="${e.unit}" onchange="eUpdate('${e.id}','unit',this.value)"></td>
-<td><input type="number" value="${e.qty}" onchange="eUpdate('${e.id}','qty',this.value)"></td>
-<td><input type="number" value="${e.rate}" onchange="eUpdate('${e.id}','rate',this.value)"></td>
-${type==="variable"?
-`<td>${total.toFixed(2)}</td>`:
-`<td><input type="number" value="${e.life}" onchange="eUpdate('${e.id}','life',this.value)"></td>
-<td>${dep}</td>`
-}
-<td class="mapbox">${productionCheckboxes(e.map,e.id)}</td>
-<td><button class="btn del" onclick="remove('${e.id}')">🗑️</button></td>`;
-     tbody.appendChild(row);
-   });
- });
-}
-
-function addExpense(type){
+function addExpense(){
  expenses.push({
   id:"e"+Date.now(),
-  type:type,title:"",
-  unit:"",qty:0,rate:0,
-  life: type==="fixed"?1:null,
-  map:{}
+  type:"variable",
+  category:"",
+  title:"",
+  unit:"",
+  qty:0,
+  rate:0,
+  life:1
  });
  save(); render();
 }
 
-function eUpdate(id,f,v){
+function update(id,f,v){
  const e=expenses.find(x=>x.id===id);
  e[f]=v; save(); render();
 }
 
-function remove(id){
- if(confirm("खर्च हटाउने हो ?")){
+function del(id){
+ if(confirm("हटाउने ?")){
   expenses=expenses.filter(x=>x.id!==id);
   save(); render();
  }
 }
 
+function render(){
+ const tb=document.getElementById("expBody");
+ tb.innerHTML="";
+ expenses.forEach(e=>{
+  const cats=categories[e.type].map(c=>`<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`).join("");
+  const total=e.qty*e.rate||0;
+  const dep=e.type==="fixed"?(total/e.life||0).toFixed(2):total.toFixed(2);
+
+  tb.innerHTML+=`
+<tr>
+<td>
+<select onchange="update('${e.id}','type',this.value)">
+<option value="variable" ${e.type==="variable"?"selected":""}>चालु</option>
+<option value="fixed" ${e.type==="fixed"?"selected":""}>स्थिर</option>
+</select>
+</td>
+<td><select onchange="update('${e.id}','category',this.value)">${cats}</select></td>
+<td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
+<td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
+<td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
+<td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
+<td>${e.type==="fixed"?`<input type="number" value="${e.life}" onchange="update('${e.id}','life',this.value)">`:"-"}</td>
+<td>${dep}</td>
+<td><button class="btn del" onclick="del('${e.id}')">🗑️</button></td>
+</tr>`;
+ });
+}
 render();
 </script>
 
