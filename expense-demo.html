@@ -3,24 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <title>Expenses</title>
+
 <style>
 body{font-family:Arial;background:#f5f5f5;margin:0}
+
+/* ===== Header / Footer ===== */
 header,footer{
  background:#2e7d32;color:#fff;padding:12px 20px;
  display:flex;justify-content:space-between;align-items:center
 }
 header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
-.container{max-width:1200px;margin:auto;background:#fff;padding:20px;min-height:70vh}
-h1{text-align:center;font-size:32px;color:#2e7d32;margin:10px 0 20px}
-h2{margin-top:28px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ccc;padding:8px;text-align:center;font-size:14px}
+
+/* ===== Layout ===== */
+.container{
+ max-width:1300px;
+ margin:auto;
+ background:#fff;
+ padding:20px;
+ min-height:70vh
+}
+h1{text-align:center;font-size:32px;color:#2e7d32;margin:15px 0}
+h2{margin-top:30px;color:#333}
+
+/* ===== Table ===== */
+table{
+ width:100%;
+ border-collapse:collapse;
+ table-layout:fixed; /* 🔒 width lock */
+ margin-top:10px
+}
+th,td{
+ border:1px solid #ccc;
+ padding:6px;
+ text-align:center;
+ font-size:14px
+}
 th{background:#e8f5e9}
-input,select{width:95%;padding:5px}
-.btn{padding:5px 10px;border:none;cursor:pointer}
+
+/* ===== Column widths ===== */
+.col-cat{width:150px}
+.col-title{width:220px}
+.col-unit{width:90px}
+.col-qty{width:90px}
+.col-rate{width:110px}
+.col-life{width:90px}
+.col-total{width:140px}
+.col-action{width:60px}
+
+/* ===== Inputs ===== */
+td input, td select{
+ width:100%;
+ box-sizing:border-box;
+ padding:5px
+}
+
+/* ===== Buttons ===== */
+.btn{padding:6px 12px;border:none;cursor:pointer}
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
-.catBox{background:#f1f8e9;padding:10px;margin-bottom:10px}
+
+/* ===== Category Box ===== */
+.catBox{
+ background:#f1f8e9;
+ padding:12px;
+ margin-bottom:15px
+}
 .small{font-size:12px;color:#555}
 </style>
 </head>
@@ -34,39 +81,57 @@ input,select{width:95%;padding:5px}
 </header>
 
 <div class="container">
-  <h1>EXPENSES</h1>
+<h1>EXPENSES</h1>
 
-  <!-- ================= CATEGORY MANAGER ================= -->
-  <div class="catBox">
-    <b>📂 खर्च उपशीर्षक व्यवस्थापन</b><br><br>
-    <select id="catType">
-      <option value="variable">चालु खर्च</option>
-      <option value="fixed">स्थिर खर्च</option>
-    </select>
-    <input id="catName" placeholder="उपशीर्षक नाम">
-    <button class="btn add" onclick="addCategory()">➕ Add</button>
-    <span class="small"> (Add / Edit / Delete सबै सम्भव)</span>
-  </div>
+<!-- ================= CATEGORY MANAGER ================= -->
+<div class="catBox">
+  <b>📂 खर्च उपशीर्षक व्यवस्थापन</b><br><br>
+  <select id="catType">
+    <option value="variable">चालु खर्च</option>
+    <option value="fixed">स्थिर खर्च</option>
+  </select>
+  <input id="catName" placeholder="उपशीर्षक नाम">
+  <button class="btn add" onclick="addCategory()">➕ Add</button>
+  <span class="small">(Add / Edit / Delete सबै सम्भव)</span>
+</div>
 
-  <!-- ================= EXPENSE TABLE ================= -->
-  <table>
-    <thead>
-      <tr>
-        <th>प्रकार</th>
-        <th>उपशीर्षक</th>
-        <th>खर्च शीर्षक</th>
-        <th>इकाई</th>
-        <th>परिमाण</th>
-        <th>दर</th>
-        <th>आयु (वर्ष)</th>
-        <th>जम्मा / वार्षिक ह्रास</th>
-        <th>🗑️</th>
-      </tr>
-    </thead>
-    <tbody id="expBody"></tbody>
-  </table>
+<!-- ================= VARIABLE EXPENSE TABLE ================= -->
+<h2>🔄 चालु खर्च</h2>
+<table id="variableTable">
+<thead>
+<tr>
+  <th class="col-cat">उपशीर्षक</th>
+  <th class="col-title">खर्च शीर्षक</th>
+  <th class="col-unit">इकाई</th>
+  <th class="col-qty">परिमाण</th>
+  <th class="col-rate">दर</th>
+  <th class="col-total">जम्मा खर्च</th>
+  <th class="col-action">🗑️</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च थप्नुहोस्</button>
 
-  <button class="btn add" onclick="addExpense()">➕ खर्च थप्नुहोस्</button>
+<!-- ================= FIXED EXPENSE TABLE ================= -->
+<h2>🏗️ स्थिर खर्च (ह्रासकट्टी)</h2>
+<table id="fixedTable">
+<thead>
+<tr>
+  <th class="col-cat">उपशीर्षक</th>
+  <th class="col-title">खर्च शीर्षक</th>
+  <th class="col-unit">इकाई</th>
+  <th class="col-qty">परिमाण</th>
+  <th class="col-rate">दर</th>
+  <th class="col-life">आयु (वर्ष)</th>
+  <th class="col-total">वार्षिक ह्रास</th>
+  <th class="col-action">🗑️</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च थप्नुहोस्</button>
+
 </div>
 
 <footer>
@@ -78,14 +143,14 @@ input,select{width:95%;padding:5px}
 <script>
 /* ================= DATA ================= */
 let categories = JSON.parse(localStorage.getItem("expenseCategories")) || {
-  variable: [
-    {id:"v1", name:"कच्चा पदार्थ"},
-    {id:"v2", name:"कामदार"},
-    {id:"v3", name:"अन्य"}
+  variable:[
+    {id:"v1",name:"कच्चा पदार्थ"},
+    {id:"v2",name:"कामदार"},
+    {id:"v3",name:"अन्य"}
   ],
-  fixed: [
-    {id:"f1", name:"मेशीन औजार"},
-    {id:"f2", name:"पूर्वाधार निर्माण"}
+  fixed:[
+    {id:"f1",name:"मेशीन औजार"},
+    {id:"f2",name:"पूर्वाधार निर्माण"}
   ]
 };
 
@@ -93,99 +158,103 @@ let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 /* ================= SAVE ================= */
 function save(){
-  localStorage.setItem("expenseCategories", JSON.stringify(categories));
-  localStorage.setItem("expenses", JSON.stringify(expenses));
+ localStorage.setItem("expenseCategories",JSON.stringify(categories));
+ localStorage.setItem("expenses",JSON.stringify(expenses));
 }
 
 /* ================= CATEGORY ================= */
 function addCategory(){
-  const type = document.getElementById("catType").value;
-  const name = document.getElementById("catName").value.trim();
-  if(!name) return;
-  categories[type].push({ id: type[0] + Date.now(), name });
-  document.getElementById("catName").value="";
-  save(); render();
+ const t=document.getElementById("catType").value;
+ const n=document.getElementById("catName").value.trim();
+ if(!n) return;
+ categories[t].push({id:t[0]+Date.now(),name:n});
+ document.getElementById("catName").value="";
+ save(); render();
 }
 
 /* ================= EXPENSE ================= */
-function addExpense(){
-  expenses.push({
-    id: "e" + Date.now(),
-    type: "variable",       // default
-    category: "",
-    title: "",
-    unit: "",
-    qty: 0,
-    rate: 0,
-    life: null              // 🔒 चालुमा life हुँदैन
-  });
-  save(); render();
+function addExpense(type){
+ expenses.push({
+  id:"e"+Date.now(),
+  type:type,
+  category:"",
+  title:"",
+  unit:"",
+  qty:0,
+  rate:0,
+  life: type==="fixed" ? 1 : null
+ });
+ save(); render();
 }
 
-function update(id, field, value){
-  const e = expenses.find(x=>x.id===id);
-  e[field] = value;
+function update(id,field,value){
+ const e=expenses.find(x=>x.id===id);
+ e[field]=value;
 
-  // 🔒 RULE ENFORCEMENT
-  if(field==="type" && value==="variable"){
-    e.life = null;          // चालुमा ह्रासकट्टी पूर्ण हटाउने
-  }
-  save(); render();
+ // 🔒 Rule enforcement
+ if(field==="type" && value==="variable"){
+   e.life=null;
+ }
+ save(); render();
 }
 
 function removeExp(id){
-  if(confirm("खर्च हटाउने हो ?")){
-    expenses = expenses.filter(x=>x.id!==id);
-    save(); render();
-  }
+ if(confirm("खर्च हटाउने हो ?")){
+  expenses=expenses.filter(x=>x.id!==id);
+  save(); render();
+ }
 }
 
 /* ================= RENDER ================= */
 function render(){
-  const tb = document.getElementById("expBody");
-  tb.innerHTML = "";
+ renderVariable();
+ renderFixed();
+}
 
-  expenses.forEach(e=>{
-    const catOptions = categories[e.type]
-      .map(c=>`<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`)
-      .join("");
+function renderVariable(){
+ const tb=document.querySelector("#variableTable tbody");
+ tb.innerHTML="";
+ expenses.filter(e=>e.type==="variable").forEach(e=>{
+  const total=(e.qty*e.rate)||0;
+  const catOpt=categories.variable.map(c=>
+   `<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`
+  ).join("");
 
-    const total = (e.qty * e.rate) || 0;
+  tb.innerHTML+=`
+<tr>
+<td><select onchange="update('${e.id}','category',this.value)"><option></option>${catOpt}</select></td>
+<td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
+<td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
+<td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
+<td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
+<td>${total.toFixed(2)}</td>
+<td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
+</tr>`;
+ });
+}
 
-    // 🔒 DISPLAY RULE
-    const displayValue = e.type==="fixed"
-      ? (e.life ? (total / e.life).toFixed(2) : "0.00")
-      : total.toFixed(2);
+function renderFixed(){
+ const tb=document.querySelector("#fixedTable tbody");
+ tb.innerHTML="";
+ expenses.filter(e=>e.type==="fixed").forEach(e=>{
+  const total=(e.qty*e.rate)||0;
+  const dep=e.life?(total/e.life).toFixed(2):"0.00";
+  const catOpt=categories.fixed.map(c=>
+   `<option value="${c.id}" ${c.id===e.category?"selected":""}>${c.name}</option>`
+  ).join("");
 
-    tb.innerHTML += `
-      <tr>
-        <td>
-          <select onchange="update('${e.id}','type',this.value)">
-            <option value="variable" ${e.type==="variable"?"selected":""}>चालु</option>
-            <option value="fixed" ${e.type==="fixed"?"selected":""}>स्थिर</option>
-          </select>
-        </td>
-        <td>
-          <select onchange="update('${e.id}','category',this.value)">
-            <option value="">--छान्नुहोस्--</option>
-            ${catOptions}
-          </select>
-        </td>
-        <td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
-        <td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
-        <td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
-        <td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
-        <td>
-          ${e.type==="fixed"
-            ? `<input type="number" value="${e.life||1}" onchange="update('${e.id}','life',this.value)">`
-            : "-"
-          }
-        </td>
-        <td>${displayValue}</td>
-        <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
-      </tr>
-    `;
-  });
+  tb.innerHTML+=`
+<tr>
+<td><select onchange="update('${e.id}','category',this.value)"><option></option>${catOpt}</select></td>
+<td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
+<td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
+<td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
+<td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
+<td><input type="number" value="${e.life}" onchange="update('${e.id}','life',this.value)"></td>
+<td>${dep}</td>
+<td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
+</tr>`;
+ });
 }
 
 render();
