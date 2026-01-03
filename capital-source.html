@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>Capital Source</title>
+
+<style>
+body{font-family:Arial;background:#f5f5f5;margin:0}
+header,footer{
+ background:#2e7d32;color:#fff;padding:12px 20px;
+ display:flex;justify-content:space-between;align-items:center
+}
+header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
+
+.container{
+ max-width:1100px;
+ margin:auto;
+ background:#fff;
+ padding:20px;
+ min-height:70vh
+}
+
+h1{text-align:center;font-size:32px;color:#2e7d32;margin:15px 0}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ table-layout:fixed
+}
+th,td{
+ border:1px solid #ccc;
+ padding:8px;
+ text-align:center;
+ font-size:14px
+}
+th{background:#e8f5e9}
+
+.col-name{width:300px}
+.col-amount{width:200px}
+.col-percent{width:150px}
+.col-action{width:80px}
+
+td input{
+ width:100%;
+ box-sizing:border-box;
+ padding:6px
+}
+
+.btn{padding:6px 12px;border:none;cursor:pointer}
+.add{background:#2e7d32;color:#fff}
+.del{background:#c62828;color:#fff}
+
+.summary{
+ background:#f1f8e9;
+ padding:12px;
+ margin-bottom:15px;
+ font-size:15px
+}
+.warn{color:#c62828;font-weight:bold}
+.ok{color:#2e7d32;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="expense-demo.html">⬅️ Expenses</a>
+  <span>Farmer Base BP Engine</span>
+  <a href="income-demo.html">Income ➡️</a>
+</header>
+
+<div class="container">
+<h1>पूँजीको स्रोत</h1>
+
+<div class="summary">
+  🔹 <b>कुल आवश्यक पूँजी (स्थिर खर्च):</b>
+  <span id="totalCapital">0.00</span>
+  <br>
+  🔹 <b>कुल स्रोत रकम:</b>
+  <span id="totalSource">0.00</span>
+  <br>
+  🔹 <b>कुल %:</b>
+  <span id="totalPercent">0%</span>
+  <span id="status"></span>
+</div>
+
+<table>
+<thead>
+<tr>
+  <th class="col-name">स्रोत</th>
+  <th class="col-amount">रकम</th>
+  <th class="col-percent">%</th>
+  <th class="col-action">🗑️</th>
+</tr>
+</thead>
+<tbody id="capBody"></tbody>
+</table>
+
+<button class="btn add" onclick="addSource()">➕ स्रोत थप्नुहोस्</button>
+</div>
+
+<footer>
+  <span>Capital Source Module</span>
+</footer>
+
+<script>
+/* ================= LOAD ================= */
+const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+let sources = JSON.parse(localStorage.getItem("capitalSources")) || [];
+
+/* ================= CAPITAL NEED ================= */
+function totalFixedCapital(){
+ return expenses
+  .filter(e=>e.type==="fixed")
+  .reduce((s,e)=>s+(e.qty*e.rate||0),0);
+}
+
+/* ================= SAVE ================= */
+function save(){
+ localStorage.setItem("capitalSources", JSON.stringify(sources));
+}
+
+/* ================= CRUD ================= */
+function addSource(){
+ sources.push({
+  id:"c"+Date.now(),
+  name:"",
+  amount:0
+ });
+ save(); render();
+}
+
+function update(id,field,val){
+ const s=sources.find(x=>x.id===id);
+ s[field]=val;
+ save(); render();
+}
+
+function removeSource(id){
+ if(confirm("हटाउने ?")){
+  sources=sources.filter(s=>s.id!==id);
+  save(); render();
+ }
+}
+
+/* ================= RENDER ================= */
+function render(){
+ const tb=document.getElementById("capBody");
+ tb.innerHTML="";
+
+ const totalCap=totalFixedCapital();
+ const totalSrc=sources.reduce((s,x)=>s+(Number(x.amount)||0),0);
+
+ sources.forEach(s=>{
+  const pct = totalCap
+   ? ((s.amount/totalCap)*100).toFixed(1)
+   : "0";
+
+  tb.innerHTML+=`
+<tr>
+<td><input value="${s.name}" onchange="update('${s.id}','name',this.value)"></td>
+<td><input type="number" value="${s.amount}" onchange="update('${s.id}','amount',this.value)"></td>
+<td>${pct}%</td>
+<td><button class="btn del" onclick="removeSource('${s.id}')">🗑️</button></td>
+</tr>`;
+ });
+
+ document.getElementById("totalCapital").innerText = totalCap.toFixed(2);
+ document.getElementById("totalSource").innerText = totalSrc.toFixed(2);
+
+ const totalPct = totalCap ? ((totalSrc/totalCap)*100).toFixed(1) : "0";
+ document.getElementById("totalPercent").innerText = totalPct + "%";
+
+ const status=document.getElementById("status");
+ if(totalPct==100){
+  status.innerHTML=' <span class="ok">✔️ मिल्यो</span>';
+ }else{
+  status.innerHTML=' <span class="warn">❗ 100% हुनुपर्छ</span>';
+ }
+}
+
+render();
+</script>
+
+</body>
+</html>
