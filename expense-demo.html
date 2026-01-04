@@ -9,73 +9,56 @@ body{font-family:Arial;background:#f5f5f5;margin:0}
 header,footer{
  background:#2e7d32;color:#fff;
  padding:12px 20px;
- display:flex;
- justify-content:space-between;
- align-items:center
+ display:flex;justify-content:space-between;align-items:center
 }
-header a,footer a{
- color:#fff;
- text-decoration:none;
- font-weight:bold
-}
-
+header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
 .container{
- max-width:1400px;
- margin:auto;
- background:#fff;
- padding:20px;
- min-height:70vh
-}
-
-h1{
- text-align:center;
- font-size:32px;
- color:#2e7d32;
- margin:15px 0
+ max-width:1450px;margin:auto;background:#fff;
+ padding:20px;min-height:70vh
 }
 h2{margin-top:30px}
 
 table{
- width:100%;
- border-collapse:collapse;
- table-layout:fixed;
- margin-top:10px
+ width:100%;border-collapse:collapse;
+ table-layout:fixed;margin-top:10px
 }
 th,td{
- border:1px solid #ccc;
- padding:6px;
- text-align:center;
- font-size:14px
+ border:1px solid #ccc;padding:6px;
+ text-align:center;font-size:14px
 }
 th{background:#e8f5e9}
 
-.col-title{width:200px}
+.col-cat{width:140px}
+.col-title{width:180px}
 .col-unit{width:80px}
 .col-qty{width:80px}
-.col-rate{width:100px}
-.col-life{width:80px}
+.col-rate{width:90px}
+.col-life{width:70px}
 .col-cost{width:120px}
-.col-map{width:220px}
-.col-action{width:60px}
+.col-map{width:200px}
+.col-action{width:50px}
 
-td input{
- width:100%;
- box-sizing:border-box
-}
+input,select{width:100%;box-sizing:border-box}
 
-.btn{
- padding:6px 10px;
- border:none;
- cursor:pointer
-}
+.btn{padding:6px 10px;border:none;cursor:pointer}
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
+.edit{background:#0277bd;color:#fff}
+
+.subhead{
+ display:flex;justify-content:space-between;
+ align-items:center;margin-top:15px
+}
+.total{
+ font-weight:bold;color:#2e7d32;
+ text-align:right;margin-top:6px
+}
+.note{font-size:12px;color:#777}
 </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER NAV ================= -->
 <header>
  <a href="production.html">⬅️ उत्पादन विवरण</a>
  <span>खर्च सम्बन्धि विवरण</span>
@@ -84,11 +67,16 @@ td input{
 
 <div class="container">
 
-<!-- ================= VARIABLE EXPENSE ================= -->
+<!-- ================= VARIABLE ================= -->
+<div class="subhead">
 <h2>🔄 चालु खर्च</h2>
+<button class="btn add" onclick="addCategory('variable')">➕ उपशीर्षक</button>
+</div>
+
 <table id="varTable">
 <thead>
 <tr>
+ <th class="col-cat">उपशीर्षक</th>
  <th class="col-title">खर्च शीर्षक</th>
  <th class="col-unit">इकाई</th>
  <th class="col-qty">परिमाण</th>
@@ -101,12 +89,18 @@ td input{
 <tbody></tbody>
 </table>
 <button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च थप्नुहोस्</button>
+<div class="total" id="varTotal"></div>
 
-<!-- ================= FIXED EXPENSE ================= -->
+<!-- ================= FIXED ================= -->
+<div class="subhead">
 <h2>🏗️ स्थिर खर्च (ह्रासकट्टी)</h2>
+<button class="btn add" onclick="addCategory('fixed')">➕ उपशीर्षक</button>
+</div>
+
 <table id="fixTable">
 <thead>
 <tr>
+ <th class="col-cat">उपशीर्षक</th>
  <th class="col-title">खर्च शीर्षक</th>
  <th class="col-unit">इकाई</th>
  <th class="col-qty">परिमाण</th>
@@ -120,35 +114,59 @@ td input{
 <tbody></tbody>
 </table>
 <button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च थप्नुहोस्</button>
+<div class="total" id="fixTotal"></div>
 
 </div>
 
-<!-- ================= FOOTER NAV ================= -->
 <footer>
  <a href="production.html">⬅️ उत्पादन विवरण</a>
- <span>Farmerbase BP Engine-Expenses Module</span>
+ <span>Farmerbase BP Engine – Expenses Module</span>
  <a href="capital-source.html">पुँजिको स्रोत ➡️</a>
 </footer>
 
 <script>
-/* ================= LOAD DATA ================= */
-const productions = JSON.parse(localStorage.getItem("productions")) || [];
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+/* ================= LOAD ================= */
+const productions=JSON.parse(localStorage.getItem("productions"))||[];
+let categories=JSON.parse(localStorage.getItem("categories"))||[];
+let expenses=JSON.parse(localStorage.getItem("expenses"))||[];
 
 /* ================= SAVE ================= */
 function save(){
- localStorage.setItem("expenses", JSON.stringify(expenses));
+ localStorage.setItem("categories",JSON.stringify(categories));
+ localStorage.setItem("expenses",JSON.stringify(expenses));
 }
 
-/* ================= CRUD ================= */
+/* ================= CATEGORY ================= */
+function addCategory(type){
+ const name=prompt("उपशीर्षक नाम:");
+ if(!name) return;
+ categories.push({id:"c"+Date.now(),type,name});
+ save(); render();
+}
+
+function categorySelect(type,val){
+ return `
+<select onchange="updateCategory(this,'${val||""}')">
+ <option value="">छान्नुहोस्</option>
+ ${categories.filter(c=>c.type===type)
+  .map(c=>`<option value="${c.id}" ${c.id===val?"selected":""}>${c.name}</option>`).join("")}
+</select>`;
+}
+
+function updateCategory(sel,old){
+ const eId=sel.dataset.eid;
+ const e=expenses.find(x=>x.id===eId);
+ e.categoryId=sel.value;
+ save();
+}
+
+/* ================= EXPENSE ================= */
 function addExpense(type){
  expenses.push({
-  id:"e"+Date.now(),
-  type:type,
-  title:"",
-  unit:"",
-  qty:0,
-  rate:0,
+  id:"e"+Date.now(),type,
+  categoryId:"",
+  title:"",unit:"",
+  qty:0,rate:0,
   life:type==="fixed"?1:null,
   map:{}
  });
@@ -157,8 +175,7 @@ function addExpense(type){
 
 function update(id,f,v){
  const e=expenses.find(x=>x.id===id);
- e[f]=v;
- save(); render();
+ e[f]=v; save(); render();
 }
 
 function removeExp(id){
@@ -168,53 +185,49 @@ function removeExp(id){
  }
 }
 
-function toggleMap(eid,pid,val){
+/* ================= MAP ================= */
+function mapUI(e){
+ if(!productions.length) return "<span class='note'>पहिले उत्पादन थप्नुहोस्</span>";
+ return productions.map(p=>{
+  const chk=e.map[p.id]?"checked":"";
+  return `<label style="display:block;text-align:left">
+  <input type="checkbox" ${chk}
+   onchange="eMap('${e.id}','${p.id}',this.checked)"> ${p.name}</label>`;
+ }).join("");
+}
+function eMap(eid,pid,v){
  const e=expenses.find(x=>x.id===eid);
- if(val) e.map[pid]=true;
- else delete e.map[pid];
+ if(v) e.map[pid]=1; else delete e.map[pid];
  save();
 }
 
-/* ================= MAP UI ================= */
-function mapUI(e){
- return productions.map(p=>{
-  const chk=e.map[p.id]?"checked":"";
-  return `
-<label style="display:block;text-align:left">
- <input type="checkbox" ${chk}
-  onchange="toggleMap('${e.id}','${p.id}',this.checked)">
- ${p.name}
-</label>`;
- }).join("");
-}
-
 /* ================= RENDER ================= */
-function renderVar(){
- const tb=document.querySelector("#varTable tbody");
- tb.innerHTML="";
- expenses.filter(e=>e.type==="variable").forEach(e=>{
-  const total=e.qty*e.rate||0;
-  tb.innerHTML+=`
+function render(){
+ let vSum=0,fSum=0;
+ document.querySelector("#varTable tbody").innerHTML="";
+ document.querySelector("#fixTable tbody").innerHTML="";
+
+ expenses.forEach(e=>{
+  if(e.type==="variable"){
+   const t=e.qty*e.rate||0; vSum+=t;
+   document.querySelector("#varTable tbody").innerHTML+=`
 <tr>
+<td>${categorySelect("variable",e.categoryId)}</td>
 <td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
 <td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
 <td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
 <td><input type="number" value="${e.rate}" onchange="update('${e.id}','rate',this.value)"></td>
-<td>${total.toFixed(2)}</td>
+<td>${t.toFixed(2)}</td>
 <td>${mapUI(e)}</td>
 <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
 </tr>`;
- });
-}
-
-function renderFix(){
- const tb=document.querySelector("#fixTable tbody");
- tb.innerHTML="";
- expenses.filter(e=>e.type==="fixed").forEach(e=>{
-  const total=e.qty*e.rate||0;
-  const dep=e.life?(total/e.life):0;
-  tb.innerHTML+=`
+  }
+  if(e.type==="fixed"){
+   const total=e.qty*e.rate||0;
+   const dep=total/(e.life||1); fSum+=dep;
+   document.querySelector("#fixTable tbody").innerHTML+=`
 <tr>
+<td>${categorySelect("fixed",e.categoryId)}</td>
 <td><input value="${e.title}" onchange="update('${e.id}','title',this.value)"></td>
 <td><input value="${e.unit}" onchange="update('${e.id}','unit',this.value)"></td>
 <td><input type="number" value="${e.qty}" onchange="update('${e.id}','qty',this.value)"></td>
@@ -224,12 +237,13 @@ function renderFix(){
 <td>${mapUI(e)}</td>
 <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
 </tr>`;
+  }
  });
-}
 
-function render(){
- renderVar();
- renderFix();
+ document.getElementById("varTotal").innerText=
+  "🔢 कुल चालु खर्च : "+vSum.toFixed(2);
+ document.getElementById("fixTotal").innerText=
+  "🔢 कुल वार्षिक ह्रास : "+fSum.toFixed(2);
 }
 
 render();
