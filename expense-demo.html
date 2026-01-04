@@ -3,20 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <title>Expenses</title>
+
 <style>
 body{font-family:Arial;background:#f5f5f5;margin:0}
 header,footer{
- background:#2e7d32;color:#fff;padding:12px 20px;
- display:flex;justify-content:space-between;align-items:center
+ background:#2e7d32;color:#fff;
+ padding:12px 20px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center
 }
-header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
+header a,footer a{
+ color:#fff;
+ text-decoration:none;
+ font-weight:bold
+}
 
-.container{max-width:1400px;margin:auto;background:#fff;padding:20px}
-h1{text-align:center;font-size:32px;color:#2e7d32}
+.container{
+ max-width:1400px;
+ margin:auto;
+ background:#fff;
+ padding:20px;
+ min-height:70vh
+}
+
+h1{
+ text-align:center;
+ font-size:32px;
+ color:#2e7d32;
+ margin:15px 0
+}
 h2{margin-top:30px}
 
-table{width:100%;border-collapse:collapse;table-layout:fixed}
-th,td{border:1px solid #ccc;padding:6px;text-align:center;font-size:14px}
+table{
+ width:100%;
+ border-collapse:collapse;
+ table-layout:fixed;
+ margin-top:10px
+}
+th,td{
+ border:1px solid #ccc;
+ padding:6px;
+ text-align:center;
+ font-size:14px
+}
 th{background:#e8f5e9}
 
 .col-title{width:200px}
@@ -25,12 +55,19 @@ th{background:#e8f5e9}
 .col-rate{width:100px}
 .col-life{width:80px}
 .col-cost{width:120px}
-.col-map{width:200px}
+.col-map{width:220px}
 .col-action{width:60px}
 
-td input{width:100%;box-sizing:border-box}
+td input{
+ width:100%;
+ box-sizing:border-box
+}
 
-.btn{padding:6px 10px;border:none;cursor:pointer}
+.btn{
+ padding:6px 10px;
+ border:none;
+ cursor:pointer
+}
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
 </style>
@@ -38,16 +75,17 @@ td input{width:100%;box-sizing:border-box}
 
 <body>
 
+<!-- ================= HEADER NAV ================= -->
 <header>
  <a href="production.html">⬅️ Production</a>
  <span>Farmer Base BP Engine</span>
- <a href="income-demo.html">Income ➡️</a>
+ <a href="capital-source.html">Capital Source ➡️</a>
 </header>
 
 <div class="container">
 <h1>EXPENSES</h1>
 
-<!-- ================= VARIABLE ================= -->
+<!-- ================= VARIABLE EXPENSE ================= -->
 <h2>🔄 चालु खर्च</h2>
 <table id="varTable">
 <thead>
@@ -63,10 +101,10 @@ td input{width:100%;box-sizing:border-box}
 </thead>
 <tbody></tbody>
 </table>
-<button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च</button>
+<button class="btn add" onclick="addExpense('variable')">➕ चालु खर्च थप्नुहोस्</button>
 
-<!-- ================= FIXED ================= -->
-<h2>🏗️ स्थिर खर्च</h2>
+<!-- ================= FIXED EXPENSE ================= -->
+<h2>🏗️ स्थिर खर्च (ह्रासकट्टी)</h2>
 <table id="fixTable">
 <thead>
 <tr>
@@ -82,22 +120,28 @@ td input{width:100%;box-sizing:border-box}
 </thead>
 <tbody></tbody>
 </table>
-<button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च</button>
+<button class="btn add" onclick="addExpense('fixed')">➕ स्थिर खर्च थप्नुहोस्</button>
 
 </div>
 
+<!-- ================= FOOTER NAV ================= -->
 <footer>
- <span>Expense Module</span>
+ <a href="production.html">⬅️ Production</a>
+ <span>Expenses Module</span>
+ <a href="capital-source.html">Capital Source ➡️</a>
 </footer>
 
 <script>
+/* ================= LOAD DATA ================= */
 const productions = JSON.parse(localStorage.getItem("productions")) || [];
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
+/* ================= SAVE ================= */
 function save(){
  localStorage.setItem("expenses", JSON.stringify(expenses));
 }
 
+/* ================= CRUD ================= */
 function addExpense(type){
  expenses.push({
   id:"e"+Date.now(),
@@ -112,6 +156,19 @@ function addExpense(type){
  save(); render();
 }
 
+function update(id,f,v){
+ const e=expenses.find(x=>x.id===id);
+ e[f]=v;
+ save(); render();
+}
+
+function removeExp(id){
+ if(confirm("हटाउने हो ?")){
+  expenses=expenses.filter(e=>e.id!==id);
+  save(); render();
+ }
+}
+
 function toggleMap(eid,pid,val){
  const e=expenses.find(x=>x.id===eid);
  if(val) e.map[pid]=true;
@@ -119,35 +176,20 @@ function toggleMap(eid,pid,val){
  save();
 }
 
-function update(eid,f,v){
- const e=expenses.find(x=>x.id===eid);
- e[f]=v;
- save(); render();
-}
-
-function removeExp(id){
- if(confirm("हटाउने ?")){
-  expenses=expenses.filter(e=>e.id!==id);
-  save(); render();
- }
-}
-
+/* ================= MAP UI ================= */
 function mapUI(e){
  return productions.map(p=>{
   const chk=e.map[p.id]?"checked":"";
-  return `<label>
-   <input type="checkbox" ${chk}
-    onchange="toggleMap('${e.id}','${p.id}',this.checked)">
-   ${p.name}
-  </label><br>`;
+  return `
+<label style="display:block;text-align:left">
+ <input type="checkbox" ${chk}
+  onchange="toggleMap('${e.id}','${p.id}',this.checked)">
+ ${p.name}
+</label>`;
  }).join("");
 }
 
-function render(){
- renderVar();
- renderFix();
-}
-
+/* ================= RENDER ================= */
 function renderVar(){
  const tb=document.querySelector("#varTable tbody");
  tb.innerHTML="";
@@ -184,6 +226,11 @@ function renderFix(){
 <td><button class="btn del" onclick="removeExp('${e.id}')">🗑️</button></td>
 </tr>`;
  });
+}
+
+function render(){
+ renderVar();
+ renderFix();
 }
 
 render();
