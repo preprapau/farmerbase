@@ -3,64 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <title>Profit Distribution</title>
+
 <style>
 body{font-family:Arial;background:#f5f5f5;margin:0}
-header,footer{background:#2e7d32;color:#fff;padding:12px 20px;
-display:flex;justify-content:space-between;align-items:center}
+header,footer{
+ background:#2e7d32;color:#fff;padding:12px 20px;
+ display:flex;justify-content:space-between;align-items:center
+}
 header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
-.container{max-width:1100px;margin:auto;background:#fff;padding:20px}
-h1{text-align:center;color:#2e7d32}
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ccc;padding:8px;text-align:center}
+
+.container{
+ max-width:1100px;margin:auto;background:#fff;
+ padding:20px;min-height:70vh
+}
+
+h1{text-align:center;font-size:32px;color:#2e7d32;margin:15px 0}
+
+.summary{
+ background:#f1f8e9;padding:15px;margin-bottom:20px;
+ font-size:16px
+}
+
+table{
+ width:100%;border-collapse:collapse;margin-top:15px
+}
+th,td{
+ border:1px solid #ccc;padding:8px;text-align:center
+}
 th{background:#e8f5e9}
-input{width:100%;padding:5px}
+
+td input{width:100%;box-sizing:border-box;padding:5px}
+
 .btn{padding:6px 12px;border:none;cursor:pointer}
 .add{background:#2e7d32;color:#fff}
 .del{background:#c62828;color:#fff}
+
 .warn{color:#c62828;font-weight:bold}
 .ok{color:#2e7d32;font-weight:bold}
+.note{font-size:13px;color:#555;margin-top:10px}
 </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER NAV ================= -->
 <header>
-<a href="profit-loss-demo.html">⬅️ Profit-Loss</a>
-<span>Farmer Base BP Engine</span>
-<a href="projection-5yr.html">5 Year ➡️</a>
+  <a href="profit-loss-demo.html">⬅️ Profit–Loss</a>
+  <span>Farmer Base BP Engine</span>
+  <a href="projection-5yr.html">5-Year ➡️</a>
 </header>
 
 <div class="container">
 <h1>नाफा वितरण (Profit Utilization)</h1>
 
-<b>कुल नाफा (Auto):</b>
-<span id="totalProfit">0</span>
-<br><br>
+<!-- ================= SUMMARY ================= -->
+<div class="summary">
+  🔹 <b>कुल शुद्ध नाफा (Auto):</b>
+  <span id="totalProfit">0.00</span><br>
+  🔹 <b>कुल वितरण %:</b>
+  <span id="totalPct">0%</span>
+  <span id="status"></span>
+</div>
 
+<!-- ================= DISTRIBUTION TABLE ================= -->
 <table>
 <thead>
 <tr>
-<th>शीर्षक</th>
-<th>प्रतिशत (%)</th>
-<th>रकम</th>
-<th>🗑️</th>
+  <th style="width:45%">शीर्षक</th>
+  <th style="width:20%">प्रतिशत (%)</th>
+  <th style="width:25%">रकम</th>
+  <th style="width:10%">🗑️</th>
 </tr>
 </thead>
 <tbody id="distBody"></tbody>
 </table>
 
 <button class="btn add" onclick="addHead()">➕ शीर्षक थप्नुहोस्</button>
-<br><br>
-<b>कुल %:</b> <span id="totalPct">0%</span>
-<span id="status"></span>
+
+<div class="note">
+✔️ नाफा खर्च होइन — पुनः प्रयोग (reuse) हो ।<br>
+✔️ कुल प्रतिशत 100% हुनै पर्छ ।<br>
+✔️ पुनः लगानी रकम 5-Year Projection मा carry हुन्छ ।
+</div>
 </div>
 
+<!-- ================= FOOTER NAV ================= -->
 <footer>
-<span>Profit Distribution Module</span>
+  <a href="profit-loss-demo.html">⬅️ Profit–Loss</a>
+  <span>Profit Distribution</span>
+  <a href="projection-5yr.html">5-Year ➡️</a>
 </footer>
 
 <script>
+/* ================= LOAD PROFIT ================= */
 const profit = Number(localStorage.getItem("netProfit")) || 0;
+
+/* ================= DEFAULT DISTRIBUTION ================= */
 let dist = JSON.parse(localStorage.getItem("profitDistribution")) || [
  {id:1,name:"पुनः लगानी",pct:60},
  {id:2,name:"वातावरण संरक्षण",pct:10},
@@ -68,48 +106,63 @@ let dist = JSON.parse(localStorage.getItem("profitDistribution")) || [
  {id:4,name:"व्यक्तिगत उपयोग",pct:20}
 ];
 
-function save(){localStorage.setItem("profitDistribution",JSON.stringify(dist));}
+/* ================= SAVE ================= */
+function save(){
+ localStorage.setItem("profitDistribution", JSON.stringify(dist));
+}
 
+/* ================= CRUD ================= */
 function addHead(){
  dist.push({id:Date.now(),name:"",pct:0});
  save(); render();
 }
 
-function update(id,f,v){
- const d=dist.find(x=>x.id===id);
- d[f]=f==="pct"?Number(v):v;
+function update(id,field,val){
+ const d = dist.find(x=>x.id===id);
+ d[field] = field==="pct" ? Number(val)||0 : val;
  save(); render();
 }
 
-function del(id){
- dist=dist.filter(x=>x.id!==id);
- save(); render();
+function removeHead(id){
+ if(confirm("हटाउने हो ?")){
+  dist = dist.filter(d=>d.id!==id);
+  save(); render();
+ }
 }
 
+/* ================= RENDER ================= */
 function render(){
- const tb=document.getElementById("distBody");
- tb.innerHTML="";
- let sumPct=0;
+ const tb = document.getElementById("distBody");
+ tb.innerHTML = "";
+ let sumPct = 0;
 
  dist.forEach(d=>{
-  sumPct+=d.pct;
-  const amt=profit*d.pct/100;
-  tb.innerHTML+=`
+  sumPct += d.pct;
+  const amt = profit * d.pct / 100;
+
+  tb.innerHTML += `
 <tr>
-<td><input value="${d.name}" onchange="update(${d.id},'name',this.value)"></td>
-<td><input type="number" value="${d.pct}" onchange="update(${d.id},'pct',this.value)"></td>
+<td><input value="${d.name}"
+    onchange="update(${d.id},'name',this.value)"></td>
+<td><input type="number" value="${d.pct}"
+    onchange="update(${d.id},'pct',this.value)"></td>
 <td>${amt.toFixed(2)}</td>
-<td><button class="btn del" onclick="del(${d.id})">🗑️</button></td>
+<td><button class="btn del"
+    onclick="removeHead(${d.id})">🗑️</button></td>
 </tr>`;
  });
 
- document.getElementById("totalProfit").innerText=profit.toFixed(2);
- document.getElementById("totalPct").innerText=sumPct+"%";
- document.getElementById("status").innerHTML=
-  sumPct===100?'<span class="ok"> ✔️ मिल्यो</span>':'<span class="warn"> ❗ 100% हुनुपर्छ</span>';
+ document.getElementById("totalProfit").innerText = profit.toFixed(2);
+ document.getElementById("totalPct").innerText = sumPct + "%";
+
+ document.getElementById("status").innerHTML =
+  sumPct === 100
+   ? '<span class="ok"> ✔️ मिल्यो</span>'
+   : '<span class="warn"> ❗ 100% हुनुपर्छ</span>';
 }
 
 render();
 </script>
+
 </body>
 </html>
