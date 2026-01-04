@@ -29,6 +29,11 @@ h1{text-align:center;font-size:32px;color:#2e7d32;margin:15px 0}
  font-size:15px
 }
 
+select,input{
+ padding:5px;
+ margin-left:5px
+}
+
 table{
  width:100%;
  border-collapse:collapse;
@@ -49,8 +54,7 @@ th{background:#e8f5e9}
 
 td input{
  width:100%;
- box-sizing:border-box;
- padding:6px
+ box-sizing:border-box
 }
 
 .btn{padding:6px 12px;border:none;cursor:pointer}
@@ -75,30 +79,29 @@ td input{
 
 <!-- ================= SUMMARY ================= -->
 <div class="summary">
-  🔹 <b>स्थिर पूँजी (Fixed Capital):</b>
-  <span id="fixedCap">0.00</span><br>
 
-  🔹 <b>वार्षिक चालु खर्च:</b>
-  <span id="annualVariable">0.00</span><br>
+<b>स्थिर पूँजी:</b> <span id="fixedCap">0</span><br>
+<b>वार्षिक चालु खर्च:</b> <span id="annualVar">0</span><br><br>
 
-  🔹 <b>कार्यशील पूँजी (३ महिना):</b>
-  <span id="workingCap">0.00</span>
-  <span style="color:#555">(स्वलगानी)</span><br>
+<b>कार्यशील पूँजी मोड:</b>
+<select id="wcMode" onchange="render()">
+ <option value="months">महिना आधारित</option>
+ <option value="percent">प्रतिशत आधारित</option>
+ <option value="manual">Manual</option>
+</select>
 
-  <hr>
+<span id="wcOptions"></span>
 
-  🔹 <b>कुल आवश्यक पूँजी:</b>
-  <span id="totalCapital">0.00</span><br>
+<hr>
 
-  🔹 <b>कुल स्रोत रकम:</b>
-  <span id="totalSource">0.00</span><br>
-
-  🔹 <b>कुल %:</b>
-  <span id="totalPercent">0%</span>
-  <span id="status"></span>
+<b>कार्यशील पूँजी:</b> <span id="workingCap">0</span><br>
+<b>कुल आवश्यक पूँजी:</b> <span id="totalCapital">0</span><br>
+<b>कुल स्रोत रकम:</b> <span id="totalSource">0</span><br>
+<b>कुल %:</b> <span id="totalPercent">0%</span>
+<span id="status"></span>
 </div>
 
-<!-- ================= CAPITAL SOURCE TABLE ================= -->
+<!-- ================= SOURCE TABLE ================= -->
 <table>
 <thead>
 <tr>
@@ -119,20 +122,18 @@ td input{
 </footer>
 
 <script>
-/* ================= LOAD DATA ================= */
+/* ================= LOAD ================= */
 const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 let sources = JSON.parse(localStorage.getItem("capitalSources")) || [];
 
-/* ================= CALCULATIONS ================= */
+/* ================= CALC ================= */
 function fixedCapital(){
- return expenses
-  .filter(e=>e.type==="fixed")
+ return expenses.filter(e=>e.type==="fixed")
   .reduce((s,e)=>s+(e.qty*e.rate||0),0);
 }
 
-function annualVariableCost(){
- return expenses
-  .filter(e=>e.type==="variable")
+function annualVariable(){
+ return expenses.filter(e=>e.type==="variable")
   .reduce((s,e)=>s+(e.qty*e.rate||0),0);
 }
 
@@ -143,17 +144,13 @@ function save(){
 
 /* ================= CRUD ================= */
 function addSource(){
- sources.push({
-  id:"c"+Date.now(),
-  name:"",
-  amount:0
- });
+ sources.push({id:"c"+Date.now(),name:"",amount:0});
  save(); render();
 }
 
-function update(id,field,val){
+function update(id,f,v){
  const s=sources.find(x=>x.id===id);
- s[field]=Number(val)||val;
+ s[f]=Number(v)||v;
  save(); render();
 }
 
@@ -164,50 +161,89 @@ function removeSource(id){
  }
 }
 
+/* ================= WORKING CAPITAL ================= */
+function calcWorkingCap(annual){
+ const mode=document.getElementById("wcMode").value;
+
+ if(mode==="months"){
+  const m=Number(document.getElementById("wcMonths").value)||3;
+  return (annual/12)*m;
+ }
+
+ if(mode==="percent"){
+  const p=Number(document.getElementById("wcPercent").value)||0;
+  return annual*p/100;
+ }
+
+ if(mode==="manual"){
+  return Number(document.getElementById("wcManual").value)||0;
+ }
+
+ return 0;
+}
+
 /* ================= RENDER ================= */
 function render(){
+ const fixed=fixedCapital();
+ const annual=annualVariable();
+
+ document.getElementById("fixedCap").innerText=fixed.toFixed(2);
+ document.getElementById("annualVar").innerText=annual.toFixed(2);
+
+ const mode=document.getElementById("wcMode").value;
+ let opt="";
+
+ if(mode==="months"){
+  opt=` महिना:
+  <select id="wcMonths" onchange="render()">
+   <option>3</option><option>6</option>
+   <option>9</option><option>12</option>
+  </select>`;
+ }
+ if(mode==="percent"){
+  opt=` %:
+  <input type="number" id="wcPercent" value="20"
+         onchange="render()" style="width:80px">`;
+ }
+ if(mode==="manual"){
+  opt=` रकम:
+  <input type="number" id="wcManual"
+         onchange="render()" style="width:120px">`;
+ }
+
+ document.getElementById("wcOptions").innerHTML=opt;
+
+ const working=calcWorkingCap(annual);
+ const totalCap=fixed+working;
+
+ document.getElementById("workingCap").innerText=working.toFixed(2);
+ document.getElementById("totalCapital").innerText=totalCap.toFixed(2);
+
  const tb=document.getElementById("capBody");
  tb.innerHTML="";
 
- const fixed = fixedCapital();
- const annualVar = annualVariableCost();
- const working = (annualVar/12)*3;
- const totalCap = fixed + working;
-
- const totalSrc = sources.reduce((s,x)=>s+(Number(x.amount)||0),0);
+ const totalSrc=sources.reduce((s,x)=>s+(Number(x.amount)||0),0);
 
  sources.forEach(s=>{
-  const pct = totalCap
-   ? ((s.amount/totalCap)*100).toFixed(1)
-   : "0";
-
+  const pct=totalCap?((s.amount/totalCap)*100).toFixed(1):"0";
   tb.innerHTML+=`
 <tr>
 <td><input value="${s.name}" onchange="update('${s.id}','name',this.value)"></td>
-<td><input type="number" value="${s.amount}" onchange="update('${s.id}','amount',this.value)"></td>
+<td><input type="number" value="${s.amount}"
+           onchange="update('${s.id}','amount',this.value)"></td>
 <td>${pct}%</td>
 <td><button class="btn del" onclick="removeSource('${s.id}')">🗑️</button></td>
 </tr>`;
  });
 
- document.getElementById("fixedCap").innerText = fixed.toFixed(2);
- document.getElementById("annualVariable").innerText = annualVar.toFixed(2);
- document.getElementById("workingCap").innerText = working.toFixed(2);
- document.getElementById("totalCapital").innerText = totalCap.toFixed(2);
- document.getElementById("totalSource").innerText = totalSrc.toFixed(2);
+ document.getElementById("totalSource").innerText=totalSrc.toFixed(2);
 
- const totalPct = totalCap
-  ? ((totalSrc/totalCap)*100).toFixed(1)
-  : "0";
+ const pct=totalCap?((totalSrc/totalCap)*100).toFixed(1):"0";
+ document.getElementById("totalPercent").innerText=pct+"%";
 
- document.getElementById("totalPercent").innerText = totalPct + "%";
-
- const status=document.getElementById("status");
- if(totalPct==100){
-  status.innerHTML=' <span class="ok">✔️ मिल्यो</span>';
- }else{
-  status.innerHTML=' <span class="warn">❗ 100% हुनुपर्छ</span>';
- }
+ document.getElementById("status").innerHTML=
+  pct==100?'<span class="ok"> ✔️ मिल्यो</span>'
+          :'<span class="warn"> ❗ 100% हुनुपर्छ</span>';
 }
 
 render();
