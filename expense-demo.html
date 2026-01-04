@@ -1,1 +1,278 @@
-गहज
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>Expenses</title>
+
+<style>
+body{font-family:Arial;background:#f5f5f5;margin:0}
+header,footer{
+ background:#2e7d32;color:#fff;
+ padding:12px 20px;
+ display:flex;justify-content:space-between;align-items:center
+}
+header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
+
+.container{
+ max-width:1400px;margin:auto;background:#fff;
+ padding:20px;min-height:70vh
+}
+h2{margin-top:30px}
+
+table{
+ width:100%;border-collapse:collapse;margin-top:10px
+}
+th,td{
+ border:1px solid #ccc;padding:6px;
+ text-align:center;font-size:14px
+}
+th{background:#e8f5e9}
+
+input{width:100%;box-sizing:border-box}
+
+.mapBox{
+ text-align:left;font-size:13px
+}
+.mapNote{
+ font-size:12px;color:#777
+}
+
+.btn{padding:6px 10px;border:none;cursor:pointer}
+.add{background:#2e7d32;color:#fff}
+.del{background:#c62828;color:#fff}
+.preview{background:#0277bd;color:#fff}
+
+.total{
+ text-align:right;
+ font-weight:bold;
+ color:#2e7d32;
+ margin-top:6px
+}
+
+#summaryBox{
+ display:none;
+ margin-top:25px;
+ border-top:2px dashed #ccc;
+ padding-top:15px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <a href="production.html">⬅️ उत्पादन विवरण</a>
+ <span>खर्च सम्बन्धि विवरण</span>
+ <a href="capital-source.html">पुँजिको स्रोत ➡️</a>
+</header>
+
+<div class="container">
+
+<!-- ================= VARIABLE ================= -->
+<h2>🔄 चालु खर्च</h2>
+
+<table id="varTable">
+<thead>
+<tr>
+ <th>खर्च शीर्षक</th>
+ <th>इकाई</th>
+ <th>परिमाण</th>
+ <th>दर</th>
+ <th>जम्मा</th>
+ <th>कुन उत्पादनमा</th>
+ <th>🗑️</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<button class="btn add" onclick="addVar()">➕ चालु खर्च थप्नुहोस्</button>
+<div class="total" id="varTotal"></div>
+
+<!-- ================= FIXED ================= -->
+<h2>🏗️ स्थिर खर्च (ह्रासकट्टी)</h2>
+
+<table id="fixTable">
+<thead>
+<tr>
+ <th>खर्च शीर्षक</th>
+ <th>इकाई</th>
+ <th>परिमाण</th>
+ <th>दर</th>
+ <th>आयु</th>
+ <th>वार्षिक ह्रास</th>
+ <th>कुन उत्पादनमा</th>
+ <th>🗑️</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<button class="btn add" onclick="addFix()">➕ स्थिर खर्च थप्नुहोस्</button>
+<div class="total" id="fixTotal"></div>
+
+<!-- ================= SUMMARY PREVIEW ================= -->
+<button class="btn preview" onclick="toggleSummary()">
+ 👁️ Expense Summary Preview
+</button>
+
+<div id="summaryBox"></div>
+
+</div>
+
+<footer>
+ <a href="production.html">⬅️ उत्पादन विवरण</a>
+ <span>Farmerbase BP Engine – Expenses Module</span>
+ <a href="capital-source.html">पुँजिको स्रोत ➡️</a>
+</footer>
+
+<script>
+/* ================= DATA ================= */
+const productions = JSON.parse(localStorage.getItem("productions")) || [];
+
+let varExp = JSON.parse(localStorage.getItem("varExp")) || [];
+let fixExp = JSON.parse(localStorage.getItem("fixExp")) || [];
+
+function save(){
+ localStorage.setItem("varExp",JSON.stringify(varExp));
+ localStorage.setItem("fixExp",JSON.stringify(fixExp));
+}
+
+/* ================= ADD ================= */
+function addVar(){
+ varExp.push({
+  id:Date.now(),
+  title:"",unit:"",
+  qty:0,rate:0,
+  map:{}
+ });
+ save(); render();
+}
+function addFix(){
+ fixExp.push({
+  id:Date.now(),
+  title:"",unit:"",
+  qty:0,rate:0,life:1,
+  map:{}
+ });
+ save(); render();
+}
+
+/* ================= UPDATE (NO RENDER) ================= */
+function upd(list,id,key,val){
+ const e=list.find(x=>x.id===id);
+ if(!e) return;
+ e[key]=val;
+ save();
+ updateTotals();
+}
+
+/* ================= MAP ================= */
+function toggleMap(list,id,pid,checked){
+ const e=list.find(x=>x.id===id);
+ if(!e) return;
+ if(checked) e.map[pid]=true;
+ else delete e.map[pid];
+ save();
+}
+
+/* ================= DELETE ================= */
+function delRow(list,id){
+ if(confirm("हटाउने हो ?")){
+  list.splice(list.findIndex(x=>x.id===id),1);
+  save(); render();
+ }
+}
+
+/* ================= TOTAL ================= */
+function updateTotals(){
+ let vSum=0,fSum=0;
+ varExp.forEach(e=>vSum+=(e.qty*e.rate||0));
+ fixExp.forEach(e=>fSum+=((e.qty*e.rate)/(e.life||1)||0));
+
+ document.getElementById("varTotal").innerText =
+  "कुल चालु खर्च : "+vSum.toFixed(2);
+
+ document.getElementById("fixTotal").innerText =
+  "कुल वार्षिक ह्रास : "+fSum.toFixed(2);
+}
+
+/* ================= MAP UI ================= */
+function mapUI(e,listName){
+ if(!productions.length)
+  return `<span class="mapNote">पहिले उत्पादन विवरण थप्नुहोस्</span>`;
+
+ return `<div class="mapBox">`+
+  productions.map(p=>{
+   const chk=e.map[p.id]?"checked":"";
+   return `
+<label>
+ <input type="checkbox" ${chk}
+  onchange="toggleMap(${listName},${e.id},'${p.id}',this.checked)">
+ ${p.name}
+</label><br>`;
+  }).join("")+
+ `</div>`;
+}
+
+/* ================= RENDER ================= */
+function render(){
+ const vtb=document.querySelector("#varTable tbody");
+ vtb.innerHTML="";
+ varExp.forEach(e=>{
+  const total=e.qty*e.rate||0;
+  vtb.innerHTML+=`
+<tr>
+<td><input value="${e.title}" oninput="upd(varExp,${e.id},'title',this.value)"></td>
+<td><input value="${e.unit}" oninput="upd(varExp,${e.id},'unit',this.value)"></td>
+<td><input type="number" value="${e.qty}" oninput="upd(varExp,${e.id},'qty',this.value)"></td>
+<td><input type="number" value="${e.rate}" oninput="upd(varExp,${e.id},'rate',this.value)"></td>
+<td>${total.toFixed(2)}</td>
+<td>${mapUI(e,'varExp')}</td>
+<td><button class="btn del" onclick="delRow(varExp,${e.id})">🗑️</button></td>
+</tr>`;
+ });
+
+ const ftb=document.querySelector("#fixTable tbody");
+ ftb.innerHTML="";
+ fixExp.forEach(e=>{
+  const dep=(e.qty*e.rate)/(e.life||1)||0;
+  ftb.innerHTML+=`
+<tr>
+<td><input value="${e.title}" oninput="upd(fixExp,${e.id},'title',this.value)"></td>
+<td><input value="${e.unit}" oninput="upd(fixExp,${e.id},'unit',this.value)"></td>
+<td><input type="number" value="${e.qty}" oninput="upd(fixExp,${e.id},'qty',this.value)"></td>
+<td><input type="number" value="${e.rate}" oninput="upd(fixExp,${e.id},'rate',this.value)"></td>
+<td><input type="number" value="${e.life}" oninput="upd(fixExp,${e.id},'life',this.value)"></td>
+<td>${dep.toFixed(2)}</td>
+<td>${mapUI(e,'fixExp')}</td>
+<td><button class="btn del" onclick="delRow(fixExp,${e.id})">🗑️</button></td>
+</tr>`;
+ });
+
+ updateTotals();
+}
+
+/* ================= SUMMARY PREVIEW ================= */
+function toggleSummary(){
+ const box=document.getElementById("summaryBox");
+ if(box.style.display==="block"){
+  box.style.display="none"; return;
+ }
+ let html="<h3>📊 Expense Summary</h3><ul>";
+ varExp.forEach(e=>{
+  html+=`<li>${e.title} : ${(e.qty*e.rate||0).toFixed(2)}</li>`;
+ });
+ fixExp.forEach(e=>{
+  html+=`<li>${e.title} (ह्रास) : ${((e.qty*e.rate)/(e.life||1)||0).toFixed(2)}</li>`;
+ });
+ html+="</ul>";
+ box.innerHTML=html;
+ box.style.display="block";
+}
+
+render();
+</script>
+
+</body>
+</html>
