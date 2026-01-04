@@ -2,271 +2,252 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Full Proposal | BPMS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Full Business Proposal</title>
 
 <style>
 body{
-  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
-  background:#f4f7f6;
-  margin:0;
+ font-family:Arial, sans-serif;
+ background:#f5f5f5;
+ margin:0;
+ line-height:1.6
+}
+header,footer{
+ background:#2e7d32;
+ color:#fff;
+ padding:14px 22px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center
+}
+header a, footer a{
+ color:#fff;
+ text-decoration:none;
+ font-weight:bold
 }
 .container{
-  max-width:900px;
-  margin:25px auto;
-  background:#fff;
-  padding:30px;
-  border-radius:10px;
+ max-width:1200px;
+ margin:auto;
+ background:#fff;
+ padding:30px;
+ min-height:70vh
 }
-h1,h2,h3{color:#2e7d32}
-h1{text-align:center;margin-top:0}
-
-.meta{
-  text-align:center;
-  font-size:13px;
-  color:#555;
-  margin-bottom:20px;
+h1{
+ text-align:center;
+ color:#2e7d32;
+ font-size:34px;
+ margin-bottom:5px
 }
-
-.section{
-  margin-top:25px;
+h2{
+ color:#2e7d32;
+ margin-top:35px;
+ border-bottom:2px solid #e0e0e0;
+ padding-bottom:6px
 }
-.section h2{
-  border-bottom:2px solid #e0e0e0;
-  padding-bottom:5px;
+h3{
+ color:#333;
+ margin-top:20px
 }
-
+p{
+ margin:6px 0
+}
 table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
+ width:100%;
+ border-collapse:collapse;
+ margin-top:10px
 }
 th,td{
-  border:1px solid #ccc;
-  padding:6px;
-  text-align:left;
+ border:1px solid #ccc;
+ padding:8px;
+ text-align:left;
+ vertical-align:top
 }
-th{background:#f0f0f0}
-.right{text-align:right}
-
-.note{
-  font-size:13px;
-  color:#666;
+th{
+ background:#f1f8e9;
+ width:30%
 }
-
-.nav{
-  display:flex;
-  justify-content:space-between;
-  margin-top:30px;
+.section{
+ margin-top:25px
 }
-button{
-  padding:8px 16px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#2e7d32;
-  color:#fff;
+.small{
+ font-size:13px;
+ color:#555
 }
-
+.print-btn{
+ background:#2e7d32;
+ color:#fff;
+ border:none;
+ padding:10px 16px;
+ cursor:pointer;
+ margin-top:15px
+}
 @media print{
-  button,.nav{display:none}
-  body{background:#fff}
+ header,footer,.print-btn{display:none}
+ body{background:#fff}
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
+<header>
+  <a href="index.html">⬅️ Home</a>
+  <span>FarmerBase BP Engine</span>
+  <a href="#" onclick="window.print()">🖨️ Print</a>
+</header>
+
 <div class="container">
 
-<h1 id="bpTitle">व्यवसायिक प्रस्तावना</h1>
+<h1 id="projectTitle">Business Proposal</h1>
+<p class="small" id="meta"></p>
 
-<div class="meta">
-  <span id="fpStatus"></span> |
-  Version : v<span id="fpVersion"></span><br>
-  Created : <span id="fpCreated"></span> |
-  Last Edited : <span id="fpEdited"></span>
-</div>
+<!-- ================= EXECUTIVE SUMMARY ================= -->
+<h2>१. कार्यकारी सारांश (Executive Summary)</h2>
+<p id="summary"></p>
 
-<!-- ===== SHORT INFO ===== -->
-<div class="section">
-<h2>१. संक्षिप्त परिचय</h2>
+<!-- ================= BASIC INFO ================= -->
+<h2>२. आधारभूत जानकारी</h2>
 <table>
-<tr><th>व्यवसाय/प्रस्तावनाको नाम</th><td id="si_name"></td></tr>
-<tr><th>सञ्चालन हुने स्थान</th><td id="si_location"></td></tr>
-<tr><th>सञ्चालन गर्ने संस्था</th><td id="si_org"></td></tr>
-<tr><th>प्रोप्राइटर</th><td id="si_owner"></td></tr>
-<tr><th>सम्पर्क व्यक्ति</th><td id="si_contact"></td></tr>
-<tr><th>सम्पर्क नम्बर</th><td id="si_phone"></td></tr>
-<tr><th>उत्पादन/व्यवसायिक प्रकृति</th><td id="si_products"></td></tr>
-<tr><th>मुख्य बजार</th><td id="si_market"></td></tr>
-<tr><th>कुल पूँजी</th><td id="si_capital"></td></tr>
+<tr><th>फर्म / व्यवसायको नाम</th><td id="firmName"></td></tr>
+<tr><th>परियोजनाको नाम</th><td id="projectName"></td></tr>
+<tr><th>व्यवसायको क्षेत्र</th><td id="bizSector"></td></tr>
+<tr><th>व्यवसायको स्वरूप</th><td id="bizStage"></td></tr>
+<tr><th>स्थान</th><td id="location"></td></tr>
+<tr><th>बजार क्षेत्र</th><td id="marketArea"></td></tr>
+<tr><th>संचालक</th><td id="promoter"></td></tr>
+<tr><th>अनुभव (वर्ष)</th><td id="experience"></td></tr>
 </table>
-</div>
 
-<!-- ===== BUSINESS DETAIL ===== -->
-<div class="section">
-<h2>२. व्यवसायको विस्तृत विवरण</h2>
-<div id="detailBox"></div>
-</div>
-
-<!-- ===== EXPENSE ===== -->
-<div class="section">
-<h2>३. खर्च विवरण (वार्षिक)</h2>
+<!-- ================= LEGAL ================= -->
+<h2>३. कानुनी स्थिति</h2>
 <table>
-<thead>
-<tr>
-  <th>क्याटेगोरी</th>
-  <th>शीर्षक</th>
-  <th class="right">परिमाण</th>
-  <th class="right">दर</th>
-  <th class="right">रकम</th>
-</tr>
-</thead>
-<tbody id="expenseBody"></tbody>
-<tfoot>
-<tr>
-  <th colspan="4" class="right">कुल खर्च</th>
-  <th class="right" id="expenseTotal"></th>
-</tr>
-</tfoot>
+<tr><th>दर्ता स्थिति</th><td id="registrationStatus"></td></tr>
+<tr><th>दर्ता निकाय</th><td id="registrationAuthority"></td></tr>
+<tr><th>दर्ता नं</th><td id="registrationNumber"></td></tr>
+<tr><th>PAN / VAT</th><td id="panNumber"></td></tr>
+<tr><th>अन्य आवद्धता</th><td id="affiliation"></td></tr>
 </table>
-</div>
 
-<!-- ===== INCOME ===== -->
+<!-- ================= BUSINESS DETAIL ================= -->
+<h2>४. व्यवसाय विवरण</h2>
 <div class="section">
-<h2>४. आम्दानी विवरण (वार्षिक)</h2>
-<table>
-<thead>
-<tr>
-  <th>क्याटेगोरी</th>
-  <th>शीर्षक</th>
-  <th class="right">परिमाण</th>
-  <th class="right">दर</th>
-  <th class="right">रकम</th>
-</tr>
-</thead>
-<tbody id="incomeBody"></tbody>
-<tfoot>
-<tr>
-  <th colspan="4" class="right">कुल आम्दानी</th>
-  <th class="right" id="incomeTotal"></th>
-</tr>
-</tfoot>
-</table>
+<h3>व्यवसायको विवरण</h3>
+<p id="bizDescription"></p>
+
+<h3>व्यवसायको औचित्य</h3>
+<p id="bizJustification"></p>
+
+<h3>उत्पादन / सेवा</h3>
+<p id="productService"></p>
+
+<h3>विशेषता</h3>
+<p id="productFeature"></p>
 </div>
 
-<!-- ===== PROFIT LOSS ===== -->
+<!-- ================= MARKET ================= -->
+<h2>५. बजार तथा सञ्चालन</h2>
 <div class="section">
-<h2>५. नाफा / नोक्सान</h2>
-<table>
-<tr><th>कुल आम्दानी</th><td class="right" id="pl_income"></td></tr>
-<tr><th>कुल खर्च</th><td class="right" id="pl_expense"></td></tr>
-<tr><th>नाफा / नोक्सान</th><td class="right" id="pl_net"></td></tr>
-</table>
+<h3>लक्षित बजार</h3>
+<p id="marketTarget"></p>
+
+<h3>माग अवस्था</h3>
+<p id="marketDemand"></p>
+
+<h3>प्रतिस्पर्धा</h3>
+<p id="competition"></p>
+
+<h3>सञ्चालन योजना</h3>
+<p id="operationPlan"></p>
+
+<h3>जनशक्ति</h3>
+<p id="manpower"></p>
 </div>
 
-<!-- ===== ROI ===== -->
+<!-- ================= RESOURCE & RISK ================= -->
+<h2>६. स्रोत साधन, जोखिम र वातावरण</h2>
 <div class="section">
-<h2>६. पाँच वर्षे ROI सारांश</h2>
+<h3>पूर्वाधार</h3>
+<p id="infrastructure"></p>
+
+<h3>प्रविधि</h3>
+<p id="technology"></p>
+
+<h3>जोखिम</h3>
+<p id="risk"></p>
+
+<h3>न्यूनीकरण</h3>
+<p id="mitigation"></p>
+
+<h3>कानुनी / वातावरणीय पक्ष</h3>
+<p id="legal"></p>
+<p id="environment"></p>
+</div>
+
+<!-- ================= FINANCIAL SUMMARY ================= -->
+<h2>७. वित्तीय सारांश</h2>
 <table>
-<tr><th>प्रारम्भिक लगानी</th><td class="right" id="roi_inv"></td></tr>
-<tr><th>कुल नाफा (५ वर्ष)</th><td class="right" id="roi_profit"></td></tr>
-<tr><th>ROI (%)</th><td class="right" id="roi_percent"></td></tr>
-<tr><th>Payback Period</th><td id="roi_payback"></td></tr>
+<tr><th>कुल आम्दानी (वार्षिक)</th><td id="totalIncome"></td></tr>
+<tr><th>कुल खर्च (वार्षिक)</th><td id="totalExpense"></td></tr>
+<tr><th>शुद्ध नाफा</th><td id="netProfit"></td></tr>
 </table>
+
+<p class="small">
+✔️ सबै वित्तीय विवरण प्रणालीबाट अटो गणना गरिएको हो ।
+</p>
+
+<button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+
 </div>
 
-<div class="nav">
-  <button onclick="goHome()">⬅ Home</button>
-  <button onclick="window.print()">🖨 Print</button>
-</div>
-
-</div>
+<!-- ================= FOOTER ================= -->
+<footer>
+  <span>FarmerBase BP Engine – Full Proposal</span>
+</footer>
 
 <script>
-/* ===== SAFETY ===== */
-let key = localStorage.getItem("activeProject");
-if(!key){
-  alert("Project भेटिएन");
-  location.href="index.html";
+/* ================= HELPER ================= */
+function val(id){
+ return localStorage.getItem(id) || "—";
 }
-let p = JSON.parse(localStorage.getItem(key)||"{}");
 
-/* ===== HELPERS ===== */
-function safe(v){ return v && v!=="" ? v : "<i>(सूचना उपलब्ध छैन)</i>"; }
+/* ================= TITLE ================= */
+const project = localStorage.getItem("projectName") || "Business Proposal";
+document.getElementById("projectTitle").innerText = project;
+document.getElementById("meta").innerText =
+ "Generated on: " + new Date().toLocaleDateString();
 
-/* ===== META ===== */
-fpStatus.innerText = p.status==="final" ? "Final Proposal" : "Draft Proposal";
-fpVersion.innerText = p.version || "1.0";
-fpCreated.innerText = p.createdAt || "";
-fpEdited.innerText = p.lastEdited || "";
-
-/* ===== SHORT INFO ===== */
-let s = p.shortInfo || {};
-bpTitle.innerText = s.bp_name || "व्यवसायिक प्रस्तावना";
-si_name.innerHTML = safe(s.bp_name);
-si_location.innerHTML = safe(s.bp_location);
-si_org.innerHTML = safe(s.bp_org);
-si_owner.innerHTML = safe(s.bp_owner);
-si_contact.innerHTML = safe(s.bp_contact_person);
-si_phone.innerHTML = safe(s.bp_phone);
-si_products.innerHTML = safe(s.bp_products);
-si_market.innerHTML = safe(s.bp_market);
-si_capital.innerHTML = safe(s.bp_capital);
-
-/* ===== DETAIL ===== */
-let dbox = document.getElementById("detailBox");
-(p.businessDetail||[]).forEach(d=>{
-  dbox.innerHTML += `<h3>${d.topic}</h3><p>${d.content}</p>`;
+/* ================= SHORT INFO ================= */
+[
+ "firmName","projectName","bizSector","bizStage",
+ "location","marketArea","promoter","experience",
+ "registrationStatus","registrationAuthority",
+ "registrationNumber","panNumber","affiliation",
+ "summary"
+].forEach(id=>{
+ const el=document.getElementById(id);
+ if(el) el.innerText = val(id);
 });
-if(!dbox.innerHTML) dbox.innerHTML="<i>(विवरण उपलब्ध छैन)</i>";
 
-/* ===== EXPENSE ===== */
-let eTotal=0;
-(p.expenseData||[]).forEach(e=>{
-  eTotal+=e.amount;
-  expenseBody.innerHTML+=`
-    <tr>
-      <td>${e.category}</td>
-      <td>${e.title}</td>
-      <td class="right">${e.qty}</td>
-      <td class="right">${e.rate}</td>
-      <td class="right">${e.amount}</td>
-    </tr>`;
+/* ================= BUSINESS DETAIL ================= */
+[
+ "bizDescription","bizJustification",
+ "productService","productFeature",
+ "marketTarget","marketDemand","competition",
+ "operationPlan","manpower",
+ "infrastructure","technology",
+ "risk","mitigation","legal","environment"
+].forEach(id=>{
+ const el=document.getElementById(id);
+ if(el) el.innerText = val(id);
 });
-expenseTotal.innerText = eTotal;
 
-/* ===== INCOME ===== */
-let iTotal=0;
-(p.incomeData||[]).forEach(i=>{
-  iTotal+=i.amount;
-  incomeBody.innerHTML+=`
-    <tr>
-      <td>${i.category}</td>
-      <td>${i.title}</td>
-      <td class="right">${i.qty}</td>
-      <td class="right">${i.rate}</td>
-      <td class="right">${i.amount}</td>
-    </tr>`;
-});
-incomeTotal.innerText = iTotal;
-
-/* ===== PROFIT LOSS ===== */
-pl_income.innerText = iTotal;
-pl_expense.innerText = eTotal;
-let net = iTotal - eTotal;
-pl_net.innerText = net>=0 ? "नाफा : रु. "+net : "नोक्सान : रु. "+Math.abs(net);
-
-/* ===== ROI ===== */
-let r = p.fiveYearROI || {};
-roi_inv.innerText = r.investment || "";
-roi_profit.innerText = r.totalProfit || "";
-roi_percent.innerText = r.roi || "";
-roi_payback.innerText = r.payback || "";
-
-/* ===== NAV ===== */
-function goHome(){location.href="index.html";}
+/* ================= FINANCIAL ================= */
+document.getElementById("totalIncome").innerText =
+ localStorage.getItem("totalIncome") || "—";
+document.getElementById("totalExpense").innerText =
+ localStorage.getItem("totalExpense") || "—";
+document.getElementById("netProfit").innerText =
+ localStorage.getItem("netProfit") || "—";
 </script>
 
 </body>
