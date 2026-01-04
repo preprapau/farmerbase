@@ -93,21 +93,11 @@ button{
 <body>
 
 <div class="container">
-
-<!-- ===== PROGRESS ===== -->
-<div class="progress-wrap">
-  <div class="progress-title" id="progressTitle">चरण 1 / 7 (14%)</div>
-  <div class="steps">
-    <span class="active">Short Info</span> →
-    <span>Detail</span> →
-    <span>Expense</span> →
-    <span>Income</span> →
-    <span>Profit</span> →
-    <span>ROI</span> →
-    <span>Proposal</span>
-  </div>
-  <div class="bar-wrap"><div class="bar" id="progressBar"></div></div>
-</div>
+<header>
+  <a href="expense-demo.html">⬅️ Expenses</a>
+  <span>Farmer Base BP Engine</span>
+  <a href="profit-loss.html">Profit ➡️</a>
+</header>
 
 <div id="autosaveStatus">💾 Saved</div>
 <div id="noticeBox"></div>
@@ -148,10 +138,11 @@ button{
 
 <button onclick="saveShortInfo()">💾 Save</button>
 
-<div class="nav">
-  <button onclick="goPrev()">⬅ Home</button>
-  <button onclick="goNext()">Next ➡</button>
-</div>
+<footer>
+  <a href="expense-demo.html">⬅️ Expenses</a>
+  <span>Income Module</span>
+  <a href="profit-loss.html">Profit ➡️</a>
+</footer>
 
 </div>
 
