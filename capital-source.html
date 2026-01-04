@@ -123,24 +123,35 @@ td input{
 </footer>
 
 <script>
-/* ================= LOAD ================= */
-const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-let sources = JSON.parse(localStorage.getItem("capitalSources")) || [];
+/* ================= LOAD (EXPENSES FIRST) ================= */
+const varExp =
+ JSON.parse(localStorage.getItem("varExp")) || [];
+
+const fixExp =
+ JSON.parse(localStorage.getItem("fixExp")) || [];
+
+let sources =
+ JSON.parse(localStorage.getItem("capitalSources")) || [];
 
 /* ================= CALC ================= */
 function fixedCapital(){
- return expenses.filter(e=>e.type==="fixed")
-  .reduce((s,e)=>s+(e.qty*e.rate||0),0);
+ return fixExp.reduce(
+  (s,e)=>s+(e.qty*e.rate||0),0
+ );
 }
 
 function annualVariable(){
- return expenses.filter(e=>e.type==="variable")
-  .reduce((s,e)=>s+(e.qty*e.rate||0),0);
+ return varExp.reduce(
+  (s,e)=>s+(e.qty*e.rate||0),0
+ );
 }
 
 /* ================= SAVE ================= */
 function save(){
- localStorage.setItem("capitalSources", JSON.stringify(sources));
+ localStorage.setItem(
+  "capitalSources",
+  JSON.stringify(sources)
+ );
 }
 
 /* ================= CRUD ================= */
@@ -188,8 +199,11 @@ function render(){
  const fixed=fixedCapital();
  const annual=annualVariable();
 
- document.getElementById("fixedCap").innerText=fixed.toFixed(2);
- document.getElementById("annualVar").innerText=annual.toFixed(2);
+ document.getElementById("fixedCap").innerText =
+  fixed.toFixed(2);
+
+ document.getElementById("annualVar").innerText =
+  annual.toFixed(2);
 
  const mode=document.getElementById("wcMode").value;
  let opt="";
@@ -217,34 +231,49 @@ function render(){
  const working=calcWorkingCap(annual);
  const totalCap=fixed+working;
 
- document.getElementById("workingCap").innerText=working.toFixed(2);
- document.getElementById("totalCapital").innerText=totalCap.toFixed(2);
+ document.getElementById("workingCap").innerText =
+  working.toFixed(2);
+
+ document.getElementById("totalCapital").innerText =
+  totalCap.toFixed(2);
 
  const tb=document.getElementById("capBody");
  tb.innerHTML="";
 
- const totalSrc=sources.reduce((s,x)=>s+(Number(x.amount)||0),0);
+ const totalSrc=sources.reduce(
+  (s,x)=>s+(Number(x.amount)||0),0
+ );
 
  sources.forEach(s=>{
-  const pct=totalCap?((s.amount/totalCap)*100).toFixed(1):"0";
+  const pct=totalCap
+   ?((s.amount/totalCap)*100).toFixed(1)
+   :"0";
   tb.innerHTML+=`
 <tr>
-<td><input value="${s.name}" onchange="update('${s.id}','name',this.value)"></td>
+<td><input value="${s.name}"
+ onchange="update('${s.id}','name',this.value)"></td>
 <td><input type="number" value="${s.amount}"
-           onchange="update('${s.id}','amount',this.value)"></td>
+ onchange="update('${s.id}','amount',this.value)"></td>
 <td>${pct}%</td>
-<td><button class="btn del" onclick="removeSource('${s.id}')">🗑️</button></td>
+<td><button class="btn del"
+ onclick="removeSource('${s.id}')">🗑️</button></td>
 </tr>`;
  });
 
- document.getElementById("totalSource").innerText=totalSrc.toFixed(2);
+ document.getElementById("totalSource").innerText =
+  totalSrc.toFixed(2);
 
- const pct=totalCap?((totalSrc/totalCap)*100).toFixed(1):"0";
- document.getElementById("totalPercent").innerText=pct+"%";
+ const pct=totalCap
+  ?((totalSrc/totalCap)*100).toFixed(1)
+  :"0";
+
+ document.getElementById("totalPercent").innerText =
+  pct+"%";
 
  document.getElementById("status").innerHTML=
-  pct==100?'<span class="ok"> ✔️ मिल्यो</span>'
-          :'<span class="warn"> ❗ 100% हुनुपर्छ</span>';
+  pct==100
+   ?'<span class="ok"> ✔️ मिल्यो</span>'
+   :'<span class="warn"> ❗ 100% हुनुपर्छ</span>';
 }
 
 render();
