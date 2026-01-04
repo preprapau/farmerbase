@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<title>Profit Distribution</title>
+<style>
+body{font-family:Arial;background:#f5f5f5;margin:0}
+header,footer{background:#2e7d32;color:#fff;padding:12px 20px;
+display:flex;justify-content:space-between;align-items:center}
+header a,footer a{color:#fff;text-decoration:none;font-weight:bold}
+.container{max-width:1100px;margin:auto;background:#fff;padding:20px}
+h1{text-align:center;color:#2e7d32}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border:1px solid #ccc;padding:8px;text-align:center}
+th{background:#e8f5e9}
+input{width:100%;padding:5px}
+.btn{padding:6px 12px;border:none;cursor:pointer}
+.add{background:#2e7d32;color:#fff}
+.del{background:#c62828;color:#fff}
+.warn{color:#c62828;font-weight:bold}
+.ok{color:#2e7d32;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<header>
+<a href="profit-loss-demo.html">⬅️ Profit-Loss</a>
+<span>Farmer Base BP Engine</span>
+<a href="projection-5yr.html">5 Year ➡️</a>
+</header>
+
+<div class="container">
+<h1>नाफा वितरण (Profit Utilization)</h1>
+
+<b>कुल नाफा (Auto):</b>
+<span id="totalProfit">0</span>
+<br><br>
+
+<table>
+<thead>
+<tr>
+<th>शीर्षक</th>
+<th>प्रतिशत (%)</th>
+<th>रकम</th>
+<th>🗑️</th>
+</tr>
+</thead>
+<tbody id="distBody"></tbody>
+</table>
+
+<button class="btn add" onclick="addHead()">➕ शीर्षक थप्नुहोस्</button>
+<br><br>
+<b>कुल %:</b> <span id="totalPct">0%</span>
+<span id="status"></span>
+</div>
+
+<footer>
+<span>Profit Distribution Module</span>
+</footer>
+
+<script>
+const profit = Number(localStorage.getItem("netProfit")) || 0;
+let dist = JSON.parse(localStorage.getItem("profitDistribution")) || [
+ {id:1,name:"पुनः लगानी",pct:60},
+ {id:2,name:"वातावरण संरक्षण",pct:10},
+ {id:3,name:"समुदाय विकास",pct:10},
+ {id:4,name:"व्यक्तिगत उपयोग",pct:20}
+];
+
+function save(){localStorage.setItem("profitDistribution",JSON.stringify(dist));}
+
+function addHead(){
+ dist.push({id:Date.now(),name:"",pct:0});
+ save(); render();
+}
+
+function update(id,f,v){
+ const d=dist.find(x=>x.id===id);
+ d[f]=f==="pct"?Number(v):v;
+ save(); render();
+}
+
+function del(id){
+ dist=dist.filter(x=>x.id!==id);
+ save(); render();
+}
+
+function render(){
+ const tb=document.getElementById("distBody");
+ tb.innerHTML="";
+ let sumPct=0;
+
+ dist.forEach(d=>{
+  sumPct+=d.pct;
+  const amt=profit*d.pct/100;
+  tb.innerHTML+=`
+<tr>
+<td><input value="${d.name}" onchange="update(${d.id},'name',this.value)"></td>
+<td><input type="number" value="${d.pct}" onchange="update(${d.id},'pct',this.value)"></td>
+<td>${amt.toFixed(2)}</td>
+<td><button class="btn del" onclick="del(${d.id})">🗑️</button></td>
+</tr>`;
+ });
+
+ document.getElementById("totalProfit").innerText=profit.toFixed(2);
+ document.getElementById("totalPct").innerText=sumPct+"%";
+ document.getElementById("status").innerHTML=
+  sumPct===100?'<span class="ok"> ✔️ मिल्यो</span>':'<span class="warn"> ❗ 100% हुनुपर्छ</span>';
+}
+
+render();
+</script>
+</body>
+</html>
