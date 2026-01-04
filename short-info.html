@@ -76,10 +76,11 @@ textarea{resize:vertical;min-height:90px}
 <!-- ================= BUSINESS INTRO ================= -->
 <h2>१. व्यवसाय परिचय</h2>
 
-<label>व्यवसायको नाम</label>
-<input id="bizName" placeholder="फर्मको नाम">
- <label>परियोजनाको नाम</label>
-<input id="bizName" placeholder="उदाहरण: व्यावसायिक तरकारी खेती">
+<label>व्यवसाय / फर्मको नाम</label>
+<input id="firmName" placeholder="फर्मको नाम">
+
+<label>परियोजनाको नाम</label>
+<input id="projectName" placeholder="उदाहरण: व्यावसायिक तरकारी खेती">
 
 <label>व्यवसायको क्षेत्र</label>
 <select id="bizSector">
@@ -160,22 +161,32 @@ textarea{resize:vertical;min-height:90px}
 
 <p class="note">
 ✔️ यो पेज बैंक, अनुदान तथा सरकारी निकायले सबैभन्दा पहिले हेर्छन् ।<br>
-✔️ दर्ता र PAN विवरण स्पष्ट भए मूल्याङ्कन सहज हुन्छ ।
+✔️ परियोजनाको नाम Home बाट अटो आएको हुन्छ ।
 </p>
 
 </div>
 
 <!-- ================= FOOTER ================= -->
 <footer>
-  <a href="login.html">⬅️ Login</a>
-  <span>Farmerbase BP Engine-Short Info</span>
+  <a href="index.html">⬅️ मुख्यपृष्ठ</a>
+  <span>Farmerbase BP Engine – Short Info</span>
   <a href="business-detail.html">विस्तृत विवरण ➡️</a>
 </footer>
 
 <script>
-/* ===== AUTO SAVE TO LOCAL STORAGE ===== */
+/* ================= AUTO FILL FROM INDEX ================= */
+const tempProject = localStorage.getItem("newBusinessName");
+const projectInput = document.getElementById("projectName");
+
+if(tempProject && !localStorage.getItem("projectName")){
+ projectInput.value = tempProject;
+ localStorage.setItem("projectName", tempProject);
+ localStorage.removeItem("newBusinessName"); // one-time use
+}
+
+/* ================= AUTO SAVE ================= */
 const ids=[
- "bizName","bizSector","bizStage",
+ "firmName","projectName","bizSector","bizStage",
  "location","marketArea",
  "promoter","experience",
  "registrationStatus","registrationAuthority",
@@ -185,8 +196,8 @@ const ids=[
 
 ids.forEach(id=>{
  const el=document.getElementById(id);
- el.value=localStorage.getItem(id)||"";
- el.onchange=()=>localStorage.setItem(id,el.value);
+ el.value = el.value || localStorage.getItem(id) || "";
+ el.onchange = ()=> localStorage.setItem(id, el.value);
 });
 </script>
 
