@@ -2,210 +2,123 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<title>Short Info | BPMS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Short Info</title>
 
 <style>
 body{
-  font-family:"Noto Sans Devanagari","Kalimati","Mangal","Nirmala UI",system-ui,Arial;
-  background:#f4f7f6;
-  margin:0;
+ font-family:Arial, sans-serif;
+ background:#f5f5f5;
+ margin:0
 }
+
+/* ===== Header / Footer ===== */
+header,footer{
+ background:#2e7d32;
+ color:#fff;
+ padding:12px 20px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center
+}
+header a, footer a{
+ color:#fff;
+ text-decoration:none;
+ font-weight:bold
+}
+
+/* ===== Container ===== */
 .container{
- max-width:1200px;
+ max-width:1000px;
  margin:auto;
  background:#fff;
  padding:20px;
  min-height:70vh
 }
-h2{margin-top:0;color:#2e7d32}
 
-/* ===== AUTOSAVE ===== */
-#autosaveStatus{
-  font-size:13px;
-  color:#2e7d32;
-  margin-bottom:10px;
-}
-
-/* ===== NOTICE ===== */
-#noticeBox{
-  display:none;
-  background:#fff8e1;
-  border:1px solid #ffe082;
-  padding:10px;
-  border-radius:6px;
-  margin-bottom:15px;
-  font-size:14px;
+/* ===== Page Title ===== */
+h1{
+ text-align:center;
+ font-size:32px;
+ color:#2e7d32;
+ margin:15px 0 25px
 }
 
-/* ===== FORM ===== */
-label{display:block;font-weight:600;margin-top:14px}
-input,textarea{
-  width:100%;
-  padding:8px;
-  margin-top:6px;
-  font-family:inherit;
+/* ===== Form ===== */
+label{
+ display:block;
+ margin-top:12px;
+ font-weight:bold
 }
-textarea{min-height:70px}
-
-/* ===== NAV ===== */
-.nav{
-  display:flex;
-  justify-content:space-between;
-  margin-top:30px;
+input, textarea{
+ width:100%;
+ padding:8px;
+ margin-top:5px;
+ box-sizing:border-box
 }
-button{
-  padding:8px 16px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#2e7d32;
-  color:#fff;
-}
-.highlight{
-  border:2px solid #ff9800 !important;
-  background:#fff3e0;
+textarea{
+ resize:vertical;
+ min-height:80px
 }
 
-@media print{
-  button,.progress-wrap,#autosaveStatus,#noticeBox{display:none}
+/* ===== Note ===== */
+.note{
+ font-size:13px;
+ color:#555;
+ margin-top:15px
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- ================= HEADER NAV ================= -->
 <header>
-  <a href="index.html">⬅️ मुख्यपृष्ठमा फर्कनुहोस्</a>
-  <span>.....यहाँ संक्षिप्त जानकारी लेख्नुहोस् .....</span>
-  <a href="existing-status.html">वर्तमान अवस्थामा जानुहोस् ➡️</a>
+  <a href="login.html">⬅️ Login</a>
+  <span>Farmer Base BP Engine</span>
+  <a href="business-detail.html">Business Detail ➡️</a>
 </header>
 
-<div id="autosaveStatus">💾 Saved</div>
-<div id="noticeBox"></div>
+<div class="container">
 
-<h2>✏️ व्यवसाय / प्रस्तावनाको संक्षिप्त विवरण</h2>
+<h1>SHORT INFO</h1>
 
-<label>व्यवसाय / प्रस्तावनाको नाम</label>
-<input id="bp_name">
+<!-- ================= SHORT INFO FORM ================= -->
+<label>व्यवसाय / परियोजनाको नाम</label>
+<input type="text" id="bizName" placeholder="उदाहरण: तरकारी खेती व्यवसाय">
 
-<label>सञ्चालन हुने स्थान (ठेगाना)</label>
-<input id="bp_location">
+<label>व्यवसायको प्रकार</label>
+<input type="text" id="bizType" placeholder="कृषि / पशुपालन / सेवा / उत्पादन">
 
-<label>सञ्चालन गर्ने संस्था</label>
-<input id="bp_org">
+<label>स्थान</label>
+<input type="text" id="location" placeholder="गाउँ/नगरपालिका, जिल्ला">
 
-<label>प्रोप्राइटरको नाम</label>
-<input id="bp_owner">
+<label>संक्षिप्त विवरण</label>
+<textarea id="description"
+ placeholder="यो व्यवसाय के हो, किन गरिँदैछ, मुख्य उद्देश्य..."></textarea>
 
-<label>सम्पर्क व्यक्ति</label>
-<input id="bp_contact_person">
-
-<label>सम्पर्क नम्बर</label>
-<input id="bp_phone">
-
-<label>इमेल (optional)</label>
-<input id="bp_email">
-
-<label>उत्पादन / व्यवसायिक प्रकृति</label>
-<textarea id="bp_products"></textarea>
-
-<label>मुख्य बजार</label>
-<input id="bp_market">
-
-<hr>
-
-<label>कुल पूँजी (रु.)</label>
-<input id="bp_capital" type="number">
-
-<button onclick="saveShortInfo()">💾 Save</button>
-
-<footer>
-  <a href="expense-demo.html">⬅️ Expenses</a>
-  <span>Income Module</span>
-  <a href="profit-loss.html">Profit ➡️</a>
-</footer>
+<p class="note">
+✔️ यो जानकारी व्यवसायिक योजनाको सारांशका लागि प्रयोग हुनेछ ।<br>
+✔️ पछि Detail पेजमा विस्तृत जानकारी थप्न सक्नुहुन्छ ।
+</p>
 
 </div>
 
+<!-- ================= FOOTER NAV ================= -->
+<footer>
+  <a href="login.html">⬅️ Login</a>
+  <span>Short Info</span>
+  <a href="business-detail.html">Business Detail ➡️</a>
+</footer>
+
 <script>
-/* ===== SAFETY ===== */
-let activeKey = localStorage.getItem("activeProject");
-if(!activeKey){
-  alert("पहिले Home बाट Project खोल्नुहोस्");
-  location.href="index.html";
-}
-let project = JSON.parse(localStorage.getItem(activeKey));
+/* ===== Simple Local Save (Optional, Safe) ===== */
+const fields = ["bizName","bizType","location","description"];
 
-/* ===== PROGRESS ===== */
-document.getElementById("progressBar").style.width="14%";
-
-/* ===== LOAD ===== */
-function loadForm(){
-  let s = project.shortInfo||{};
-  for(let k in s){
-    if(document.getElementById(k))
-      document.getElementById(k).value = s[k];
-  }
-}
-loadForm();
-
-/* ===== SAVE ===== */
-function saveShortInfo(){
-  let data={};
-  document.querySelectorAll("input,textarea").forEach(el=>{
-    data[el.id]=el.value||"";
-  });
-  project.shortInfo=data;
-  project.lastEdited=new Date().toLocaleString("ne-NP");
-  localStorage.setItem(activeKey,JSON.stringify(project));
-  autosaveStatus.innerText="✔ Saved";
-  checkNotices();
-}
-
-/* ===== AUTOSAVE ===== */
-let t;
-document.querySelectorAll("input,textarea").forEach(el=>{
-  el.addEventListener("input",()=>{
-    autosaveStatus.innerText="⏳ Saving...";
-    clearTimeout(t);
-    t=setTimeout(saveShortInfo,700);
-  });
+fields.forEach(id=>{
+ const el = document.getElementById(id);
+ el.value = localStorage.getItem(id) || "";
+ el.onchange = ()=> localStorage.setItem(id, el.value);
 });
-
-/* ===== NOTICES ===== */
-function highlight(id){
-  let e=document.getElementById(id);
-  if(!e) return;
-  e.classList.add("highlight");
-  e.scrollIntoView({behavior:"smooth",block:"center"});
-  setTimeout(()=>e.classList.remove("highlight"),3000);
-}
-function checkNotices(){
-  let n=[];
-  if(!bp_location.value)
-    n.push(`ठेगाना छैन <a href="#" onclick="highlight('bp_location')">[देखाऊ]</a>`);
-  if(!bp_phone.value)
-    n.push(`सम्पर्क नम्बर छैन <a href="#" onclick="highlight('bp_phone')">[देखाऊ]</a>`);
-  if(n.length){
-    noticeBox.style.display="block";
-    noticeBox.innerHTML="ℹ️ <b>सूचना:</b><ul><li>"+n.join("</li><li>")+"</li></ul>";
-  }else noticeBox.style.display="none";
-}
-checkNotices();
-
-/* ===== FINAL LOCK ===== */
-if(project.status==="final"){
-  document.querySelectorAll("input,textarea,button").forEach(b=>{
-    if(b.innerText.includes("Home")||b.innerText.includes("Next")) return;
-    b.disabled=true;b.style.opacity=.7;
-  });
-}
-
-/* ===== NAV ===== */
-function goPrev(){location.href="index.html";}
-function goNext(){saveShortInfo();location.href="business-detail.html";}
 </script>
 
 </body>
