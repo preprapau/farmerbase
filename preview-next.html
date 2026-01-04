@@ -67,29 +67,6 @@ td input{
 </header>
 
 <div class="container">
-<h1>INCOME</h1>
-
-<table>
-<thead>
-<tr>
-  <th class="col-prod">उत्पादन</th>
-  <th class="col-unit">इकाई</th>
-  <th class="col-qty">उत्पादन परिमाण</th>
-  <th class="col-cost">लागत / इकाई (Auto)</th>
-  <th class="col-profitpct">नाफा %</th>
-  <th class="col-rate">बिक्री दर (Auto)</th>
-  <th class="col-sales">कुल आम्दानी</th>
-  <th class="col-profit">नाफा</th>
-</tr>
-</thead>
-<tbody id="incomeBody"></tbody>
-</table>
-
-<div class="note">
-✔️ उत्पादन, इकाई, परिमाण र लागत Expense बाट अटो आएको हो ।<br>
-✔️ यहाँ **नाफा % मात्र** हाल्नुहोस् — बिक्री दर र नाफा सिस्टमले निकाल्छ ।
-</div>
-</div>
 
 <footer>
   <a href="expense-demo.html">⬅️ Expenses</a>
@@ -97,93 +74,7 @@ td input{
   <a href="profit-loss.html">Profit ➡️</a>
 </footer>
 
-<script>
-/* ================= LOAD DATA ================= */
-const productions = JSON.parse(localStorage.getItem("productions")) || [];
-const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-let incomes = JSON.parse(localStorage.getItem("incomes")) || {};
 
-/* ================= COST ALLOCATION ================= */
-function allocateExpense(exp){
- const map = exp.map || {};
- const keys = Object.keys(map);
- if(keys.length===0) return {};
-
- let weightSum = 0;
- keys.forEach(k=>{
-  weightSum += typeof map[k]==="number" ? map[k] : 1;
- });
-
- const baseCost = exp.type==="fixed"
-   ? (exp.qty * exp.rate) / (exp.life || 1)
-   : (exp.qty * exp.rate);
-
- const out = {};
- keys.forEach(k=>{
-  const w = typeof map[k]==="number" ? map[k] : 1;
-  out[k] = baseCost * (w / weightSum);
- });
- return out;
-}
-
-function productionCostMap(){
- const map = {};
- productions.forEach(p=>map[p.id]=0);
-
- expenses.forEach(e=>{
-  const alloc = allocateExpense(e);
-  Object.keys(alloc).forEach(pid=>{
-   if(map[pid] !== undefined){
-    map[pid] += alloc[pid];
-   }
-  });
- });
- return map;
-}
-
-/* ================= RENDER ================= */
-function render(){
- const tb = document.getElementById("incomeBody");
- tb.innerHTML = "";
-
- const costMap = productionCostMap();
-
- productions.forEach(p=>{
-  const totalCost = costMap[p.id] || 0;
-  const qty = Number(p.quantity) || 1;
-  const costPerUnit = totalCost / qty;
-
-  if(!incomes[p.id]) incomes[p.id] = { profitPct: 0 };
-  const profitPct = incomes[p.id].profitPct || 0;
-
-  const sellingRate = costPerUnit * (1 + profitPct/100);
-  const sales = sellingRate * qty;
-  const profit = sales - totalCost;
-
-  tb.innerHTML += `
-<tr>
-<td>${p.name}</td>
-<td>${p.unit}</td>
-<td>${qty}</td>
-<td>${costPerUnit.toFixed(2)}</td>
-<td>
-  <input type="number" value="${profitPct}"
-    onchange="updateProfit('${p.id}', this.value)">
-</td>
-<td>${sellingRate.toFixed(2)}</td>
-<td>${sales.toFixed(2)}</td>
-<td>${profit.toFixed(2)}</td>
-</tr>`;
- });
-}
-
-function updateProfit(pid, val){
- incomes[pid].profitPct = Number(val) || 0;
- localStorage.setItem("incomes", JSON.stringify(incomes));
- render();
-}
-
-render();
 </script>
 
 </body>
