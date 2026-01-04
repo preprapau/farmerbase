@@ -10,8 +10,6 @@ body{
  background:#f5f5f5;
  margin:0
 }
-
-/* ===== Header / Footer ===== */
 header,footer{
  background:#2e7d32;
  color:#fff;
@@ -25,42 +23,37 @@ header a, footer a{
  text-decoration:none;
  font-weight:bold
 }
-
-/* ===== Container ===== */
 .container{
- max-width:1000px;
+ max-width:1100px;
  margin:auto;
  background:#fff;
  padding:20px;
  min-height:70vh
 }
-
-/* ===== Page Title ===== */
 h1{
  text-align:center;
  font-size:32px;
  color:#2e7d32;
  margin:15px 0 25px
 }
-
-/* ===== Form ===== */
+h2{
+ color:#333;
+ border-bottom:2px solid #e0e0e0;
+ padding-bottom:5px;
+ margin-top:25px
+}
 label{
  display:block;
  margin-top:12px;
  font-weight:bold
 }
-input, textarea{
+input, textarea, select{
  width:100%;
  padding:8px;
  margin-top:5px;
  box-sizing:border-box
 }
-textarea{
- resize:vertical;
- min-height:80px
-}
-
-/* ===== Note ===== */
+textarea{resize:vertical;min-height:90px}
 .note{
  font-size:13px;
  color:#555;
@@ -71,7 +64,7 @@ textarea{
 
 <body>
 
-<!-- ================= HEADER NAV ================= -->
+<!-- ================= HEADER ================= -->
 <header>
   <a href="login.html">⬅️ Login</a>
   <span>Farmer Base BP Engine</span>
@@ -80,30 +73,99 @@ textarea{
 
 <div class="container">
 
-<h1>SHORT INFO</h1>
+<h1>SHORT INFO (Executive Summary)</h1>
 
-<!-- ================= SHORT INFO FORM ================= -->
+<!-- ================= BUSINESS INTRO ================= -->
+<h2>१. व्यवसाय परिचय</h2>
+
 <label>व्यवसाय / परियोजनाको नाम</label>
-<input type="text" id="bizName" placeholder="उदाहरण: तरकारी खेती व्यवसाय">
+<input id="bizName" placeholder="उदाहरण: व्यावसायिक तरकारी खेती">
 
-<label>व्यवसायको प्रकार</label>
-<input type="text" id="bizType" placeholder="कृषि / पशुपालन / सेवा / उत्पादन">
+<label>व्यवसायको क्षेत्र</label>
+<select id="bizSector">
+ <option value="">छान्नुहोस्</option>
+ <option>कृषि</option>
+ <option>पशुपालन</option>
+ <option>सेवा</option>
+ <option>उत्पादन</option>
+ <option>अन्य</option>
+</select>
 
-<label>स्थान</label>
-<input type="text" id="location" placeholder="गाउँ/नगरपालिका, जिल्ला">
+<label>व्यवसायको स्वरूप</label>
+<select id="bizStage">
+ <option value="">छान्नुहोस्</option>
+ <option>नयाँ व्यवसाय</option>
+ <option>विद्यमान व्यवसायको विस्तार</option>
+</select>
 
-<label>संक्षिप्त विवरण</label>
-<textarea id="description"
- placeholder="यो व्यवसाय के हो, किन गरिँदैछ, मुख्य उद्देश्य..."></textarea>
+<!-- ================= LOCATION ================= -->
+<h2>२. स्थान र दायरा</h2>
+
+<label>व्यवसायको स्थान</label>
+<input id="location" placeholder="गाउँ/नगरपालिका, जिल्ला">
+
+<label>सेवा / बजार क्षेत्र</label>
+<input id="marketArea" placeholder="स्थानीय / जिल्ला / प्रदेश / राष्ट्रिय">
+
+<!-- ================= PROMOTER ================= -->
+<h2>३. संचालक / प्रवर्तक</h2>
+
+<label>संचालकको नाम</label>
+<input id="promoter">
+
+<label>अनुभव (वर्षमा)</label>
+<input type="number" id="experience" placeholder="उदाहरण: 5">
+
+<!-- ================= LEGAL REGISTRATION ================= -->
+<h2>४. कानुनी दर्ता तथा आवद्धता</h2>
+
+<label>व्यवसाय दर्ता स्थिति</label>
+<select id="registrationStatus">
+ <option value="">छान्नुहोस्</option>
+ <option>दर्ता भइसकेको</option>
+ <option>दर्ता प्रक्रियामा</option>
+ <option>दर्ता गर्न बाँकी</option>
+</select>
+
+<label>दर्ता गर्ने निकाय</label>
+<input id="registrationAuthority"
+ placeholder="गाउँपालिका / नगरपालिका / घरेलु / कम्पनी रजिष्ट्रार">
+
+<label>दर्ता नं</label>
+<input id="registrationNumber" placeholder="दर्ता प्रमाणपत्र नं">
+
+<label>PAN / VAT नं</label>
+<input id="panNumber" placeholder="PAN वा VAT नं (यदि छ भने)">
+
+<label>अन्य आवद्धता / सदस्यता (यदि छ भने)</label>
+<textarea id="affiliation"
+ placeholder="सहकारी, किसान समूह, संघ संस्था, परियोजना, NGO, Network आदि"></textarea>
+
+<!-- ================= OBJECTIVE ================= -->
+<h2>५. उद्देश्य र लक्ष्य</h2>
+
+<label>मुख्य उद्देश्य</label>
+<textarea id="objective"
+ placeholder="उत्पादन वृद्धि, आम्दानी वृद्धि, रोजगारी सिर्जना..."></textarea>
+
+<label>लक्षित ग्राहक / बजार</label>
+<textarea id="targetMarket"
+ placeholder="स्थानीय उपभोक्ता, होटल, थोक बजार..."></textarea>
+
+<!-- ================= SUMMARY ================= -->
+<h2>६. कार्यकारी सारांश (Executive Summary)</h2>
+
+<textarea id="summary"
+ placeholder="यो व्यवसाय के हो, किन सम्भाव्य छ, दर्ता स्थिति, बजार र वित्तीय सम्भावना..."></textarea>
 
 <p class="note">
-✔️ यो जानकारी व्यवसायिक योजनाको सारांशका लागि प्रयोग हुनेछ ।<br>
-✔️ पछि Detail पेजमा विस्तृत जानकारी थप्न सक्नुहुन्छ ।
+✔️ यो पेज बैंक, अनुदान तथा सरकारी निकायले सबैभन्दा पहिले हेर्छन् ।<br>
+✔️ दर्ता र PAN विवरण स्पष्ट भए मूल्याङ्कन सहज हुन्छ ।
 </p>
 
 </div>
 
-<!-- ================= FOOTER NAV ================= -->
+<!-- ================= FOOTER ================= -->
 <footer>
   <a href="login.html">⬅️ Login</a>
   <span>Short Info</span>
@@ -111,13 +173,20 @@ textarea{
 </footer>
 
 <script>
-/* ===== Simple Local Save (Optional, Safe) ===== */
-const fields = ["bizName","bizType","location","description"];
+/* ===== AUTO SAVE TO LOCAL STORAGE ===== */
+const ids=[
+ "bizName","bizSector","bizStage",
+ "location","marketArea",
+ "promoter","experience",
+ "registrationStatus","registrationAuthority",
+ "registrationNumber","panNumber","affiliation",
+ "objective","targetMarket","summary"
+];
 
-fields.forEach(id=>{
- const el = document.getElementById(id);
- el.value = localStorage.getItem(id) || "";
- el.onchange = ()=> localStorage.setItem(id, el.value);
+ids.forEach(id=>{
+ const el=document.getElementById(id);
+ el.value=localStorage.getItem(id)||"";
+ el.onchange=()=>localStorage.setItem(id,el.value);
 });
 </script>
 
